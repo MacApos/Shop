@@ -1,23 +1,19 @@
 package pl.coderslab.service.impl;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 import pl.coderslab.entity.User;
-import pl.coderslab.repository.AuthorityRepository;
 import pl.coderslab.repository.UserRepository;
+import pl.coderslab.service.AuthorityService;
 import pl.coderslab.service.UserService;
 
-import java.util.Optional;
-
+@Service
 public class UserServiceImpl implements UserService {
-    private  UserRepository userRepository;
-    private  AuthorityRepository authorityRepository;
-    private  BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
+    private final AuthorityService authorityService;
 
-    public UserServiceImpl(UserRepository userRepository, AuthorityRepository authorityRepository,
-                           BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, AuthorityService authorityService) {
         this.userRepository = userRepository;
-        this.authorityRepository = authorityRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.authorityService = authorityService;
     }
 
     @Override
@@ -26,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(User user) {
-
+    public boolean isUserAdmin(User user) {
+        return user.getAuthorities().contains(authorityService.findByAuthority("ROLE_ADMIN"));
     }
 }

@@ -1,41 +1,34 @@
 package pl.coderslab.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-//import pl.coderslab.service.EmployeeService;
+import pl.coderslab.entity.CustomUser;
+import pl.coderslab.entity.User;
+import pl.coderslab.service.UserService;
 
-@RestController
+
+@Controller
 public class HomeController {
-//    public EmployeeService employeeService;
-//
-//    public HomeController(EmployeeService employeeService) {
-//        this.employeeService = employeeService;
-//    }
-//
-//    @GetMapping("/")
-//    public String home(Model model) {
-//        Employee frodo = new Employee("Frodo", "Baggins", "ring bearer");
-//        employeeService.saveEmployee(frodo);
-//        model.addAttribute("frodo", frodo);
-//        return String.format("Hello %s!", frodo.getFirstName());
-//    }
+    UserService userService;
 
-    @GetMapping("/admin")
-    public String adminEndpoint() {
-        return "Admin!";
+    public HomeController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping("/user")
-    public String userEndpoint() {
-        return "User!";
+    @RequestMapping("/")
+    public String home(@AuthenticationPrincipal CustomUser userDetails, Model model) {
+        if(userDetails!=null){
+            User user = userService.findByUsername(userDetails.getUsername());
+            model.addAttribute("isAdmin", userService.isUserAdmin(user));
+        }
+        return "home";
     }
 
-    @GetMapping("/all")
-    public String allRolesEndpoint() {
-        return "All Roles!";
+    @RequestMapping("/403")
+    public String accessDenied() {
+        return "accessDenied";
     }
 }

@@ -1,15 +1,17 @@
 package pl.coderslab.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
+@Table(name = "authorities")
 public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    @Column(nullable = false, unique = true)
-    public String username;
-    public String authority;
+    private Long id;
+
+    @NotNull
+    private String authority;
 
     public Long getId() {
         return id;
@@ -17,14 +19,6 @@ public class Authority {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getAuthority() {
