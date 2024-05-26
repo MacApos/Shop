@@ -1,29 +1,34 @@
 package pl.coderslab.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import pl.coderslab.entity.Category;
 import pl.coderslab.entity.CustomUser;
-import pl.coderslab.entity.User;
+import pl.coderslab.repository.CategoryRepository;
+import pl.coderslab.service.CategoryService;
 import pl.coderslab.service.UserService;
+
+import java.util.HashMap;
+import java.util.List;
 
 
 @Controller
 public class HomeController {
-    UserService userService;
+    private final UserService userService;
+    private final CategoryService categoryService;
 
-    public HomeController(UserService userService) {
+    public HomeController(UserService userService, CategoryService categoryService) {
         this.userService = userService;
+        this.categoryService = categoryService;
     }
 
     @RequestMapping("/")
     public String home(@AuthenticationPrincipal CustomUser userDetails, Model model) {
-        if(userDetails!=null){
-            User user = userService.findByUsername(userDetails.getUsername());
-            model.addAttribute("isAdmin", userService.isUserAdmin(user));
-        }
+        HashMap<String, Object> all = categoryService.findAll();
+        model.addAttribute("categories", all);
         return "home";
     }
 

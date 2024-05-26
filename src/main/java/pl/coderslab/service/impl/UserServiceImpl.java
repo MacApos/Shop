@@ -22,7 +22,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUserAdmin(User user) {
-        return user.getAuthorities().contains(authorityService.findByAuthority("ROLE_ADMIN"));
+    public boolean isUserAdmin(String user) {
+        return findByUsername(user).getAuthorities()
+                .contains(authorityService.findByAuthority("ROLE_ADMIN"));
     }
 }

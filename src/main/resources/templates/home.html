@@ -5,23 +5,18 @@
     <meta charset="UTF-8">
     <title>Home</title>
 </head>
-<body th:with="isAuthenticated=${#authentication.isAuthenticated()}, isAdministrator=false">
-<div sec:authorize="hasRole('USER')">
-    <h1 th:inline="text">Welcome [[${#authentication.name}]]!</h1>
-    <div th:if="${isAdmin}">You are admin.</div>
-    <div th:unless="${isAdmin}">You are user.</div>
-    <form name="logoutForm" th:action="@{/logout}" method="post">
-        <input type="submit" value="Sign Out"/>
-    </form>
+<body>
+<div th:insert="~{header::header}"></div>
+<div>O nas</div>
+<div>Kontakt</div>
+<div>Kategorie
+    <div th:insert="this::fragment(${categories})"></div>
 </div>
-<div sec:authorize="hasRole('ANONYMOUS')">
-    <a href="/register">
-        <button>Zarejestruj się</button>
-    </a>
-    <br>
-    <a href="/login">
-        <button>Zaloguj się</button>
-    </a>
-</div>
+<ul th:fragment="fragment(cat)" th:each="category:${cat}">
+    <li th:inline="text">
+        [[${category.key}]]
+        <div th:if="${category.value!=null}" th:insert="this::fragment(${category.value})"></div>
+    </li>
+</ul>
 </body>
 </html>

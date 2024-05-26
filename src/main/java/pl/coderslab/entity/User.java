@@ -4,6 +4,7 @@
     import jakarta.validation.constraints.Email;
     import jakarta.validation.constraints.NotNull;
 
+    import java.util.List;
     import java.util.Set;
 
     @Entity
@@ -12,25 +13,22 @@
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-
         @Column(unique = true)
         @NotNull
         private String username;
-
         @Column(unique = true)
         @Email
         @NotNull
         private String email;
-
         @NotNull
         private String password;
-
         @NotNull
         private boolean enabled;
-
         @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         @NotNull
         private Set<Authority> authorities;
+        @OneToMany(mappedBy = "user")
+        private List<CartItem> cartItems;
 
         public Long getId() {
             return id;
