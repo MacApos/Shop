@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: shop
 -- ------------------------------------------------------
--- Server version	8.0.36-0ubuntu0.23.10.1
+-- Server version	8.0.36-0ubuntu0.22.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -79,10 +79,9 @@ CREATE TABLE `category` (
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `parent_category_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `parent_child_unique` (`name`,`parent_category_id`),
   KEY `FKs2ride9gvilxy2tcuv7witnxc` (`parent_category_id`),
   CONSTRAINT `FKs2ride9gvilxy2tcuv7witnxc` FOREIGN KEY (`parent_category_id`) REFERENCES `category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,7 +90,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (80,'Artykuły domowe',NULL),(83,'Dywany',80),(82,'Inne',NULL),(86,'Inne dywany',80),(85,'Jednokolorowe dywany',83),(84,'Kolorowe dywany',83),(87,'Różne dywany',86),(88,'Swerty',81),(81,'Ubrania',NULL);
+INSERT INTO `category` VALUES (1,'Artykuły domowe',NULL),(2,'Ubrania',NULL),(3,'AInne',NULL),(4,'Dywany',1),(5,'Kolorowe dywany',4),(6,'Jednokolorowe dywany',4),(7,'Inne dywany',1),(8,'Różne dywany',7),(9,'Swetry',2);
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -213,4 +212,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-26 16:06:02
+-- Dump completed on 2024-05-27 22:43:26
