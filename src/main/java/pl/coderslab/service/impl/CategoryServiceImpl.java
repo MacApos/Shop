@@ -1,11 +1,15 @@
 package pl.coderslab.service.impl;
 
+import org.antlr.v4.runtime.tree.Tree;
 import org.springframework.stereotype.Service;
 import pl.coderslab.entity.Category;
+import pl.coderslab.entity.CategoryNameComparator;
 import pl.coderslab.repository.CategoryRepository;
 import pl.coderslab.service.CategoryService;
 
+import java.text.Normalizer;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -37,28 +41,49 @@ public class CategoryServiceImpl implements CategoryService {
 //        return list;
 //    }
 
-    public HashMap<String, Object> createCategoriesHierarchy(List<Category> parents) {
-        HashMap<String, Object> map = new HashMap<>();
+    private List<Category> sortCategories(List<Category> categories) {
+        if (categories.size() > 1) {
+            return categories.stream().sorted((Comparator.comparing(Category::getName))).toList();
+        }
+        return categories;
+    }
+
+    private final List<String> othersPropositions = List.of("inne", "pozostałe");
+
+    private List<Category> getSortedCategories(List<Category> categories) {
+        List<Category> others = new ArrayList<>();
+        List<Category> main = new ArrayList<>(categories);
+        for (Category category : categories) {
+            for (String proposition : othersPropositions) {
+                if (category.getName().toLowerCase().contains(proposition)) {
+                    main.remove(category);
+                    others.add(category);
+                }
+            }
+        }
+        main = sortCategories(main);
+        others = sortCategories(others);
+        return Stream.concat(main.stream(), others.stream()).toList();
+    }
+
+    private LinkedHashMap<Category, Object> getCategoriesInHierarchy(List<Category> parents) {
+        parents = getSortedCategories(parents);
+        LinkedHashMap<Category, Object> map = new LinkedHashMap<>();
         for (Category parent : parents) {
-            map.put(parent.getName(), null);
-            List<Category> children = findChildrenByParentCategory(parent);
+            map.put(parent, null);
+            List<Category> children = categoryRepository.findByParentCategory(parent);
             if (!children.isEmpty()) {
-                HashMap<String, Object> newParents = createCategoriesHierarchy(children);
-                map.replace(parent.getName(), newParents);
+                LinkedHashMap<Category, Object> newParents = getCategoriesInHierarchy(children);
+                map.replace(parent, newParents);
             }
         }
         return map;
     }
 
     @Override
-    public HashMap<String, Object> findAll() {
+    public LinkedHashMap<Category, Object> findAll() {
         List<Category> grandparents = categoryRepository.findChildrenByParentCategoryIsNull();
-        return createCategoriesHierarchy(grandparents);
-    }
-
-    @Override
-    public List<Category> findChildrenByParentCategory(Category category) {
-        return categoryRepository.findByParentCategory(category);
+        return getCategoriesInHierarchy(grandparents);
     }
 
     @Override
@@ -66,4 +91,29 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> byId = categoryRepository.findById(id);
         return byId.orElse(null);
     }
+
+    @Override
+    public Category findByNameLike(String name) {
+        return categoryRepository.findByNameLike(name + "%");
+    }
+
+    private String normalized(String unnormalized) {
+        String path = unnormalized.replaceAll(" ", "-").toLowerCase();
+        return Normalizer.normalize(path, Normalizer.Form.NFKD)
+                .replaceAll("\\p{M}", "")
+                .replaceAll("[\\u0141-\\u0142]", "l");
+    }
+
+    @Override
+    public void save(Category category) {
+        Category parent = category.getParentCategory();
+        String name = category.getName();
+        if (categoryRepository.findByNameAndParentCategory(name, parent) != null) {
+            throw new Error("Category already exists");
+        }
+        category.setPath(parent == null ? normalized(name) : parent.getPath() + "/" + normalized(name));
+
+        categoryRepository.save(category);
+    }
+
 }

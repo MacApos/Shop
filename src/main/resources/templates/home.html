@@ -9,14 +9,17 @@
 <div th:insert="~{header::header}"></div>
 <div>O nas</div>
 <div>Kontakt</div>
+
 <div>Kategorie
     <div th:insert="this::fragment(${categories})"></div>
 </div>
 <ul th:fragment="fragment(cat)" th:each="category:${cat}">
-    <li th:inline="text">
-        [[${category.key}]]
+    <li>
+        <a th:href="@{/}" th:inline="text">
+            [[${category.key.name}]] </a>
         <div th:if="${category.value!=null}" th:insert="this::fragment(${category.value})"></div>
     </li>
 </ul>
+
 </body>
 </html>
