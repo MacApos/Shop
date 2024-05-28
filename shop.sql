@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: shop
 -- ------------------------------------------------------
--- Server version	8.0.36-0ubuntu0.22.04.1
+-- Server version	8.0.36-0ubuntu0.23.10.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -77,6 +77,7 @@ DROP TABLE IF EXISTS `category`;
 CREATE TABLE `category` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `parent_category_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKs2ride9gvilxy2tcuv7witnxc` (`parent_category_id`),
@@ -90,7 +91,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'Artykuły domowe',NULL),(2,'Ubrania',NULL),(3,'AInne',NULL),(4,'Dywany',1),(5,'Kolorowe dywany',4),(6,'Jednokolorowe dywany',4),(7,'Inne dywany',1),(8,'Różne dywany',7),(9,'Swetry',2);
+INSERT INTO `category` VALUES (1,'Artykuły domowe','artykuly-domowe',NULL),(2,'Ubrania','ubrania',NULL),(3,'Inne','inne',NULL),(4,'Dywany','artykuly-domowe/dywany',1),(5,'Kolorowe dywany','artykuly-domowe/dywany/kolorowe-dywany',4),(6,'Jednokolorowe dywany','artykuly-domowe/dywany/jednokolorowe-dywany',4),(7,'Inne dywany','artykuly-domowe/inne-dywany',1),(8,'Różne dywany','artykuly-domowe/inne-dywany/rozne-dywany',7),(9,'Czapki','ubrania/czapki',2);
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -107,14 +108,14 @@ CREATE TABLE `product` (
   `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price` double DEFAULT NULL,
-  `category_id` bigint DEFAULT NULL,
+  `category_id` bigint NOT NULL,
   `seller_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK1mtsbur82frn64de7balymq9s` (`category_id`),
   KEY `FKesd6fy52tk7esoo2gcls4lfe3` (`seller_id`),
   CONSTRAINT `FK1mtsbur82frn64de7balymq9s` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`),
   CONSTRAINT `FKesd6fy52tk7esoo2gcls4lfe3` FOREIGN KEY (`seller_id`) REFERENCES `seller` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,6 +124,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES (1,'Lorem ipsum','crochet-hat.jpg','Czapka 1',10,9,NULL),(2,'Lorem ipsum','crochet-hat.jpg','Czapka 2',10,9,NULL),(3,'Lorem ipsum','crochet-hat.jpg','Czerwony dywan',10,5,NULL),(4,'Lorem ipsum','crochet-hat.jpg','Zielony dywan',10,5,NULL),(5,'Lorem ipsum','crochet-hat.jpg','Dywan wzór 1',10,6,NULL),(6,'Lorem ipsum','crochet-hat.jpg','Dywan wzór 2',10,6,NULL),(7,'Lorem ipsum','crochet-hat.jpg','Dywan do salonu',10,8,NULL),(8,'Lorem ipsum','crochet-hat.jpg','Dywan dla dziecka',10,8,NULL),(9,'Lorem ipsum','crochet-hat.jpg','Torba 1',10,3,NULL),(10,'Lorem ipsum','crochet-hat.jpg','Torba 2',10,3,NULL);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,4 +214,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-27 22:43:26
+-- Dump completed on 2024-05-29  1:21:46
