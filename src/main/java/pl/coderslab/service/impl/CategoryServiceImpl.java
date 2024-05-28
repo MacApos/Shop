@@ -1,9 +1,7 @@
 package pl.coderslab.service.impl;
 
-import org.antlr.v4.runtime.tree.Tree;
 import org.springframework.stereotype.Service;
 import pl.coderslab.entity.Category;
-import pl.coderslab.entity.CategoryNameComparator;
 import pl.coderslab.repository.CategoryRepository;
 import pl.coderslab.service.CategoryService;
 
@@ -71,18 +69,18 @@ public class CategoryServiceImpl implements CategoryService {
         LinkedHashMap<Category, Object> map = new LinkedHashMap<>();
         for (Category parent : parents) {
             map.put(parent, null);
-            List<Category> children = categoryRepository.findByParentCategory(parent);
+            List<Category> children = categoryRepository.findAllByParentCategory(parent);
             if (!children.isEmpty()) {
-                LinkedHashMap<Category, Object> newParents = getCategoriesInHierarchy(children);
-                map.replace(parent, newParents);
+                LinkedHashMap<Category, Object> parentWithChildren = getCategoriesInHierarchy(children);
+                map.replace(parent, parentWithChildren);
             }
         }
         return map;
     }
 
     @Override
-    public LinkedHashMap<Category, Object> findAll() {
-        List<Category> grandparents = categoryRepository.findChildrenByParentCategoryIsNull();
+    public LinkedHashMap<Category, Object> getHierarchyMap() {
+        List<Category> grandparents = categoryRepository.findAllChildrenByParentCategoryIsNull();
         return getCategoriesInHierarchy(grandparents);
     }
 
@@ -93,11 +91,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category findByNameLike(String name) {
-        return categoryRepository.findByNameLike(name + "%");
+    public Category findByName(String name) {
+        return categoryRepository.findByName(name);
     }
 
-    private String normalized(String unnormalized) {
+    @Override
+    public Category findByPath(String path) {
+        return categoryRepository.findByPath(path);
+    }
+
+    private String normalize(String unnormalized) {
         String path = unnormalized.replaceAll(" ", "-").toLowerCase();
         return Normalizer.normalize(path, Normalizer.Form.NFKD)
                 .replaceAll("\\p{M}", "")
@@ -111,7 +114,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryRepository.findByNameAndParentCategory(name, parent) != null) {
             throw new Error("Category already exists");
         }
-        category.setPath(parent == null ? normalized(name) : parent.getPath() + "/" + normalized(name));
+        category.setPath(parent == null ? normalize(name) : parent.getPath() + "/" + normalize(name));
 
         categoryRepository.save(category);
     }

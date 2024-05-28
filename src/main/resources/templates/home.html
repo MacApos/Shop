@@ -11,11 +11,12 @@
 <div>Kontakt</div>
 
 <div>Kategorie
+    <div><a th:href="@{/search/all}">Wszystkie</a></div>
     <div th:insert="this::fragment(${categories})"></div>
 </div>
 <ul th:fragment="fragment(cat)" th:each="category:${cat}">
     <li>
-        <a th:href="@{/}" th:inline="text">
+        <a th:href="@{/search/{path}(path=${category.key.path})}" th:inline="text">
             [[${category.key.name}]] </a>
         <div th:if="${category.value!=null}" th:insert="this::fragment(${category.value})"></div>
     </li>

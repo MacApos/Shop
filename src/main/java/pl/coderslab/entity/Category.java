@@ -1,6 +1,8 @@
 package pl.coderslab.entity;
 
 import jakarta.persistence.*;
+import pl.coderslab.service.CategoryService;
+import pl.coderslab.service.impl.CategoryServiceImpl;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,13 +13,11 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @Transient
     private String path;
     @ManyToOne
     private Category parentCategory;
 
     public Category() {
-
     }
 
     public Category(String name) {
@@ -59,12 +59,5 @@ public class Category {
 
     public void setParentCategory(Category parentCategory) {
         this.parentCategory = parentCategory;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Category category)) return false;
-        return Objects.equals(id, category.id) && Objects.equals(name, category.name) && Objects.equals(path, category.path) && Objects.equals(parentCategory, category.parentCategory);
     }
 }

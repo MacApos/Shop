@@ -2,17 +2,16 @@ package pl.coderslab.service;
 
 import pl.coderslab.entity.Category;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.TreeMap;
 
 public interface CategoryService {
-    LinkedHashMap<Category, Object> findAll();
+    LinkedHashMap<Category, Object> getHierarchyMap();
 
     Category findById(Long id);
 
-    Category findByNameLike(String name);
+    Category findByName(String name);
+
+    Category findByPath(String path);
 
     void save(Category category);
 }

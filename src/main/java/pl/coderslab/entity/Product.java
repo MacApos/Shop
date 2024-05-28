@@ -1,6 +1,7 @@
 package pl.coderslab.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Product {
@@ -11,10 +12,22 @@ public class Product {
     private String description;
     private Double price;
     private String image;
+    @NotNull
     @ManyToOne
     private Category category;
     @ManyToOne
     private Seller seller;
+
+    public Product() {
+    }
+
+    public Product(String name, String description, Double price, String image, Category category) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.image = image;
+        this.category = category;
+    }
 
     public Long getId() {
         return id;
