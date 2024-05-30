@@ -1,6 +1,7 @@
 package pl.coderslab.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import pl.coderslab.service.CategoryService;
 import pl.coderslab.service.impl.CategoryServiceImpl;
 
@@ -14,6 +15,7 @@ public class Category {
     private Long id;
     private String name;
     private String path;
+    @NotBlank
     @ManyToOne
     private Category parentCategory;
 

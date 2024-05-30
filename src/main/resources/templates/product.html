@@ -2,13 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="${product.name}"/>
 </head>
 <body>
 
-<ul th:each="product:${products}">
-   <li th:text="${product.name}"/>
-</ul>
+<div th:text="${product.name}"></div>
 
 </body>
 </html>

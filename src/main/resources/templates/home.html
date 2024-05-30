@@ -17,7 +17,8 @@
 <ul th:fragment="fragment(cat)" th:each="category:${cat}">
     <li>
         <a th:href="@{/search/{path}(path=${category.key.path})}" th:inline="text">
-            [[${category.key.name}]] </a>
+            [[${category.key.name}]]
+        </a>
         <div th:if="${category.value!=null}" th:insert="this::fragment(${category.value})"></div>
     </li>
 </ul>

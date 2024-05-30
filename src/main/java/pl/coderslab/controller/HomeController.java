@@ -29,6 +29,7 @@ public class HomeController {
                 List.of("Artykuły domowe"),
                 List.of("Ubrania"),
                 List.of("Inne"),
+                List.of("Pozostałe"),
                 List.of("Dywany", "Artykuły domowe"),
                 List.of("Kolorowe dywany", "Dywany"),
                 List.of("Jednokolorowe dywany", "Dywany"),

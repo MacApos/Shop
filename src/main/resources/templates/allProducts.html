@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${category instanceof T(java.lang.String) ? category : category.name} "/>
+</head>
+<body>
+<div th:text="${category.path}"></div>
+<ul th:each="product:${products}">
+    <li>
+        <a th:href="@{/search/{path}/product/{productPath}(path=${category.path},
+        productPath=${product.path})}" th:inline="text">
+            [[${product.name}]]
+        </a>
+    </li>
+</ul>
+
+</body>
+</html>

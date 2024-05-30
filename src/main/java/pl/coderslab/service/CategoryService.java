@@ -5,6 +5,9 @@ import pl.coderslab.entity.Category;
 import java.util.LinkedHashMap;
 
 public interface CategoryService {
+    String SEARCH_PATH = "search";
+    String PRODUCT_PATH = "product";
+
     LinkedHashMap<Category, Object> getHierarchyMap();
 
     Category findById(Long id);
@@ -14,4 +17,8 @@ public interface CategoryService {
     Category findByPath(String path);
 
     void save(Category category);
+
+    String normalizeName(String unnormalized);
+
+   String[] splitPathAroundProduct(String path);
 }

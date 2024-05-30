@@ -12,6 +12,7 @@ public class Product {
     private String description;
     private Double price;
     private String image;
+    private String path;
     @NotNull
     @ManyToOne
     private Category category;
@@ -59,6 +60,22 @@ public class Product {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public Category getCategory() {

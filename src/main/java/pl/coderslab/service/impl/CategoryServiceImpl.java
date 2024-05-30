@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import pl.coderslab.entity.Category;
 import pl.coderslab.repository.CategoryRepository;
 import pl.coderslab.service.CategoryService;
+import pl.coderslab.service.ProductService;
 
 import java.text.Normalizer;
 import java.util.*;
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+//    private final ProductService productService;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
@@ -96,11 +98,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public String[] splitPathAroundProduct(String path) {
+        path = path.replace("/" + SEARCH_PATH + "/", "");
+        return path.split("/" + PRODUCT_PATH + "/");
+    }
+
+    @Override
     public Category findByPath(String path) {
         return categoryRepository.findByPath(path);
     }
 
-    private String normalize(String unnormalized) {
+    @Override
+    public String normalizeName(String unnormalized) {
         String path = unnormalized.replaceAll(" ", "-").toLowerCase();
         return Normalizer.normalize(path, Normalizer.Form.NFKD)
                 .replaceAll("\\p{M}", "")
@@ -114,7 +123,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryRepository.findByNameAndParentCategory(name, parent) != null) {
             throw new Error("Category already exists");
         }
-        category.setPath(parent == null ? normalize(name) : parent.getPath() + "/" + normalize(name));
+        category.setPath(parent == null ? normalizeName(name) : parent.getPath() + "/" + normalizeName(name));
 
         categoryRepository.save(category);
     }

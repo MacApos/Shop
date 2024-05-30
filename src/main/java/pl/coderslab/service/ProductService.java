@@ -10,6 +10,10 @@ public interface ProductService {
 
     List<Product> findAll();
 
+    Product findById(Long id);
+
+    Product findByPathAndCategory(String path, Category category);
+
     void save(Product product);
 
 }
