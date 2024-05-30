@@ -14,6 +14,8 @@ public interface ProductService {
 
     Product findByPathAndCategory(String path, Category category);
 
+    Product findByCategory(Category category);
+
     void save(Product product);
 
 }

@@ -41,6 +41,7 @@ public class SearchController {
         if (split.length > 1) {
             String productPath = split[1];
             Product product = productService.findByPathAndCategory(productPath, category);
+            Product byCategory = productService.findByCategory(category);
             if (product == null) {
                 return "error/404";
             }
