@@ -87,6 +87,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<Category> getParentsLine(Category category) {
+        List<Category> parents = new ArrayList<>(List.of(category));
+        Category parentCategory = category.getParentCategory();
+        while(parentCategory != null){
+           parents.add(parentCategory);
+           parentCategory=parentCategory.getParentCategory();
+        }
+        Collections.reverse(parents);
+        return parents;
+    }
+
+    @Override
     public Category findById(Long id) {
         Optional<Category> byId = categoryRepository.findById(id);
         return byId.orElse(null);

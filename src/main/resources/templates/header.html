@@ -8,7 +8,8 @@
 <body>
 <div th:fragment="header"
      th:with="isAuthenticated=${#authentication.isAuthenticated()},
-     isAdmin=${#authorization.expression('hasRole(''ADMIN'')')}">
+     isAdmin=${#authorization.expression('hasRole(''ADMIN'')')},
+     admin=${#authorization.expr('hasRole(''USER'')')}">
     <h1>Sklep</h1>
     <div sec:authorize="hasRole('USER')">
         <div th:unless="${isAdmin}"><a href="/">\_/ "Koszyk"</a></div>

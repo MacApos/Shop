@@ -41,11 +41,12 @@ public class SearchController {
         if (split.length > 1) {
             String productPath = split[1];
             Product product = productService.findByPathAndCategory(productPath, category);
-            Product byCategory = productService.findByCategory(category);
             if (product == null) {
                 return "error/404";
             }
+            List<Category> parents = categoryService.getParentsLine(product.getCategory());
             model.addAttribute("product", product);
+            model.addAttribute("parents", parents);
             return "product";
         }
         List<Product> products = productService.findAllByCategory(category);

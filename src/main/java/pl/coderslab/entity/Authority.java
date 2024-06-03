@@ -11,6 +11,7 @@ public class Authority {
     private Long id;
 
     @NotNull
+    @Column(unique = true)
     private String authority;
 
     public Long getId() {

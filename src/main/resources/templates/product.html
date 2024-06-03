@@ -4,9 +4,48 @@
     <meta charset="UTF-8">
     <title th:text="${product.name}"/>
 </head>
+<style>
+    ul {
+        padding-left: 0;
+    }
+
+    li {
+        float: left;
+        display: block;
+    }
+</style>
 <body>
 
-<div th:text="${product.name}"></div>
+<ul th:each="parent, iterStat:${parents}">
+    <li>
+        <a th:href="@{/search/{path}(path=${parent.path})}" th:text="${parent.name}"/>
+    </li>
+    <li th:unless="${iterStat.last}" th:text="'/'" style="
+    padding-left: 8px;
+    padding-right: 8px;"/>
+</ul>
+<br>
+<div th:text="${product.name}"/>
+<div th:text="${product.description}"/>
+<div th:text="${product.price}"/>
+<img th:src="@{/images/crochet-hat.jpg}" th:alt="${product.name}">
+<br>
+<button id="addToCart">Dodaj do koszyka</button>
+<div id="afterAdd" style="display: none">
+    <button>
+        <a th:href="@{/cart}">Przejdź do koszyka</a>
+    </button>
+    <button id="stayOnPage">Zostań na stronie</button>
+</div>
+<button id="buy">Kup</button>
+
+<script>
+    const addButton = document.querySelector("button#addToCart");
+    const afterAdd = document.querySelector("div#afterAdd");
+    const stayOnPage = document.querySelector("button#stayOnPage");
+    addButton.addEventListener("click", () => afterAdd.style.display = "block");
+    stayOnPage.addEventListener("click", () => afterAdd.style.display = "none");
+</script>
 
 </body>
 </html>

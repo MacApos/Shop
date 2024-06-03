@@ -56,20 +56,6 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByPathAndCategory(path, category);
     }
 
-    public List<Category> getAllCategories(Category category){
-        List<Category> parents = new ArrayList<>();
-        if(category!=null){
-           parents.addAll( getAllCategories(category.getParentCategory()));
-        }
-        return parents;
-    }
-
-    @Override
-    public Product findByCategory(Category category) {
-        getAllCategories(category);
-        return null;
-    }
-
     @Override
     public void save(Product product) {
         Category category = product.getCategory();

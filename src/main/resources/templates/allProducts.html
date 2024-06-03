@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:with="title=${category instanceof T(java.lang.String) ? category : category.name}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${category instanceof T(java.lang.String) ? category : category.name} "/>
+    <title th:text="${title}"/>
 </head>
 <body>
-<div th:text="${category.path}"></div>
+<div th:text="${title}"></div>
 <ul th:each="product:${products}">
     <li>
-        <a th:href="@{/search/{path}/product/{productPath}(path=${category.path},
+        <a th:href="@{/search/{productCategory}/product/{productPath}(productCategory=${product.category.path},
         productPath=${product.path})}" th:inline="text">
             [[${product.name}]]
         </a>

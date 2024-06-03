@@ -3,6 +3,7 @@ package pl.coderslab.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import pl.coderslab.entity.Category;
 import pl.coderslab.entity.Product;
 import pl.coderslab.service.CategoryService;
@@ -82,6 +83,12 @@ public class HomeController {
             }
         }
     }
+
+    @RequestMapping("/index")
+    public String index() {
+        return "index";
+    }
+
 
     @RequestMapping("/")
     public String home(Model model) {
