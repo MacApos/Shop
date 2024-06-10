@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-//    private final ProductService productService;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
@@ -113,6 +112,11 @@ public class CategoryServiceImpl implements CategoryService {
     public String[] splitPathAroundProduct(String path) {
         path = path.replace("/" + SEARCH_PATH + "/", "");
         return path.split("/" + PRODUCT_PATH + "/");
+    }
+
+    @Override
+    public List<Category> findAllByParentCategory(Category category) {
+        return categoryRepository.findAllByParentCategory(category);
     }
 
     @Override

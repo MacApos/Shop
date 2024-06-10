@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${product.name}"/>
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 </head>
 <style>
     ul {
@@ -39,12 +41,29 @@
 </div>
 <button id="buy">Kup</button>
 
-<script>
-    const addButton = document.querySelector("button#addToCart");
-    const afterAdd = document.querySelector("div#afterAdd");
-    const stayOnPage = document.querySelector("button#stayOnPage");
-    addButton.addEventListener("click", () => afterAdd.style.display = "block");
-    stayOnPage.addEventListener("click", () => afterAdd.style.display = "none");
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const product = /*[[${product}]]*/ null;
+    /*]]>*/
+    $(document).ready(function () {
+        console.log(product);
+        const afterAdd = $("#afterAdd");
+
+        const cart = [product]
+        const cartItem = localStorage.getItem("cart");
+
+        if (cartItem === undefined || cartItem === null || cartItem.length === 0) {
+            localStorage.setItem("cart", cartItem)
+        }
+
+        $("#addToCart").click(function () {
+
+            afterAdd.css("display", "block");
+        });
+        $("#stayOnPage").click(function () {
+            afterAdd.css("display", "none");
+        });
+    });
 </script>
 
 </body>

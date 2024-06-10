@@ -1,13 +1,19 @@
 package pl.coderslab.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import pl.coderslab.entity.CartItem;
 import pl.coderslab.entity.Category;
 import pl.coderslab.entity.Product;
+import pl.coderslab.entity.User;
 import pl.coderslab.repository.ProductRepository;
 import pl.coderslab.service.CategoryService;
 import pl.coderslab.service.ProductService;
@@ -29,7 +35,7 @@ public class SearchController {
     }
 
     @RequestMapping("/**")
-    public String searchController(HttpServletRequest request, Model model) {
+    public String searchController(HttpServletRequest request, Model model, @AuthenticationPrincipal User user) {
         String path = request.getRequestURI();
         String[] split = categoryService.splitPathAroundProduct(path);
         path = split[0];
@@ -45,6 +51,7 @@ public class SearchController {
                 return "error/404";
             }
             List<Category> parents = categoryService.getParentsLine(product.getCategory());
+            CartItem cartItem = new CartItem();
             model.addAttribute("product", product);
             model.addAttribute("parents", parents);
             return "product";

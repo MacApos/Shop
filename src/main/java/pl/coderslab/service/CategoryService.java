@@ -13,6 +13,12 @@ public interface CategoryService {
 
     List<Category> getParentsLine(Category category);
 
+    String normalizeName(String unnormalized);
+
+    String[] splitPathAroundProduct(String path);
+
+    List<Category> findAllByParentCategory(Category category);
+
     Category findById(Long id);
 
     Category findByName(String name);
@@ -21,7 +27,5 @@ public interface CategoryService {
 
     void save(Category category);
 
-    String normalizeName(String unnormalized);
 
-    String[] splitPathAroundProduct(String path);
 }

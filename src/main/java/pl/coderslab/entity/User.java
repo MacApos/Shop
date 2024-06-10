@@ -27,8 +27,6 @@
         @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         @NotNull
         private Set<Authority> authorities;
-        @OneToMany(mappedBy = "user")
-        private List<CartItem> cartItems;
 
         public Long getId() {
             return id;

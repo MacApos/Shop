@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name","parent_category_id"}))
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

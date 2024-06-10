@@ -8,11 +8,11 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    List<Category> findAllByParentCategory(Category parent);
+    List<Category> findAllByParentCategory(Category category);
     
     List<Category> findAllChildrenByParentCategoryIsNull();
 
-    Category findByNameAndParentCategory(String name, Category parent);
+    Category findByNameAndParentCategory(String name, Category category);
 
     Category findByPath(String path);
 
