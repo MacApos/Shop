@@ -1,11 +1,10 @@
 package pl.coderslab.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
 import pl.coderslab.entity.Category;
 import pl.coderslab.entity.Product;
 
@@ -13,36 +12,48 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-
-@RunWith(SpringRunner.class)
 @DataJpaTest
-class ProductRepositoryTest {
+public class ProductRepositoryTest {
     @Autowired
-   private TestEntityManager entityManager;
+    private TestEntityManager entityManager;
 
     @Autowired
     private ProductRepository productRepository;
 
-    @Test
-    void givenInvalidId_whenFindById_thenReturnNull(){
-        Product product = productRepository.findById(-1L).orElse(null);
-        assertThat(product).isNull();
+    private Category parent;
+    private Product product1;
+    private Product product2;
+
+    @BeforeEach
+    public void initProducts() {
+        parent = new Category("Parent", null);
+        product1 = new Product("Product1", "Description1", 1.0, "/image1", "product1", parent);
+        product2 = new Product("Product2", "Description2", 1.0, "/image2", "product2", parent);
+        entityManager.persist(parent);
+        entityManager.persist(product1);
+        entityManager.persist(product2);
+        entityManager.flush();
     }
 
-//    @Test
-//    void givenCategory_whenFindAllByCategory_thenReturnAllChildCategories(){
-//        Category parent = new Category("parent", null);
-//        Category child1 = new Category("child1", parent);
-//        Category child2 = new Category("child2", parent);
-//
-//        entityManager.persist(parent);
-//        entityManager.persist(child1);
-//        entityManager.persist(child2);
-//
-//        List<Product> children = productRepository.findAllByCategory(parent);
-//
-//        assertThat(children).hasSize(3).extracting(Category::getName).containsOnly(alex.getName(), ron.getName(), bob.getName());
-//
-//    }
+    @Test
+    public void givenCategory_whenFindAllByCategory_thenReturnAllCategoryProducts() {
+        List<Product> products = productRepository.findAllByCategory(parent);
+        assertThat(products).hasSize(2).extracting(Product::getName)
+                .containsOnly(product1.getName(), product2.getName());
+    }
+
+    @Test
+    public void givenNameAndCategory_whenFindByPathAndCategory_thenReturnProduct() {
+        String name = product1.getName();
+        Product product = productRepository.findByNameAndCategory(name, parent);
+        assertThat(product).extracting("name", "category").containsOnly(name, parent);
+    }
+
+    @Test
+    public void givenPathAndCategory_whenFindByPathAndCategory_thenReturnProduct() {
+        String path = product1.getPath();
+        Product product = productRepository.findByPathAndCategory(path, parent);
+        assertThat(product).extracting("path", "category").containsOnly(path, parent);
+    }
 
 }

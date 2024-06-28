@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
             throw new Error("Product already exists.");
         }
         Long categoryId = category.getId();
-        if (categoryId == null || categoryService.findById(categoryId)==null) {
+        if (categoryId == null || categoryService.findById(categoryId) == null) {
             throw new Error("Category doesn't exists.");
         }
         List<Category> children = categoryService.findAllByParentCategory(category);

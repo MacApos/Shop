@@ -1,23 +1,25 @@
 package pl.coderslab.service;
 
+import pl.coderslab.dto.CategoryDto;
 import pl.coderslab.entity.Category;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface CategoryService {
     String SEARCH_PATH = "search";
     String PRODUCT_PATH = "product";
 
-    LinkedHashMap<Category, Object> getHierarchyMap();
+    List<CategoryDto> getHierarchyMap();
 
-    List<Category> getParentsLine(Category category);
+    List<Category> getParents(Category category);
 
     String normalizeName(String unnormalized);
 
     String[] splitPathAroundProduct(String path);
 
     List<Category> findAllByParentCategory(Category category);
+
+    List<Category> findAll();
 
     Category findById(Long id);
 

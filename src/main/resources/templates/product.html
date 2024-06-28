@@ -3,29 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${product.name}"/>
+    <link rel="stylesheet" href="/css/style.css">
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 </head>
-<style>
-    ul {
-        padding-left: 0;
-    }
-
-    li {
-        float: left;
-        display: block;
-    }
-</style>
 <body>
 
-<ul th:each="parent, iterStat:${parents}">
-    <li>
-        <a th:href="@{/search/{path}(path=${parent.path})}" th:text="${parent.name}"/>
-    </li>
-    <li th:unless="${iterStat.last}" th:text="'/'" style="
-    padding-left: 8px;
-    padding-right: 8px;"/>
-</ul>
+<div th:insert="~{allProducts::breadcrumbs(${parents})}"></div>
+
 <br>
 <div th:text="${product.name}"/>
 <div th:text="${product.description}"/>
