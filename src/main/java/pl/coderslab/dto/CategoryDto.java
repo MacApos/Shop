@@ -1,7 +1,10 @@
 package pl.coderslab.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CategoryDto {
     private Long id;
     private String name;

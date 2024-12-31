@@ -1,7 +1,12 @@
 package pl.coderslab.service.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.coderslab.dto.CategoryDto;
 import pl.coderslab.entity.Category;
 import pl.coderslab.repository.CategoryRepository;
@@ -14,19 +19,15 @@ import java.util.stream.Stream;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    @Autowired
-    private CustomMapper customMapper;
+    private final CustomMapper customMapper;
+    private final CategoryRepository categoryRepository;
+    private final EntityManager entityManager;
 
-    private CategoryRepository categoryRepository;
-
-    public CategoryServiceImpl() {
-    }
-
-    @Autowired
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CustomMapper customMapper, CategoryRepository categoryRepository, EntityManager entityManager, EntityManager entityManager1) {
+        this.customMapper = customMapper;
         this.categoryRepository = categoryRepository;
+        this.entityManager = entityManager1;
     }
-
 
 //    public CategoryServiceImpl(CategoryRepository categoryRepository) {
 //        this.categoryRepository = categoryRepository;
@@ -55,8 +56,14 @@ public class CategoryServiceImpl implements CategoryService {
 //    }
 
     private List<Category> sortCategories(List<Category> categories) {
+
         if (categories.size() > 1) {
-            return categories.stream().sorted((Comparator.comparing(Category::getName))).toList();
+            TreeMap<String, Category> treeMap = new TreeMap<>();
+            for (Category category : categories) {
+                treeMap.put(category.getName(), category);
+            }
+            return treeMap.values().stream().toList();
+//            return categories.stream().sorted((Comparator.comparing(Category::getName))).toList();
         }
         return categories;
     }
@@ -67,16 +74,17 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> others = new ArrayList<>();
         List<Category> main = new ArrayList<>();
         for (Category category : categories) {
-            if (this.others.stream().anyMatch(prop -> category.getName().toLowerCase().contains(prop))) {
+//            if (this.others.stream().anyMatch(prop -> category.getName().toLowerCase().startsWith(prop))) {
+            if (category.getName().toLowerCase().startsWith("inne")) {
                 others.add(category);
-            } else {
-                main.add(category);
+                continue;
             }
+            main.add(category);
         }
         main = sortCategories(main);
         others = sortCategories(others);
-        List<Category> list = Stream.concat(main.stream(), others.stream()).toList();
-        return list;
+
+        return Stream.concat(main.stream(), others.stream()).toList();
     }
 
     private List<CategoryDto> getCategoriesInHierarchy(List<Category> parents, Long parentId) {
@@ -168,6 +176,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void save(Category category) {
         Category parent = category.getParentCategory();
         String name = category.getName();
@@ -184,6 +193,23 @@ public class CategoryServiceImpl implements CategoryService {
         String normalizedName = normalizeName(name);
         category.setPath(parent == null ? normalizedName : parent.getPath() + "/" + normalizedName);
 
-        categoryRepository.save(category);
+//        categoryRepository.saveAndFlush(category);
+//        if (parent != null) {
+//            if (parent.getParentsPath() == null) {
+//                category.setParentsPath(parent.getId() + "-" + category.getId());
+//            } else {
+//                category.setParentsPath(parent.getParentsPath() + "-" + category.getId());
+//            }
+//        }
+        entityManager.persist(category);
+        if (parent != null) {
+            String parentPath;
+            if (parent.getParentsPath() == null) {
+                parentPath = String.valueOf(parent.getId());
+            } else {
+                parentPath = parent.getParentsPath();
+            }
+            category.setParentsPath(parentPath + "-" + category.getId());
+        }
     }
 }
