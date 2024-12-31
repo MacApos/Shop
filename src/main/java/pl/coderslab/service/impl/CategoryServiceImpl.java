@@ -190,6 +190,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (byNameAndParentCategory != null) {
             throw new Error("Category already exists");
         }
+
         String normalizedName = normalizeName(name);
         category.setPath(parent == null ? normalizedName : parent.getPath() + "/" + normalizedName);
 

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import pl.coderslab.entity.Category;
 import pl.coderslab.entity.Product;
+import pl.coderslab.repository.CategoryRepository;
 import pl.coderslab.service.CategoryService;
 import pl.coderslab.service.ProductService;
 
@@ -14,10 +15,10 @@ import java.util.Map;
 
 @Configuration
 public class LoadData {
-    Map<String, Category> parentCategoryCache = new HashMap<>();
+    Map<String, Category> parentCategoryMap = new HashMap<>();
 
     @Bean
-    public CommandLineRunner createCategories(CategoryService categoryService) {
+    public CommandLineRunner createCategories(CategoryService categoryService, CategoryRepository categoryRepository) {
         List<List<String>> categories = List.of(
                 List.of("Artykuły domowe"),
                 List.of("Ubrania"),
@@ -40,15 +41,16 @@ public class LoadData {
                 parent = null;
             }
             Category newCategory = new Category(name, parent);
-            parentCategoryCache.put(name, newCategory);
+            parentCategoryMap.put(name, newCategory);
 
             try {
                 categoryService.save(newCategory);
             } catch (Error e) {
                System.out.println(e.getMessage());
             }
-            parentCategoryCache.put(name, categoryService.findByName(name));
+            parentCategoryMap.put(name, categoryService.findByName(name));
         }
+        List<Category> allByParentCategoryId = categoryRepository.findAllByParentCategoryId(String.valueOf(1L));
 
         return args -> {
         };
@@ -76,7 +78,7 @@ public class LoadData {
                     "Lorem ipsum",
                     10.0,
                     "crochet-hat.jpg",
-                    parentCategoryCache.get(parentName));
+                    parentCategoryMap.get(parentName));
 
             try {
                 productService.save(newProduct);

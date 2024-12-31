@@ -2,10 +2,10 @@ package pl.coderslab.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedList;
 import java.util.Objects;
 
 @Entity
@@ -24,8 +24,12 @@ public class Category {
     @ManyToOne
     private Category parentCategory;
 
-    public Category() {
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "category_id") // Foreign key in Item table
+//    @OrderColumn(name = "category_order") // Maintains the LinkedList order
+//    private LinkedList<CategoryOrder> categoryOrder= new LinkedList<>();
 
+    public Category() {
     }
 
     public Category(String name) {

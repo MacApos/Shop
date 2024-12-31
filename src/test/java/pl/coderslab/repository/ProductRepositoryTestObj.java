@@ -13,7 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-public class ProductRepositoryTest {
+public class ProductRepositoryTestObj {
     @Autowired
     private TestEntityManager entityManager;
 
