@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import pl.coderslab.entity.Category;
 import pl.coderslab.entity.Product;
 import pl.coderslab.repository.CategoryRepository;
-import pl.coderslab.service.CategoryService;
-import pl.coderslab.service.ProductService;
+import pl.coderslab.service.impl.CategoryService;
+import pl.coderslab.service.impl.ProductService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +50,6 @@ public class LoadData {
             }
             parentCategoryMap.put(name, categoryService.findByName(name));
         }
-        List<Category> allByParentCategoryId = categoryRepository.findAllByParentCategoryId(String.valueOf(1L));
 
         return args -> {
         };

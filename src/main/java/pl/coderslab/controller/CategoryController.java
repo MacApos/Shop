@@ -1,35 +1,23 @@
 package pl.coderslab.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import pl.coderslab.dto.CategoryDto;
 import pl.coderslab.entity.Category;
-import pl.coderslab.entity.Product;
-import pl.coderslab.repository.ProductRepository;
-import pl.coderslab.service.CategoryService;
-import pl.coderslab.service.ProductService;
+import pl.coderslab.service.impl.CategoryService;
+import pl.coderslab.service.impl.ProductService;
 
-import java.util.ArrayList;
 import java.util.List;
-
+import java.util.TreeSet;
 
 @RestController
+@RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
     private final ProductService productService;
-    private final ProductRepository productRepository;
-
-    public CategoryController(CategoryService categoryService, ProductService productService, ProductRepository productRepository) {
-        this.categoryService = categoryService;
-        this.productService = productService;
-        this.productRepository = productRepository;
-    }
 
     @GetMapping("/categories")
     public List<Category> getAllCategories(){
@@ -37,7 +25,7 @@ public class CategoryController {
     }
 
     @GetMapping("/categories-hierarchy")
-    public List<CategoryDto> getCategoriesHierarchy(){
+    public TreeSet<Category> getCategoriesHierarchy(){
         return categoryService.getHierarchyMap();
     }
 
@@ -56,8 +44,8 @@ public class CategoryController {
         if(category==null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        List<Category> parents = categoryService.getParents(category);
-        return parents;
+        List<Category> parents2 = categoryService.getParents2(category);
+        return categoryService.getParents(category);
     }
 
 

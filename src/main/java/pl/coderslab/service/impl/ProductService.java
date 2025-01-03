@@ -1,33 +1,29 @@
 package pl.coderslab.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.coderslab.entity.Category;
 import pl.coderslab.entity.Product;
+import pl.coderslab.repository.CategoryRepository;
 import pl.coderslab.repository.ProductRepository;
-import pl.coderslab.service.CategoryService;
-import pl.coderslab.service.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+@RequiredArgsConstructor
+public class ProductService {
     private final CategoryService categoryService;
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductServiceImpl(CategoryService categoryService, ProductRepository productRepository) {
-        this.categoryService = categoryService;
-        this.productRepository = productRepository;
-    }
-
-    @Override
-    public List<Product> findAllByCategory(Category category) {
+    public List<Product> recursiveFindAllByCategory(Category category) {
         List<Category> children = categoryService.findAllByParentCategory(category);
         List<Product> productList = new ArrayList<>();
 
         if (!children.isEmpty()) {
             for (Category child : children) {
-                productList.addAll(findAllByCategory(child));
+                productList.addAll(recursiveFindAllByCategory(child));
             }
         } else {
             return productRepository.findAllByCategory(category);
@@ -35,22 +31,37 @@ public class ProductServiceImpl implements ProductService {
         return productList;
     }
 
-    @Override
+    public List<Product> findAllByCategory(Category category) {
+        ArrayList<Category> categories = new ArrayList<>(List.of(category));
+        ArrayList<Product> products = new ArrayList<>();
+
+        for (int i = 0; i < categories.size(); i++) {
+            Category cat = categories.get(i);
+            List<Category> children = categoryRepository.findAllChildrenByParentCategory(cat);
+            if (children.isEmpty()) {
+                products.addAll(productRepository.findAllByCategory(category));
+            } else {
+                categories.addAll(children);
+            }
+        }
+        return products;
+    }
+
     public List<Product> findAll() {
         return productRepository.findAll();
     }
 
-    @Override
+
     public Product findById(Long id) {
         return productRepository.findById(id).orElse(null);
     }
 
-    @Override
+
     public Product findByPathAndCategory(String path, Category category) {
         return productRepository.findByPathAndCategory(path, category);
     }
 
-    @Override
+
     public void save(Product product) {
         Category category = product.getCategory();
         if (category == null) {

@@ -1,16 +1,12 @@
 package pl.coderslab.service.impl;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import jakarta.persistence.PersistenceContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.coderslab.dto.CategoryDto;
 import pl.coderslab.entity.Category;
 import pl.coderslab.repository.CategoryRepository;
-import pl.coderslab.service.CategoryService;
 import pl.coderslab.util.CustomMapper;
 
 import java.text.Normalizer;
@@ -18,45 +14,13 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Service
-public class CategoryServiceImpl implements CategoryService {
+@RequiredArgsConstructor
+public class CategoryService {
     private final CustomMapper customMapper;
     private final CategoryRepository categoryRepository;
     private final EntityManager entityManager;
 
-    public CategoryServiceImpl(CustomMapper customMapper, CategoryRepository categoryRepository, EntityManager entityManager, EntityManager entityManager1) {
-        this.customMapper = customMapper;
-        this.categoryRepository = categoryRepository;
-        this.entityManager = entityManager1;
-    }
-
-//    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-//        this.categoryRepository = categoryRepository;
-//    }
-
-//    public List<Object> createCategoriesHierarchy(List<Category> parents) {
-//        List<Object> list = new ArrayList<>();
-//        List<Object> childList = new ArrayList<>();
-//        for (Category parent : parents) {
-//            List<Category> children = findChildrenByParentCategory(parent);
-//
-//            if (!children.isEmpty()) {
-//                List<Object> newParents = createCategoriesHierarchy(children);
-//                List<Object> parentList = new ArrayList<>(List.of(parent.getName()));
-//                parentList.addAll(newParents);
-//                list.add(parentList);
-//            }
-//            else {
-//                childList.add(parent.getName());
-//            }
-//        }
-//        if(!childList.isEmpty()){
-//            list.add(childList);
-//        }
-//        return list;
-//    }
-
     private List<Category> sortCategories(List<Category> categories) {
-
         if (categories.size() > 1) {
             TreeMap<String, Category> treeMap = new TreeMap<>();
             for (Category category : categories) {
@@ -87,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
         return Stream.concat(main.stream(), others.stream()).toList();
     }
 
-    private List<CategoryDto> getCategoriesInHierarchy(List<Category> parents, Long parentId) {
+    private List<CategoryDto> recursiveGetCategoriesInHierarchy(List<Category> parents, Long parentId) {
         parents = getSortedCategories(parents);
         List<CategoryDto> list = new ArrayList<>();
 
@@ -101,21 +65,38 @@ public class CategoryServiceImpl implements CategoryService {
 
             List<Category> children = categoryRepository.findAllChildrenByParentCategory(parent);
             if (!children.isEmpty()) {
-                parentDto.setChildren(getCategoriesInHierarchy(children, parent.getId()));
+                parentDto.setChildren(recursiveGetCategoriesInHierarchy(children, parent.getId()));
             }
             list.add(parentDto);
         }
         return list;
     }
 
-    @Override
-    public List<CategoryDto> getHierarchyMap() {
-        List<Category> grandparents = categoryRepository.findAllByParentCategoryIsNull();
-        return getCategoriesInHierarchy(grandparents, null);
+    private Category getCategoriesInHierarchy(Category category) {
+        ArrayList<Category> categories = new ArrayList<>(List.of(category));
+
+        for (int i = 0; i < categories.size(); i++) {
+            Category cat = categories.get(i);
+            List<Category> foundChildren = categoryRepository.findAllChildrenByParentCategory(cat);
+            if (!foundChildren.isEmpty()) {
+                categories.addAll(foundChildren);
+                cat.setChildren(new TreeSet<>(foundChildren));
+            }
+        }
+        return category;
     }
 
-    @Override
-    public List<Category> getParents(Category category) {
+    public TreeSet<Category> getHierarchyMap() {
+        List<Category> grandparents = categoryRepository.findAllByParentCategoryIsNull();
+        TreeSet<Category> categories = new TreeSet<>();
+        for (Category grandparent : grandparents) {
+            categories.add(getCategoriesInHierarchy(grandparent));
+        }
+        return categories;
+    }
+
+
+    public List<Category> getParents2(Category category) {
         List<Category> parents = new ArrayList<>(List.of(category));
         Category parent = category.getParentCategory();
         while (parent != null) {
@@ -123,48 +104,58 @@ public class CategoryServiceImpl implements CategoryService {
             if (parent == null) {
                 break;
             }
-            parents.add(parent);
+            parents.add(0, parent);
             parent = parent.getParentCategory();
-        }
-        if (parents.size() > 1) {
-            Collections.reverse(parents);
         }
         return parents;
     }
 
-    @Override
-    public Category findById(Long id) {
-        Optional<Category> byId = categoryRepository.findById(id);
-        return byId.orElse(null);
+    public List<Category> getParents(Category category) {
+        ArrayList<Category> categories = new ArrayList<>(List.of(category));
+        for (int i = 0; i < categories.size(); i++) {
+            Category cat = categories.get(0);
+            Category parent = cat.getParentCategory();
+            if (parent != null) {
+                categories.add(0, findById(parent.getId()));
+            }
+        }
+        return categories;
     }
 
-    @Override
+    public Category findById(Long id) {
+        return categoryRepository.findById(id).orElse(null);
+    }
+
+
     public Category findByName(String name) {
         return categoryRepository.findByName(name);
     }
 
-    @Override
+
     public String[] splitPathAroundProduct(String path) {
-        path = path.replace("/" + SEARCH_PATH + "/", "");
-        return path.split("/" + PRODUCT_PATH + "/");
+        path = path.replace("/search/", "");
+        return path.split("/product/");
     }
 
-    @Override
     public List<Category> findAllByParentCategory(Category category) {
         return categoryRepository.findAllChildrenByParentCategory(category);
     }
 
-    @Override
+//    public List<Category> findAllByParentCategoryId(Long id) {
+//        return categoryRepository.findAllByParentCategoryId(String.valueOf(id));
+//    }
+
+
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
 
-    @Override
+
     public Category findByPath(String path) {
-        return categoryRepository.findByPath(path);
+        return categoryRepository.findByNamePath(path);
     }
 
-    @Override
+
     public String normalizeName(String unnormalized) {
         if (unnormalized == null) {
             return null;
@@ -175,7 +166,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .replaceAll("[\\u0141-\\u0142]", "l");
     }
 
-    @Override
+
     @Transactional
     public void save(Category category) {
         Category parent = category.getParentCategory();
@@ -192,25 +183,27 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         String normalizedName = normalizeName(name);
-        category.setPath(parent == null ? normalizedName : parent.getPath() + "/" + normalizedName);
+        category.setNamePath(parent == null ? normalizedName : parent.getNamePath() + "/" + normalizedName);
 
-//        categoryRepository.saveAndFlush(category);
-//        if (parent != null) {
-//            if (parent.getParentsPath() == null) {
-//                category.setParentsPath(parent.getId() + "-" + category.getId());
-//            } else {
-//                category.setParentsPath(parent.getParentsPath() + "-" + category.getId());
-//            }
-//        }
         entityManager.persist(category);
-        if (parent != null) {
-            String parentPath;
-            if (parent.getParentsPath() == null) {
-                parentPath = String.valueOf(parent.getId());
-            } else {
-                parentPath = parent.getParentsPath();
-            }
-            category.setParentsPath(parentPath + "-" + category.getId());
+//        if (parent != null) {
+//            String parentPath;
+//            if (parent.getHierarchyPath() == null) {
+//                parentPath = String.valueOf(parent.getId());
+//            } else {
+//                parentPath = parent.getHierarchyPath();
+//            }
+//            category.setHierarchyPath(parentPath + "-" + category.getId());
+//        } else {
+//            category.setHierarchyPath(String.valueOf(category.getId()));
+//        }
+
+        if (parent == null) {
+            category.setHierarchyPath(String.valueOf(category.getId()));
+        } else {
+            category.setHierarchyPath(parent.getHierarchyPath() + "-" + category.getId());
         }
     }
+
+
 }

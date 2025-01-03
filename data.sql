@@ -10,8 +10,8 @@ select * from category;
 select * from category where id = 1;
 set @con = 'r';
 select @con;
-select * from category where parents_path regexp '(?:^|-)1(?:-|$)';
-select * from category where parents_path regexp '-?1-?';
+select * from category where hierarchy_path regexp '(?:^|-)1(?:-|$)';
+select * from category where hierarchy_path regexp '-?1-?';
 
 SET @regex_pattern = CONCAT('-?',5 ,'-?');
 SET @query = CONCAT('SELECT * FROM category WHERE parents_path REGEXP "', @regex_pattern, '"');

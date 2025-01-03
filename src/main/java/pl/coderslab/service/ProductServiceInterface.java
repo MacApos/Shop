@@ -5,7 +5,7 @@ import pl.coderslab.entity.Product;
 
 import java.util.List;
 
-public interface ProductService {
+public interface ProductServiceInterface {
     List<Product> findAllByCategory(Category category);
 
     List<Product> findAll();

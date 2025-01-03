@@ -1,24 +1,21 @@
 package pl.coderslab.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.coderslab.entity.Category;
 import pl.coderslab.entity.Product;
-import pl.coderslab.service.CategoryService;
-import pl.coderslab.service.ProductService;
+import pl.coderslab.service.impl.CategoryService;
+import pl.coderslab.service.impl.ProductService;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class ProductController {
     private final CategoryService categoryService;
     private final ProductService productService;
-
-    public ProductController(CategoryService categoryService, ProductService productService) {
-        this.categoryService = categoryService;
-        this.productService = productService;
-    }
 
     @GetMapping("/products")
     public List<Product> getAllProducts(){
@@ -31,7 +28,7 @@ public class ProductController {
         if(category==null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return productService.findAllByCategory(category);
+        return productService.recursiveFindAllByCategory(category);
     }
 
     @GetMapping("/product/{id}")

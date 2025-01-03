@@ -2,7 +2,6 @@ package pl.coderslab.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import pl.coderslab.entity.Category;
 
@@ -16,7 +15,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Category findByNameAndParentCategory(String name, Category parent);
 
-    Category findByPath(String path);
+    Category findByNamePath(String path);
 
     Category findByName(String name);
 
@@ -25,8 +24,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query(value = "select * from category", nativeQuery = true)
     List<Category> findAllSQL();
 
-    @Query(value = "select * from category where parents_path regexp concat('(?:^|-)',?1,'(?:-|$)');", nativeQuery = true)
-    List<Category> findAllByParentCategoryId(String id);
+    @Query(value = "select * from category where hierarchy_path regexp concat('(?:^|-)',?1,'(?:-|$)');", nativeQuery = true)
+    List<Category> findAllByParentCategoryId(Long id);
 
 
 }

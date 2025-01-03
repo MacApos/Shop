@@ -5,7 +5,7 @@ import pl.coderslab.entity.Category;
 
 import java.util.List;
 
-public interface CategoryService {
+public interface CategoryServiceInterface {
     String SEARCH_PATH = "search";
     String PRODUCT_PATH = "product";
 

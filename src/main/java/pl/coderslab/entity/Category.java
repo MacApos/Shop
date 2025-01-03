@@ -1,36 +1,43 @@
 package pl.coderslab.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "parent_category_id"}))
-@Getter
-@Setter
-public class Category {
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {
+        "name", "parent_category_id"}))
+@Data
+@NoArgsConstructor
+public class Category implements Comparable<Category> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String path;
-    private String parentsPath;
+    private String namePath;
+    private String hierarchyPath;
 
-    @JsonBackReference
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference
     private Category parentCategory;
 
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "category_id") // Foreign key in Item table
-//    @OrderColumn(name = "category_order") // Maintains the LinkedList order
-//    private LinkedList<CategoryOrder> categoryOrder= new LinkedList<>();
+    @Transient
+    private TreeSet<Category> children;
 
-    public Category() {
-    }
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonManagedReference
+    private List<Product> products;
 
     public Category(String name) {
         this.name = name;
@@ -46,11 +53,29 @@ public class Category {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return Objects.equals(id, category.id) && Objects.equals(name, category.name) && Objects.equals(path, category.path) && Objects.equals(parentCategory, category.parentCategory);
+        return Objects.equals(id, category.id) && Objects.equals(name, category.name) && Objects.equals(namePath, category.namePath) && Objects.equals(parentCategory, category.parentCategory);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, path, parentCategory);
+        return Objects.hash(id, name, namePath, parentCategory);
+    }
+
+    private boolean startsWith(String string, String prefix) {
+        return string.toLowerCase().startsWith(prefix);
+    }
+
+    @Override
+    public int compareTo(Category category) {
+        String categoryName = category.getName();
+        boolean aIsOther = startsWith(name, "inne");
+        boolean bIsOther = startsWith(categoryName, "inne");
+        if (aIsOther & !bIsOther) {
+            return 1;
+        } else if (!aIsOther & bIsOther) {
+            return -1;
+        }
+
+        return name.compareTo(categoryName);
     }
 }
