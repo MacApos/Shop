@@ -150,11 +150,9 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-
     public Category findByPath(String path) {
         return categoryRepository.findByNamePath(path);
     }
-
 
     public String normalizeName(String unnormalized) {
         if (unnormalized == null) {
