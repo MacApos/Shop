@@ -3,7 +3,6 @@ package pl.coderslab.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.coderslab.dto.CategoryDto;
 import pl.coderslab.entity.Category;
 import pl.coderslab.repository.CategoryRepository;
 import pl.coderslab.service.UserService;
@@ -22,8 +21,8 @@ public class HomeController {
     private final CategoryRepository categoryRepository;
 
     @RequestMapping("/")
-    public TreeSet<Category> home() {
-        return categoryService.getHierarchyMap();
+    public Set<Category> home() {
+        return categoryService.getHierarchy();
     }
 
     @RequestMapping("/403")

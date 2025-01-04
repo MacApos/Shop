@@ -12,23 +12,24 @@ import pl.coderslab.service.impl.ProductService;
 import java.util.List;
 
 @RestController
+@RequestMapping("/product")
 @RequiredArgsConstructor
 public class ProductController {
     private final CategoryService categoryService;
     private final ProductService productService;
 
-    @GetMapping("/products")
+    @GetMapping("/all")
     public List<Product> getAllProducts(){
         return productService.findAll();
     }
 
-    @GetMapping("/products/category/{id}")
+    @GetMapping("/by-category/{id}")
     public List<Product> getProductsByCategory(@PathVariable Long id){
         Category category = categoryService.findById(id);
         if(category==null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return productService.recursiveFindAllByCategory(category);
+        return productService.findAllByCategory(category);
     }
 
     @GetMapping("/product/{id}")

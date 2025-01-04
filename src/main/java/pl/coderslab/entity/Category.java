@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -29,23 +28,24 @@ public class Category implements Comparable<Category> {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
-    private Category parentCategory;
+    private Category parent;
 
     @Transient
     private TreeSet<Category> children;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonBackReference
     private List<Product> products;
 
     public Category(String name) {
         this.name = name;
     }
 
-    public Category(String name, Category parentCategory) {
+    public Category(String name, Category parent) {
         this.name = name;
-        this.parentCategory = parentCategory;
+        this.parent = parent;
     }
 
     @Override
@@ -53,12 +53,12 @@ public class Category implements Comparable<Category> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return Objects.equals(id, category.id) && Objects.equals(name, category.name) && Objects.equals(namePath, category.namePath) && Objects.equals(parentCategory, category.parentCategory);
+        return Objects.equals(id, category.id) && Objects.equals(name, category.name) && Objects.equals(namePath, category.namePath) && Objects.equals(parent, category.parent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, namePath, parentCategory);
+        return Objects.hash(id, name, namePath, parent);
     }
 
     private boolean startsWith(String string, String prefix) {

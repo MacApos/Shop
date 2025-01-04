@@ -37,7 +37,7 @@ public class ProductService {
 
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
-            List<Category> children = categoryRepository.findAllChildrenByParentCategory(cat);
+            List<Category> children = categoryRepository.findAllChildrenByParent(cat);
             if (children.isEmpty()) {
                 products.addAll(productRepository.findAllByCategory(category));
             } else {

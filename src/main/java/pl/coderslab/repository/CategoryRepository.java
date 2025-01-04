@@ -9,23 +9,23 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    List<Category> findAllChildrenByParentCategory(Category parent);
+    List<Category> findAllChildrenByParent(Category parent);
 
-    List<Category> findAllByParentCategoryIsNull();
+    List<Category> findAllByParentIsNull();
 
-    Category findByNameAndParentCategory(String name, Category parent);
+    Category findByNameAndParent(String name, Category parent);
 
     Category findByNamePath(String path);
 
     Category findByName(String name);
 
-    List<Category> findByParentCategory(Category parent);
+    List<Category> findByParent(Category parent);
 
     @Query(value = "select * from category", nativeQuery = true)
     List<Category> findAllSQL();
 
     @Query(value = "select * from category where hierarchy_path regexp concat('(?:^|-)',?1,'(?:-|$)');", nativeQuery = true)
-    List<Category> findAllByParentCategoryId(Long id);
+    List<Category> findAllByParentId(Long id);
 
 
 }

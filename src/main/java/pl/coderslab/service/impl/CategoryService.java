@@ -51,7 +51,7 @@ public class CategoryService {
         return Stream.concat(main.stream(), others.stream()).toList();
     }
 
-    private List<CategoryDto> recursiveGetCategoriesInHierarchy(List<Category> parents, Long parentId) {
+    private List<CategoryDto> recursiveFindChildren(List<Category> parents, Long parentId) {
         parents = getSortedCategories(parents);
         List<CategoryDto> list = new ArrayList<>();
 
@@ -63,21 +63,21 @@ public class CategoryService {
                 parentDto.setParentId(parentId);
             }
 
-            List<Category> children = categoryRepository.findAllChildrenByParentCategory(parent);
+            List<Category> children = categoryRepository.findAllChildrenByParent(parent);
             if (!children.isEmpty()) {
-                parentDto.setChildren(recursiveGetCategoriesInHierarchy(children, parent.getId()));
+                parentDto.setChildren(recursiveFindChildren(children, parent.getId()));
             }
             list.add(parentDto);
         }
         return list;
     }
 
-    private Category getCategoriesInHierarchy(Category category) {
-        ArrayList<Category> categories = new ArrayList<>(List.of(category));
+    private Category findChildren(Category category) {
+        List<Category> categories = new ArrayList<>(List.of(category));
 
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
-            List<Category> foundChildren = categoryRepository.findAllChildrenByParentCategory(cat);
+            List<Category> foundChildren = categoryRepository.findAllChildrenByParent(cat);
             if (!foundChildren.isEmpty()) {
                 categories.addAll(foundChildren);
                 cat.setChildren(new TreeSet<>(foundChildren));
@@ -86,41 +86,58 @@ public class CategoryService {
         return category;
     }
 
-    public TreeSet<Category> getHierarchyMap() {
-        List<Category> grandparents = categoryRepository.findAllByParentCategoryIsNull();
-        TreeSet<Category> categories = new TreeSet<>();
+    private Set<Category> findAllLastChildren() {
+        List<Category> parents = categoryRepository.findAllByParentIsNull();
+        Set<Category> lastChildren = new TreeSet<>();
+
+        for (int i = 0; i < parents.size(); i++) {
+            Category parent = parents.get(i);
+            List<Category> foundChildren = categoryRepository.findAllChildrenByParent(parent);
+            if (!foundChildren.isEmpty()) {
+                parents.addAll(foundChildren);
+            } else {
+                lastChildren.add(parent);
+            }
+        }
+        return lastChildren;
+    }
+
+    public Set<Category> getHierarchy() {
+        List<Category> grandparents = categoryRepository.findAllByParentIsNull();
+        Set<Category> categories = new TreeSet<>();
         for (Category grandparent : grandparents) {
-            categories.add(getCategoriesInHierarchy(grandparent));
+            categories.add(findChildren(grandparent));
         }
         return categories;
     }
 
+    public List<Category> findParents(Category category) {
+        List<Category> categories = new ArrayList<>(List.of(category));
 
-    public List<Category> getParents2(Category category) {
-        List<Category> parents = new ArrayList<>(List.of(category));
-        Category parent = category.getParentCategory();
-        while (parent != null) {
-            parent = findById(parent.getId());
-            if (parent == null) {
-                break;
-            }
-            parents.add(0, parent);
-            parent = parent.getParentCategory();
-        }
-        return parents;
-    }
-
-    public List<Category> getParents(Category category) {
-        ArrayList<Category> categories = new ArrayList<>(List.of(category));
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(0);
-            Category parent = cat.getParentCategory();
+            Category parent = cat.getParent();
             if (parent != null) {
                 categories.add(0, findById(parent.getId()));
             }
         }
         return categories;
     }
+
+    public List<Category> findParents2(Category category) {
+        List<Category> parents = new ArrayList<>(List.of(category));
+        Category parent = category.getParent();
+        while (parent != null) {
+            parent = findById(parent.getId());
+            if (parent == null) {
+                break;
+            }
+            parents.add(0, parent);
+            parent = parent.getParent();
+        }
+        return parents;
+    }
+
 
     public Category findById(Long id) {
         return categoryRepository.findById(id).orElse(null);
@@ -138,7 +155,7 @@ public class CategoryService {
     }
 
     public List<Category> findAllByParentCategory(Category category) {
-        return categoryRepository.findAllChildrenByParentCategory(category);
+        return categoryRepository.findAllChildrenByParent(category);
     }
 
 //    public List<Category> findAllByParentCategoryId(Long id) {
@@ -167,7 +184,7 @@ public class CategoryService {
 
     @Transactional
     public void save(Category category) {
-        Category parent = category.getParentCategory();
+        Category parent = category.getParent();
         String name = category.getName();
 
         if (parent != null) {
@@ -175,7 +192,7 @@ public class CategoryService {
                     .orElseThrow(() -> new Error("Parent category doesn't exist"));
         }
 
-        Category byNameAndParentCategory = categoryRepository.findByNameAndParentCategory(name, parent);
+        Category byNameAndParentCategory = categoryRepository.findByNameAndParent(name, parent);
         if (byNameAndParentCategory != null) {
             throw new Error("Category already exists");
         }

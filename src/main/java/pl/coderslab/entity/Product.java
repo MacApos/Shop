@@ -23,7 +23,6 @@ public class Product {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference
     private Category category;
 
     @ManyToOne
