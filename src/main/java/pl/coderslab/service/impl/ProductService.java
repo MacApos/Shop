@@ -39,7 +39,7 @@ public class ProductService {
             Category cat = categories.get(i);
             List<Category> children = categoryRepository.findAllChildrenByParent(cat);
             if (children.isEmpty()) {
-                products.addAll(productRepository.findAllByCategory(category));
+                products.addAll(productRepository.findAllByCategory(cat));
             } else {
                 categories.addAll(children);
             }

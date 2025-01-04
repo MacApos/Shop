@@ -35,7 +35,6 @@ public class Category implements Comparable<Category> {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
-//    @JsonManagedReference
     @JsonBackReference
     private List<Product> products;
 
@@ -75,7 +74,6 @@ public class Category implements Comparable<Category> {
         } else if (!aIsOther & bIsOther) {
             return -1;
         }
-
         return name.compareTo(categoryName);
     }
 }

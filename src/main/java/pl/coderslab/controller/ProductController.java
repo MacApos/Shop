@@ -23,21 +23,14 @@ public class ProductController {
         return productService.findAll();
     }
 
+    @GetMapping("/{id}")
+    public Product getProductById(@PathVariable Long id){
+        return productService.findById(id);
+    }
+
     @GetMapping("/by-category/{id}")
     public List<Product> getProductsByCategory(@PathVariable Long id){
         Category category = categoryService.findById(id);
-        if(category==null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
         return productService.findAllByCategory(category);
-    }
-
-    @GetMapping("/product/{id}")
-    public Product getProductById(@PathVariable Long id){
-        Product product = productService.findById(id);
-        if( product==null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        return product;
     }
 }

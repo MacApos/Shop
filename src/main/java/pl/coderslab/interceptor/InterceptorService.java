@@ -1,19 +1,17 @@
-package pl.coderslab.filter;
+package pl.coderslab.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
-import pl.coderslab.service.impl.CategoryService;
+
 
 @RequiredArgsConstructor
-@Component
-public class CategoryInterceptor implements HandlerInterceptor {
-    private final CategoryService categoryService;
+public class InterceptorService implements HandlerInterceptor {
+    private final InterceptorInterface interceptorInterface;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
@@ -22,7 +20,7 @@ public class CategoryInterceptor implements HandlerInterceptor {
         String[] split = path.split("/");
         String id = split[split.length - 1];
 
-        if (categoryService.findById(Long.valueOf(id)) == null) {
+        if (interceptorInterface.findById(Long.valueOf(id)) == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return true;

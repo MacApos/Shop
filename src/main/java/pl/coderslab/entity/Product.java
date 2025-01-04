@@ -23,10 +23,8 @@ public class Product {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference
     private Category category;
-
-    @ManyToOne
-    private Seller seller;
 
     public Product(String name, String description, Double price, String image, Category category) {
         this.name = name;
