@@ -1,13 +1,12 @@
 package pl.coderslab.service.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.coderslab.dto.CategoryDto;
 import pl.coderslab.entity.Category;
 import pl.coderslab.repository.CategoryRepository;
-import pl.coderslab.util.CustomMapper;
 
 import java.text.Normalizer;
 import java.util.*;
@@ -16,9 +15,10 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
-    private final CustomMapper customMapper;
     private final CategoryRepository categoryRepository;
-    private final EntityManager entityManager;
+
+    @PersistenceContext
+    private  EntityManager entityManager;
 
     private List<Category> sortCategories(List<Category> categories) {
         if (categories.size() > 1) {
@@ -51,42 +51,21 @@ public class CategoryService {
         return Stream.concat(main.stream(), others.stream()).toList();
     }
 
-    private List<CategoryDto> recursiveFindChildren(List<Category> parents, Long parentId) {
+    private Set<Category> recursiveFindChildren(List<Category> parents, Long parentId) {
         parents = getSortedCategories(parents);
-        List<CategoryDto> list = new ArrayList<>();
+        Set<Category> set = new TreeSet<>();
 
         for (Category parent : parents) {
-            CategoryDto parentDto = new CategoryDto();
-            customMapper.mapCategoryToDto(parent, parentDto);
-
-            if (parentId != null) {
-                parentDto.setParentId(parentId);
-            }
-
             List<Category> children = categoryRepository.findAllChildrenByParent(parent);
             if (!children.isEmpty()) {
-                parentDto.setChildren(recursiveFindChildren(children, parent.getId()));
+                parent.setChildren(new TreeSet<>(recursiveFindChildren(children, parent.getId())));
             }
-            list.add(parentDto);
+            set.add(parent);
         }
-        return list;
+        return set;
     }
 
-    private Category findChildren(Category category) {
-        List<Category> categories = new ArrayList<>(List.of(category));
-
-        for (int i = 0; i < categories.size(); i++) {
-            Category cat = categories.get(i);
-            List<Category> foundChildren = categoryRepository.findAllChildrenByParent(cat);
-            if (!foundChildren.isEmpty()) {
-                categories.addAll(foundChildren);
-                cat.setChildren(new TreeSet<>(foundChildren));
-            }
-        }
-        return category;
-    }
-
-    private Set<Category> findAllLastChildren() {
+    public Set<Category> findAllLastChildren() {
         List<Category> parents = categoryRepository.findAllByParentIsNull();
         Set<Category> lastChildren = new TreeSet<>();
 
@@ -102,11 +81,42 @@ public class CategoryService {
         return lastChildren;
     }
 
+    public Category findChildren(Category category) {
+        List<Category> categories = new ArrayList<>(List.of(category));
+
+        for (int i = 0; i < categories.size(); i++) {
+            Category cat = categories.get(i);
+            List<Category> children = categoryRepository.findAllChildrenByParent(cat);
+            if (!children.isEmpty()) {
+                categories.addAll(children);
+                cat.setChildren(new TreeSet<>(children));
+            }
+        }
+        return category;
+    }
+
+
     public Set<Category> getHierarchy() {
-        List<Category> grandparents = categoryRepository.findAllByParentIsNull();
-        Set<Category> categories = new TreeSet<>();
-        for (Category grandparent : grandparents) {
-            categories.add(findChildren(grandparent));
+        List<Category> categories = categoryRepository.findAllByParentIsNull();
+        Set<Category> set = new TreeSet<>();
+        for (Category grandparent : categories) {
+            set.add(findChildren(grandparent));
+        }
+        return set;
+    }
+
+
+    public List<Category> getHierarchyFlat() {
+        List<Category> categories = categoryRepository.findAllByParentIsNull();
+        Collections.sort(categories);
+        for (int i = 0; i < categories.size(); i++) {
+            Category cat = categories.get(i);
+            List<Category> children = categoryRepository.findAllChildrenByParent(cat);
+            if (!children.isEmpty()) {
+                Collections.sort(children);
+                int j = i;
+                children.forEach(child -> categories.add(j + 1 + children.indexOf(child), child));
+            }
         }
         return categories;
     }
@@ -158,14 +168,14 @@ public class CategoryService {
         return categoryRepository.findAllChildrenByParent(category);
     }
 
-//    public List<Category> findAllByParentCategoryId(Long id) {
-//        return categoryRepository.findAllByParentCategoryId(String.valueOf(id));
-//    }
-
+    public void delete(Category category) {
+        categoryRepository.delete(category);
+    }
 
     public List<Category> findAll() {
         return categoryRepository.findAll();
     }
+
 
     public Category findByPath(String path) {
         return categoryRepository.findByNamePath(path);

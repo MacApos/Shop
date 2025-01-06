@@ -29,6 +29,12 @@ public class CategoryController {
         return categoryService.getHierarchy();
     }
 
+    @GetMapping("/hierarchy-flat")
+    @ResponseBody
+    public List<Category> getCategoriesHierarchyFlat() {
+        return categoryService.getHierarchyFlat();
+    }
+
     @GetMapping("/{id}")
     public Category getCategoryById(@PathVariable Long id) {
         return categoryService.findById(id);

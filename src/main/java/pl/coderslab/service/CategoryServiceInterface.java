@@ -1,6 +1,5 @@
 package pl.coderslab.service;
 
-import pl.coderslab.dto.CategoryDto;
 import pl.coderslab.entity.Category;
 
 import java.util.List;
@@ -9,7 +8,7 @@ public interface CategoryServiceInterface {
     String SEARCH_PATH = "search";
     String PRODUCT_PATH = "product";
 
-    List<CategoryDto> getHierarchyMap();
+    List<Category> getHierarchyMap();
 
     List<Category> getParents(Category category);
 

@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {
@@ -31,12 +29,12 @@ public class Category implements Comparable<Category> {
     private Category parent;
 
     @Transient
-    private TreeSet<Category> children;
+    private Set<Category> children = new TreeSet<>();
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 
     public Category(String name) {
         this.name = name;
@@ -75,5 +73,16 @@ public class Category implements Comparable<Category> {
             return -1;
         }
         return name.compareTo(categoryName);
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", namePath='" + namePath + '\'' +
+               ", hierarchyPath='" + hierarchyPath + '\'' +
+               ", parent=" + parent +
+               '}';
     }
 }
