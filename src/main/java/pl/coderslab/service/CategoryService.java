@@ -1,4 +1,4 @@
-package pl.coderslab.service.impl;
+package pl.coderslab.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,9 +16,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-
-    @PersistenceContext
-    private  EntityManager entityManager;
+    private final EntityManager entityManager;
 
     private List<Category> sortCategories(List<Category> categories) {
         if (categories.size() > 1) {

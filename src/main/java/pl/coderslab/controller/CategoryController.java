@@ -1,12 +1,10 @@
 package pl.coderslab.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import pl.coderslab.entity.Category;
-import pl.coderslab.service.impl.CategoryService;
-import pl.coderslab.service.impl.ProductService;
+import pl.coderslab.service.CategoryService;
+import pl.coderslab.service.ProductService;
 
 import java.util.List;
 import java.util.Set;

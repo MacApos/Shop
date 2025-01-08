@@ -1,70 +1,95 @@
-//    package pl.coderslab.entity;
+package pl.coderslab.entity;
 //
-//    import jakarta.persistence.*;
-//    import jakarta.validation.constraints.Email;
-//    import jakarta.validation.constraints.NotNull;
+//import jakarta.persistence.*;
+//import jakarta.validation.constraints.NotNull;
+//import lombok.Data;
+//import org.hibernate.annotations.OnDelete;
+//import org.hibernate.annotations.OnDeleteAction;
+//import org.springframework.security.core.GrantedAuthority;
+//import org.springframework.security.core.userdetails.UserDetails;
 //
-//    import java.util.List;
-//    import java.util.Set;
+//import java.util.Collection;
+//import java.util.Set;
 //
-//    @Entity
-//    @Table(name="users")
-//    public class User {
-//        @Id
-//        @GeneratedValue(strategy = GenerationType.IDENTITY)
-//        private Long id;
-//        @Column(unique = true)
-//        @NotNull
-//        private String username;
-//        @Column(unique = true)
-//        @Email
-//        @NotNull
-//        private String email;
-//        @NotNull
-//        private String password;
-//        @NotNull
-//        private boolean enabled;
-//        @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//        @NotNull
-//        private Set<Authority> authorities;
+//@Entity
+//@Data
+//public class User
+////        implements UserDetails
+//{
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+//    @Column(unique = true)
+//    @NotNull
+//    private String username;
+//    @Column(unique = true)
+//    @NotNull
+//    private String email;
+//    @NotNull
+//    private String password;
+//    @NotNull
+//    private boolean enabled;
 //
-//        public Long getId() {
-//            return id;
-//        }
+////    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+////    @OnDelete(action = OnDeleteAction.CASCADE)
+////    private Set<Role> authorities;
 //
-//        public void setId(Long id) {
-//            this.id = id;
-//        }
-//
-//        public String getUsername() {
-//            return username;
-//        }
-//
-//        public void setUsername(String username) {
-//            this.username = username;
-//        }
-//
-//        public String getPassword() {
-//            return password;
-//        }
-//
-//        public void setPassword(String password) {
-//            this.password = password;
-//        }
-//
-//        public boolean isEnabled() {
-//            return enabled;
-//        }
-//
-//        public void setEnabled(boolean enabled) {
-//            this.enabled = enabled;
-//        }
-//
-//        public Set<Authority> getAuthorities() {
-//            return authorities;
-//        }
-//
-//        public void setAuthorities(Set<Authority> authorities) {
-//            this.authorities = authorities;
-//        }
+//    public User() {
 //    }
+//
+//    public User(String username, String password, boolean enabled) {
+//        this.username = username;
+//        this.password = password;
+//        this.enabled = enabled;
+//    }
+//
+//    public User(String username, String email, String password, boolean enabled) {
+//        this.username = username;
+//        this.email = email;
+//        this.password = password;
+//        this.enabled = enabled;
+//    }
+////
+////    @Override
+////    public Collection<? extends GrantedAuthority> getAuthorities() {
+////        return authorities;
+////    }
+////
+////    @Override
+////    public String getPassword() {
+////        return password;
+////    }
+////
+////    @Override
+////    public String getUsername() {
+////        return username;
+////    }
+//}
+
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Data
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String username;
+    private String password;
+    private String email;
+    private boolean enabled;
+
+    public User() {
+    }
+
+    public User(String username, String password, String email, boolean enabled) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.enabled = enabled;
+    }
+}

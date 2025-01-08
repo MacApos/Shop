@@ -3,7 +3,7 @@ package pl.coderslab.interceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.coderslab.entity.Category;
-import pl.coderslab.service.impl.CategoryService;
+import pl.coderslab.service.CategoryService;
 
 @Service
 @RequiredArgsConstructor

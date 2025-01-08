@@ -1,4 +1,4 @@
-package pl.coderslab.service.impl;
+package pl.coderslab.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,6 +56,9 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
+    public Product findByName(String name) {
+        return productRepository.findByName(name);
+    }
 
     public Product findByPathAndCategory(String path, Category category) {
         return productRepository.findByPathAndCategory(path, category);

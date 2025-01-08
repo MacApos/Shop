@@ -1,9 +1,12 @@
 //package pl.coderslab.entity;
 //
+//import lombok.Getter;
 //import org.springframework.security.core.GrantedAuthority;
+//import org.springframework.security.core.userdetails.UserDetails;
 //
 //import java.util.Collection;
 //
+//@Getter
 //public class CustomUser extends org.springframework.security.core.userdetails.User {
 //    private final User user;
 //
@@ -13,7 +16,4 @@
 //        this.user = user;
 //    }
 //
-//    public User getUser() {
-//        return user;
-//    }
 //}
