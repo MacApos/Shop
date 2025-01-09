@@ -23,10 +23,10 @@ insert into user(username, password, enabled, email)
 values ('b', '$2a$12$87.hiWT69Dw/26pgLf96TerHU/McZRyZi/3libAOCJ4DRUsvQ0BSG', 1, 'b'),
        ('c', '$2a$12$L2P/54EPLdH8gXVgVTfOYuEGnvArlLHB76eaARbExTcfYBG1mg8pe', 1, 'c');
 
-set @admin = (select id
+set @admin = (select email
               from user
               where username like 'b');
-set @user = (select id
+set @user = (select email
              from user
              where username like 'c');
 select @admin;
@@ -38,3 +38,4 @@ values (@admin, 'ROLE_ADMIN'),
 
 select username, password, enabled from user where email = 'a';
 select r.* from role r left join user u on u.id = r.user_id where email = 'a';
+select email, name from role where email = 'a';

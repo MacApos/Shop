@@ -1,6 +1,8 @@
 package pl.coderslab.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.coderslab.entity.Category;
@@ -18,7 +20,8 @@ public class HomeController {
     private final CategoryRepository categoryRepository;
 
     @RequestMapping("/")
-    public Set<Category> home() {
+    public Set<Category> home(Authentication authentication) {
+        authentication.getAuthorities();
         return categoryService.getHierarchy();
     }
 

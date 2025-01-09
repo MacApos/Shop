@@ -50,6 +50,7 @@ public class Role {
     private Long id;
     private String name;
     @ManyToOne
+    @JoinColumn(name="email", referencedColumnName = "email")
     private User user;
 
     public Role() {

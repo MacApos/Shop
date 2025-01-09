@@ -226,6 +226,7 @@ public class CategoryService {
         } else {
             category.setHierarchyPath(parent.getHierarchyPath() + "-" + category.getId());
         }
+//        entityManager.flush();
     }
 
 

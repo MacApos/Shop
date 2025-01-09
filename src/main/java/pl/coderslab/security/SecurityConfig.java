@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,6 +26,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.*;
@@ -80,37 +82,45 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/register", "/login", "/csrf").permitAll()
                         .anyRequest().authenticated()
                 )
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new CsrfTokenRequestHandler() {
-                            private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
-                            private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
-
-                            @Override
-                            public void handle(HttpServletRequest request, HttpServletResponse response,
-                                               Supplier<CsrfToken> csrfToken) {
-                                xor.handle(request, response, csrfToken);
-                                csrfToken.get();
-                            }
-
-                            @Override
-                            public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
-                                String header = request.getHeader(csrfToken.getHeaderName());
-                                return (StringUtils.hasText(header) ? plain : xor).resolveCsrfTokenValue(request,
-                                        csrfToken);
-                            }
-                        }))
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint((request, response, authException) ->
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
-//                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-//                        UsernamePasswordAuthenticationFilter.class)
+//                .formLogin(form->form.loginProcessingUrl("/login"))
+                .httpBasic(Customizer.withDefaults())
+//                .csrf(csrf -> csrf
+//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                        .csrfTokenRequestHandler(new CsrfTokenRequestHandler() {
+//                            private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
+//                            private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
+//
+//                            @Override
+//                            public void handle(HttpServletRequest request, HttpServletResponse response,
+//                                               Supplier<CsrfToken> csrfToken) {
+//                                xor.handle(request, response, csrfToken);
+//                                csrfToken.get();
+//                            }
+//
+//                            @Override
+//                            public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
+//                                String header = request.getHeader(csrfToken.getHeaderName());
+//                                return (StringUtils.hasText(header) ? plain : xor).resolveCsrfTokenValue(request,
+//                                        csrfToken);
+//                            }
+//                        }))
+                .csrf((csrf) -> csrf.ignoringRequestMatchers("/token"))
                 .build();
     }
 
+    @Bean
+    UserDetailsService users() {
+        // @formatter:off
+        return new InMemoryUserDetailsManager(
+                User.withUsername("b")
+                        .password("$2a$10$HqADWawnaX/Sab0hA5dmc.jA7M9qV.CjvcbP2CAZi5fV3aaxGDQAe")
+                        .authorities("ADMIN","USER")
+                        .build()
+        );
+        // @formatter:on
+    }
 
     @Bean
     JwtDecoder jwtDecoder() {
@@ -122,5 +132,27 @@ public class SecurityConfig {
         RSAKey jwk = new RSAKey.Builder(this.publicKey).privateKey(this.privateKey).build();
         ImmutableJWKSet<SecurityContext> jwkSet = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwkSet);
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder encoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(encoder);
+        return provider;
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(DataSource dataSource) {
+        JdbcDaoImpl jdbcDaoImpl = new JdbcDaoImpl();
+        jdbcDaoImpl.setDataSource(dataSource);
+        jdbcDaoImpl.setUsersByUsernameQuery("select email, password, enabled from user where email = ?");
+        jdbcDaoImpl.setAuthoritiesByUsernameQuery("select email, name from role where email = ?");
+        return jdbcDaoImpl;
+    }
+
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
     }
 }
