@@ -5,12 +5,17 @@
 //import org.springframework.security.core.userdetails.UserDetailsService;
 //import org.springframework.security.core.userdetails.UsernameNotFoundException;
 //import org.springframework.stereotype.Service;
+//import pl.coderslab.entity.Role;
 //import pl.coderslab.entity.User;
+//
+//import java.util.List;
+//import java.util.Set;
 //
 //@Service
 //@RequiredArgsConstructor
 //public class UserDetailsServiceImpl implements UserDetailsService {
 //    private final UserService userService;
+//    private final RoleService roleService;
 //
 //    @Override
 //    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -18,6 +23,7 @@
 //        if (user == null) {
 //            throw new UsernameNotFoundException(username);
 //        }
+//        user.setRoles(roleService.findByUser(user));
 //        return user;
 //    }
 //

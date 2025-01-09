@@ -4,20 +4,18 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.proc.SecurityContext;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,11 +24,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.*;
-import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -39,24 +33,9 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
-
-//    @Bean
-//    protected SecurityFilterChain config(HttpSecurity http) throws Exception {
-//        http.csrf(withDefaults())
-////                .authorizeHttpRequests(authorize -> authorize
-////                        .requestMatchers("/admin/**").hasAnyRole("ADMIN")
-////                        .requestMatchers("/user/**").hasAnyRole("USER")
-////                        )
-//                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/"))
-//                .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")))
-//                .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedPage("/403"))
-//                .httpBasic(withDefaults());
-//        return http.build();
-//    }
-//
 
 @Configuration
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -65,6 +44,12 @@ public class SecurityConfig {
 
     @Value("${jwt.private.key}")
     private RSAPrivateKey privateKey;
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
@@ -82,10 +67,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
+                                .requestMatchers("/login").permitAll()
                         .anyRequest().authenticated()
                 )
-//                .formLogin(form->form.loginProcessingUrl("/login"))
-                .httpBasic(Customizer.withDefaults())
 //                .csrf(csrf -> csrf
 //                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                        .csrfTokenRequestHandler(new CsrfTokenRequestHandler() {
@@ -106,20 +90,9 @@ public class SecurityConfig {
 //                                        csrfToken);
 //                            }
 //                        }))
-                .csrf((csrf) -> csrf.ignoringRequestMatchers("/token"))
+                .csrf(AbstractHttpConfigurer::disable)
+//                .csrf((csrf) -> csrf.ignoringRequestMatchers("/login"))
                 .build();
-    }
-
-    @Bean
-    UserDetailsService users() {
-        // @formatter:off
-        return new InMemoryUserDetailsManager(
-                User.withUsername("b")
-                        .password("$2a$10$HqADWawnaX/Sab0hA5dmc.jA7M9qV.CjvcbP2CAZi5fV3aaxGDQAe")
-                        .authorities("ADMIN","USER")
-                        .build()
-        );
-        // @formatter:on
     }
 
     @Bean
@@ -135,7 +108,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService, PasswordEncoder encoder) {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
+                                                         PasswordEncoder encoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(encoder);
