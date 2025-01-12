@@ -94,16 +94,17 @@ public class LoadData {
     public CommandLineRunner createUsersAndRoles(UserService userService, RoleService roleService) {
         String roleUser = "ROLE_USER";
         String roleAdmin = "ROLE_ADMIN";
-        List<List<String>> users = List.of(
-                List.of("admin", "a", "a", roleUser, roleAdmin),
-                List.of("user", "u", "u", roleUser)
+        List<User> users = List.of(
+                new User("admin", "Adamin", "Nowak", "admin", "admin@gmail.com"),
+                new User("user", "Andrzej", "Userski", "user", "user@gmail.com")
         );
+        List<List<String>> roles = List.of(List.of(roleUser, roleAdmin), List.of(roleUser));
 
-        for (List<String> user : users) {
-            String name = user.get(0);
-            User newUser = new User(name, user.get(1), user.get(2), true);
-            userService.save(newUser);
-            user.subList(3, user.size()).forEach(r -> roleService.save(new Role(r, newUser)));
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            user.setEnabled(true);
+            userService.save(user);
+            roles.get(i).forEach(r -> roleService.save(new Role(r, user)));
         }
 
         return args -> {

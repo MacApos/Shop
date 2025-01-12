@@ -18,11 +18,14 @@ public class UserService {
     private final EntityManager entityManager;
 
     public User findByUsername(String username) {
-        User user = userRepository.findByUsername(username);
 //        if (user != null) {
 //            setRoles(user);
 //        }
-        return user;
+        return userRepository.findByUsername(username);
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 //    private void setRoles(User user) {
