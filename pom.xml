@@ -10,10 +10,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>pl.coderslab</groupId>
-    <artifactId>jee-spring-react</artifactId>
+    <groupId>com.shop</groupId>
+    <artifactId>shop</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
 
     <properties>
