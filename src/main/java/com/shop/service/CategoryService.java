@@ -151,6 +151,14 @@ public class CategoryService implements ServiceInterface<Category> {
         return categoryRepository.findById(id).orElse(null);
     }
 
+    @Override
+    public boolean existsById(Long id) {
+        return categoryRepository.existsById(id);
+    }
+
+    public boolean existsByNameAndParent(String name, Category parent) {
+        return categoryRepository.existsByNameAndParent(name, parent);
+    }
 
     public Category findByName(String name) {
         return categoryRepository.findByName(name);
@@ -198,15 +206,15 @@ public class CategoryService implements ServiceInterface<Category> {
         Category parent = category.getParent();
         String name = category.getName();
 
-        if (parent != null) {
-            categoryRepository.findById(parent.getId())
-                    .orElseThrow(() -> new Error("Parent category doesn't exist"));
-        }
-
-        Category byNameAndParentCategory = categoryRepository.findByNameAndParent(name, parent);
-        if (byNameAndParentCategory != null) {
-            throw new Error("Category already exists");
-        }
+//        if (parent != null) {
+//            categoryRepository.findById(parent.getId())
+//                    .orElseThrow(() -> new Error("Parent category doesn't exist"));
+//        }
+//
+//        Category byNameAndParentCategory = categoryRepository.findByNameAndParent(name, parent);
+//        if (byNameAndParentCategory != null) {
+//            throw new Error("Category already exists");
+//        }
 
         String normalizedName = normalizeName(name);
         category.setNamePath(parent == null ? normalizedName : parent.getNamePath() + "/" + normalizedName);

@@ -28,6 +28,11 @@ public class Product {
     @JsonBackReference
     private Category category;
 
+    public Product(String name, Category category) {
+        this.name = name;
+        this.category = category;
+    }
+
     public Product(String name, String description, Double price, String image, Category category) {
         this.name = name;
         this.description = description;

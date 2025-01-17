@@ -27,4 +27,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query(value = "select * from category where hierarchy_path regexp concat('(?:^|-)',?1,'(?:-|$)');", nativeQuery = true)
     List<Category> findAllByParentId(Long id);
+
+    boolean existsByNameAndParent(String name, Category parent);
 }

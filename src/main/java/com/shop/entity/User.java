@@ -4,28 +4,28 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.service.UserService;
-import com.shop.validator.Unique;
+import com.shop.validator.groups.NewEntity;
+import com.shop.validator.UniqueEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+//import org.hibernate.boot.model.internal.XMLContext.*;
 
 
 import java.util.List;
 
 @Entity
 @Data
+@UniqueEntity(groups = {NewEntity.class}, service = UserService.class, fields = {"username", "email"})
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Unique
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
-    @NotNull()
+    @NotNull
     @Size(min = 3)
     private String username;
 
@@ -40,7 +40,6 @@ public class User {
     //    custom validator
     @NotNull
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Size(min = 3)
     private String password;
 
     //    custom validator

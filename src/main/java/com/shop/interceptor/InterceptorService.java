@@ -21,10 +21,10 @@ public class InterceptorService<T> implements HandlerInterceptor {
         String[] split = path.split("/");
         String id = split[split.length - 1];
 
-        if (serviceInterface.findById(Long.valueOf(id)) == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (serviceInterface.existsById(Long.valueOf(id))) {
+            return true;
         }
-        return true;
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
 }

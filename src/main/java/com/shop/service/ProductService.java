@@ -59,6 +59,15 @@ public class ProductService implements ServiceInterface<Product> {
         return productRepository.findById(id).orElse(null);
     }
 
+    @Override
+    public boolean existsById(Long id) {
+        return productRepository.existsById(id);
+    }
+
+    public boolean existsByNameAndCategory(String name, Category category) {
+        return productRepository.existsByNameAndCategory(name, category);
+    }
+
     public Product findByName(String name) {
         return productRepository.findByName(name);
     }
@@ -73,7 +82,7 @@ public class ProductService implements ServiceInterface<Product> {
         String name = product.getName();
         if (productRepository.findByNameAndCategory(name, category) != null) {
 
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Product already exists.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product already exists.");
         }
         Long categoryId = category.getId();
         if (categoryId == null || categoryService.findById(categoryId) == null) {

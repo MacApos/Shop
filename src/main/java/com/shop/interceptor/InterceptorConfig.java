@@ -15,7 +15,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private final ProductService productService;
 
     @Override
-    public void addInterceptors(final InterceptorRegistry registry) {
+    public void addInterceptors( InterceptorRegistry registry) {
         registry.addInterceptor(new InterceptorService<>(categoryService))
                 .addPathPatterns(
                         "/category/{id:\\d+}",

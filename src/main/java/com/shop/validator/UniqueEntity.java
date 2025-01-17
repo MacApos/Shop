@@ -1,7 +1,5 @@
 package com.shop.validator;
 
-import com.shop.service.UserService;
-import com.shop.validator.impl.UniqueValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -10,12 +8,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = {UniqueValidator.class})
-@Target({ElementType.TYPE,ElementType.METHOD,ElementType.FIELD})
+@Constraint(validatedBy = {UniqueEntityValidator.class})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Unique {
+public @interface UniqueEntity {
+    Class<?> service();
 
-    String message() default "This field is required.";
+    String[] fields();
+
+    String message() default "";
 
     Class<?>[] groups() default {};
 

@@ -1,5 +1,7 @@
 package com.shop.service;
 
+import com.shop.entity.Category;
+import com.shop.interceptor.ServiceInterface;
 import com.shop.repository.RoleRepository;
 import com.shop.repository.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -11,7 +13,7 @@ import com.shop.entity.User;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements ServiceInterface<User> {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -28,12 +30,22 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-//    private void setRoles(User user) {
-//        Set<Role> authorities = roleRepository.findByUser(user);
-//        if (authorities != null) {
-//            user.setAuthorities(authorities);
-//        }
-//    }
+    @Override
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public boolean existsByUsernameOrEmail(String username,String email) {
+        return userRepository.existsByUsernameOrEmail(username, email);
+    }
 
     @Transactional
     public void save(User user) {
@@ -42,6 +54,18 @@ public class UserService {
         entityManager.persist(user);
     }
 
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+
+//    private void setRoles(User user) {
+//        Set<Role> authorities = roleRepository.findByUser(user);
+//        if (authorities != null) {
+//            user.setAuthorities(authorities);
+//        }
+//    }
 //
 //    public boolean isUserAdmin(String user) {
 //        return findByUsername(user).getAuthorities()
