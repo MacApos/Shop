@@ -16,8 +16,6 @@ import java.util.*;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ControllerExceptionHandler {
-    private final MessageSource messageSource;
-    private final LocaleService localeService;
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -25,10 +23,7 @@ public class ControllerExceptionHandler {
         Map<String, List<String>> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String field = ((FieldError) error).getField();
-            String errorMessage = messageSource.getMessage(
-                    String.format("%s.%s", ex.getObjectName(), field), null, localeService.getLocale())
-                                  + " " + error.getDefaultMessage();
-            errors.computeIfAbsent(field, key -> new ArrayList<>()).add(errorMessage);
+            errors.computeIfAbsent(field, key -> new ArrayList<>()).add(error.getDefaultMessage());
         });
         return errors;
     }
