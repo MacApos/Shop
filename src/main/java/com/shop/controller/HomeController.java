@@ -18,17 +18,10 @@ public class HomeController {
     private final CategoryService categoryService;
     private final ProductService productService;
     private final CategoryRepository categoryRepository;
-    private final EmailService emailService;
 
     @RequestMapping("/")
     public Set<Category> home() {
         return categoryService.getHierarchy();
-    }
-
-    @RequestMapping("/send")
-    public String sendEmail() {
-        emailService.sendSimpleMessage();
-        return "sent";
     }
 
     @RequestMapping("/ok")
