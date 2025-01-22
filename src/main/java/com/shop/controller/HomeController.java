@@ -1,6 +1,7 @@
 package com.shop.controller;
 
 import com.shop.repository.CategoryRepository;
+import com.shop.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,11 +18,17 @@ public class HomeController {
     private final CategoryService categoryService;
     private final ProductService productService;
     private final CategoryRepository categoryRepository;
+    private final EmailService emailService;
 
     @RequestMapping("/")
-    public Set<Category> home(Authentication authentication) {
-        authentication.getAuthorities();
+    public Set<Category> home() {
         return categoryService.getHierarchy();
+    }
+
+    @RequestMapping("/send")
+    public String sendEmail() {
+        emailService.sendSimpleMessage();
+        return "sent";
     }
 
     @RequestMapping("/ok")
