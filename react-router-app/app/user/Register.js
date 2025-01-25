@@ -1,5 +1,5 @@
 import React from 'react';
-import {useInput} from "../hook/useInput";
+import {useInput} from "../hook/useInput.js";
 import {fetchWithParams} from "./Login";
 
 export const Register = () => {

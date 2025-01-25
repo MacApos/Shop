@@ -1,9 +1,7 @@
 package com.shop.controller;
 
 import com.shop.repository.CategoryRepository;
-import com.shop.service.EmailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.shop.entity.Category;

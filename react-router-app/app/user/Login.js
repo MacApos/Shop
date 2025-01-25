@@ -1,5 +1,6 @@
+"use client"
 import React, {useState} from 'react';
-import {useInput} from "../hook/useInput";
+import {useInput} from "../hook/useInput.js";
 
 export const getFetchParams = (path, method = "GET", body,
                                credentials = "include") => {
@@ -55,7 +56,7 @@ export const Login = () => {
     return (
         <>
             <form onSubmit={handleSubmit}>
-                <div>
+                <div className={"App-link"}>
                     <label>Email: </label>
                     <input type={"text"} {...input.email}/>
                 </div>

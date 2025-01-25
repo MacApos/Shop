@@ -39,3 +39,5 @@ values (@admin, 'ROLE_ADMIN'),
 select username, password, enabled from user where email = 'a';
 select r.* from role r left join user u on u.id = r.user_id where email = 'a';
 select email, name from role where email = 'a';
+
+insert into registration_token (user_id) value (1);

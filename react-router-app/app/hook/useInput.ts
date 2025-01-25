@@ -1,14 +1,14 @@
 import {useState} from 'react';
 
-export const useInput = (initialState) => {
+export function useInput(initialState: { [key: string]: string }) {
     const [state, setState] = useState(initialState);
-    const input = {};
+    const input: { [key: string]: any } = {};
     for (const key of Object.keys(initialState)) {
         const name = key;
         input[name] = {
             name,
             value: state[name],
-            onChange: e => setState(prevState => {
+            onChange: (e: { target: { value: any; }; }) => setState(prevState => {
                 return {
                     ...prevState,
                     [name]: e.target.value
@@ -17,4 +17,4 @@ export const useInput = (initialState) => {
         };
     }
     return [state, input];
-};
+}

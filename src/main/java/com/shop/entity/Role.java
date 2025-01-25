@@ -9,7 +9,9 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     @ManyToOne
     @JoinColumn(name="email", referencedColumnName = "email")
     private User user;

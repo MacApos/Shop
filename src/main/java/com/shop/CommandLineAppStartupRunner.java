@@ -1,13 +1,7 @@
 package com.shop;
 
-import com.shop.entity.Category;
-import com.shop.entity.Product;
-import com.shop.entity.Role;
-import com.shop.entity.User;
-import com.shop.service.CategoryService;
-import com.shop.service.ProductService;
-import com.shop.service.RoleService;
-import com.shop.service.UserService;
+import com.shop.entity.*;
+import com.shop.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -22,6 +16,7 @@ public class CommandLineAppStartupRunner {
     private final ProductService productService;
     private final UserService userService;
     private final RoleService roleService;
+    private final RegistrationTokenService registrationTokenService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void createCategories() {
@@ -101,6 +96,9 @@ public class CommandLineAppStartupRunner {
             userService.save(user);
             entry.getValue().forEach(r -> roleService.save(new Role(r, user)));
         }
+
+//        RegistrationToken admin = new RegistrationToken(userService.findByUsername("admin"));
+//        registrationTokenService.save(admin);
 
     }
 }
