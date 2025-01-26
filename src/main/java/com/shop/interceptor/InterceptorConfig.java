@@ -9,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@PropertySource(value = "messages_pl.properties", encoding="UTF-8")
 @RequiredArgsConstructor
 public class InterceptorConfig implements WebMvcConfigurer {
 
