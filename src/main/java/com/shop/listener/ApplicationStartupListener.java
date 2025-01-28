@@ -1,24 +1,29 @@
-package com.shop;
+package com.shop.listener;
 
 import com.shop.entity.*;
 import com.shop.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class CommandLineAppStartupRunner {
+public class ApplicationStartupListener implements ApplicationListener<ApplicationReadyEvent> {
     private final CategoryService categoryService;
     private final ProductService productService;
     private final UserService userService;
     private final RoleService roleService;
     private final RegistrationTokenService registrationTokenService;
 
-    @EventListener(ApplicationReadyEvent.class)
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent event) {
+        createCategories();
+        createUsers();
+    }
+
     public void createCategories() {
         Map<String, Category> categoriesMap = new HashMap<>();
         ArrayList<List<String>> categories = new ArrayList<>(List.of(
@@ -76,7 +81,6 @@ public class CommandLineAppStartupRunner {
         }
     }
 
-    @EventListener(ApplicationReadyEvent.class)
     public void createUsers() {
         String roleUser = "ROLE_USER";
         String roleAdmin = "ROLE_ADMIN";
@@ -89,6 +93,8 @@ public class CommandLineAppStartupRunner {
 
         for (Map.Entry<User, List<String>> entry : users.entrySet()) {
             User user = entry.getKey();
+            User byUsername = userService.findByUsername(user.getUsername());
+
             if (userService.existsByUsernameOrEmail(user.getUsername(), user.getEmail())) {
                 continue;
             }
@@ -101,4 +107,6 @@ public class CommandLineAppStartupRunner {
 //        registrationTokenService.save(admin);
 
     }
+
+
 }

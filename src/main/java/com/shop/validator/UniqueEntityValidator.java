@@ -1,6 +1,6 @@
 package com.shop.validator;
 
-import com.shop.service.LocaleService;
+import com.shop.service.MessageService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.*;
 public class UniqueEntityValidator implements ConstraintValidator<UniqueEntity, Object> {
     private final ApplicationContext context;
     private final MessageSource messageSource;
-    private final LocaleService localeService;
+    private final MessageService messageSourceService;
 
     private Class<?> service;
     private List<String> fields = new ArrayList<>();
@@ -69,9 +69,9 @@ public class UniqueEntityValidator implements ConstraintValidator<UniqueEntity, 
 
     private void addConstraintViolation(ConstraintValidatorContext validatorContext, String entityName, String field) {
         validatorContext
-                .buildConstraintViolationWithTemplate(messageSource.getMessage(
-                        String.join(".", entityName.toLowerCase(), field, "already.exists"),
-                        null, localeService.getLocale()))
+                .buildConstraintViolationWithTemplate(messageSourceService.getMessage(
+                        String.join(".", entityName.toLowerCase(), field, "already.exists")
+                ))
                 .addPropertyNode(field)
                 .addConstraintViolation();
     }
