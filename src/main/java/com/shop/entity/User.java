@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.service.UserService;
-import com.shop.validator.groups.NewEntity;
+import com.shop.validator.groups.CheckInOrder;
 import com.shop.validator.UniqueEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Entity
 @Data
-@UniqueEntity(groups = {NewEntity.class}, service = UserService.class, fields = {"username", "email"})
+@UniqueEntity(groups = {CheckInOrder.class}, service = UserService.class, fields = {"username", "email"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     @Id

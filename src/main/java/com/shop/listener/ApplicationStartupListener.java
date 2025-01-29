@@ -103,8 +103,8 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
             entry.getValue().forEach(r -> roleService.save(new Role(r, user)));
         }
 
-//        RegistrationToken admin = new RegistrationToken(userService.findByUsername("admin"));
-//        registrationTokenService.save(admin);
+        RegistrationToken admin = new RegistrationToken(userService.findByUsername("admin"));
+        registrationTokenService.save(admin);
 
     }
 

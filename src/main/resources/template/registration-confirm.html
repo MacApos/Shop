@@ -8,8 +8,9 @@
 </head>
 <body>
 <div>
+    <p th:text="#{email.greetings(${user.username})}"></p>
     <p>You have successfully registered a new account, now please confirm it with link above:</p>
-    <p>link</p>
+    <p th:text="${url}">
 </div>
 
 </body>

@@ -15,6 +15,8 @@ export async function loader({request, params}: Route.LoaderArgs) {
 
 export default function RegistrationConfirm({loaderData}: Route.ComponentProps) {
     const {token} = loaderData;
+    console.log(token)
+
     return (
         <>
             test

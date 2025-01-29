@@ -2,6 +2,7 @@ package com.shop.advisor;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,8 +16,8 @@ import java.util.*;
 public class ControllerExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, List<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    @ExceptionHandler(BindException.class)
+    public Map<String, List<String>> handleValidationExceptions(BindException ex) {
         Map<String, List<String>> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String field = ((FieldError) error).getField();
@@ -24,5 +25,4 @@ public class ControllerExceptionHandler {
         });
         return errors;
     }
-
 }
