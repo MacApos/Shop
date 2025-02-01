@@ -7,6 +7,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -103,8 +104,10 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
             entry.getValue().forEach(r -> roleService.save(new Role(r, user)));
         }
 
-        RegistrationToken admin = new RegistrationToken(userService.findByUsername("admin"));
-        registrationTokenService.save(admin);
+        RegistrationToken token = new RegistrationToken(userService.findByUsername("admin"));
+        token.setToken("test");
+        token.setExpiryDate(LocalDateTime.now().plusSeconds(1200));
+        registrationTokenService.save(token);
 
     }
 

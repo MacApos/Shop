@@ -8,7 +8,7 @@ import com.shop.entity.Category;
 import java.util.List;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface CategoryRepository extends BaseRepository<Category, Long> {
     List<Category> findAllChildrenByParent(Category category);
 
     List<Category> findAllByParentIsNull();

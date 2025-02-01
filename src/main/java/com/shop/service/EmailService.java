@@ -1,7 +1,9 @@
 package com.shop.service;
 
+import com.shop.event.SendEmailEvent;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,16 +15,12 @@ import java.util.Locale;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender emailSender;
-
+    private final MessageService messageService;
     @Qualifier("emailTemplateEngine")
     private final TemplateEngine templateEngine;
-
-    public EmailService(JavaMailSender emailSender, TemplateEngine templateEngine) {
-        this.emailSender = emailSender;
-        this.templateEngine = templateEngine;
-    }
 
     private void sendHtmlMessage(String to, String subject, String htmlBody) {
         MimeMessage message = emailSender.createMimeMessage();
@@ -38,12 +36,21 @@ public class EmailService {
         }
     }
 
-    public void sendMessageUsingThymeleafTemplate(String to, String subject, Map<String, Object> variables,
-                                                  Locale locale, String template) {
+    public void sendHtmlMessage(String to, String subject, String template, Locale locale,
+                                Map<String, Object> variables) {
         Context context = new Context(locale);
         context.setVariables(variables);
         String htmlBody = templateEngine.process(template, context);
         sendHtmlMessage(to, subject, htmlBody);
+    }
+
+    public void sendHtmlMessage(SendEmailEvent event) {
+        Locale locale = event.getLocale();
+        String subject = messageService.getMessage(event.getSubjectCode(), locale);
+        Context context = new Context(locale);
+        context.setVariables(event.getVariables());
+        String htmlBody = templateEngine.process(event.getTemplate(), context);
+        sendHtmlMessage(event.getTo(), subject, htmlBody);
     }
 
 }

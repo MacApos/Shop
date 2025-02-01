@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.service.UserService;
-import com.shop.validator.groups.CheckInOrder;
-import com.shop.validator.UniqueEntity;
+import com.shop.validator.annotations.UserExists;
+import com.shop.validator.annotations.UserAlreadyEnabled;
+import com.shop.validator.groups.CheckFirst;
+import com.shop.validator.annotations.UniqueEntity;
+import com.shop.validator.groups.Exists;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -17,9 +20,10 @@ import java.util.List;
 
 @Entity
 @Data
-@UniqueEntity(groups = {CheckInOrder.class}, service = UserService.class, fields = {"username", "email"})
+@UniqueEntity(groups = {CheckFirst.class}, service = UserService.class, fields = {"username", "email"})
+@UserExists(groups = {Exists.class})
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User {
+public class User implements Identifiable<Long>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,6 +53,7 @@ public class User {
     @Email
     private String email;
 
+    @UserAlreadyEnabled
     @ColumnDefault("false")
     @JsonIgnore
     private boolean enabled = false;

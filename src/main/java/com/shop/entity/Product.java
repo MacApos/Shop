@@ -12,7 +12,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(uniqueConstraints=@UniqueConstraint(columnNames = {"name","category_id"}))
 @Data
 @NoArgsConstructor
-public class Product {
+public class Product implements Identifiable<Long>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

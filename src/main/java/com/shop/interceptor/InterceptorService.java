@@ -9,7 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
-
 @RequiredArgsConstructor
 public class InterceptorService<T> implements HandlerInterceptor {
     private final ServiceInterface<T> serviceInterface;

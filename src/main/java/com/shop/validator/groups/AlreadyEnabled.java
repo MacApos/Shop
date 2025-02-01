@@ -1,4 +1,4 @@
 package com.shop.validator.groups;
 
-public interface CheckInOrder {
+public interface AlreadyEnabled {
 }

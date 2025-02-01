@@ -8,7 +8,7 @@ import com.shop.entity.User;
 import java.util.List;
 
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface RoleRepository extends BaseRepository<Role, Long> {
     Role findByName(String authority);
 
     List<Role> findByUser(User user);

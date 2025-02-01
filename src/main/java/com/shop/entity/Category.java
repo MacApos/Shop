@@ -14,7 +14,7 @@ import java.util.*;
         columnNames = {"name", "parent_id"}))
 @Data
 @NoArgsConstructor
-public class Category implements Comparable<Category> {
+public class Category implements Comparable<Category>,  Identifiable<Long>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

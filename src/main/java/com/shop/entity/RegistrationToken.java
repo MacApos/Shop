@@ -1,7 +1,7 @@
 package com.shop.entity;
 
-import com.shop.validator.TokenExists;
-import com.shop.validator.groups.CheckInOrder;
+import com.shop.validator.annotations.TokenExists;
+import com.shop.validator.groups.Exists;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-public class RegistrationToken {
+public class RegistrationToken implements Identifiable<Long>{
     private static final int expiration = 24;
 
     @Id
@@ -22,7 +22,7 @@ public class RegistrationToken {
 
     @NotNull
     @Size(min = 3)
-    @TokenExists(groups = CheckInOrder.class)
+    @TokenExists(groups = Exists.class)
     private String token;
 
     @NotNull
@@ -35,10 +35,6 @@ public class RegistrationToken {
     private LocalDateTime expiryDate;
 
     public RegistrationToken() {
-    }
-
-    public RegistrationToken(String token) {
-        this.token = token;
     }
 
     public RegistrationToken(User user) {

@@ -30,18 +30,18 @@ public class RegistrationEventListener implements ApplicationListener<Registrati
         RegistrationToken registrationToken = new RegistrationToken(user);
         registrationTokenService.save(registrationToken);
         Locale locale = event.getLocale();
-        sendHtmlMessage(user, locale, registrationToken);
+        String token = registrationToken.getToken();
+        sendHtmlMessage(user, locale, token);
     }
 
-    private void sendHtmlMessage(User user, Locale locale, RegistrationToken registrationToken) {
+    private void sendHtmlMessage(User user, Locale locale, String token) {
         String to = user.getEmail();
         String subject = messageService.getMessage("registration.confirm.subject", locale);
-        String token = registrationToken.getToken();
         String url = String.format("%sconfirm-registration?token=%s", origin, token);
         Map<String, Object> variables = Map.of(
                 "user", user,
                 "url", url);
         String template = "registration-confirm.html";
-        emailService.sendMessageUsingThymeleafTemplate(to, subject, variables, locale, template);
+        emailService.sendHtmlMessage(to, subject, template, locale, variables);
     }
 }
