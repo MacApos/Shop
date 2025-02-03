@@ -1,7 +1,7 @@
-package com.shop.validator;
+package com.shop.validation.validator;
 
 import com.shop.service.MessageService;
-import com.shop.validator.annotations.UniqueEntity;
+import com.shop.validation.annotations.UniqueEntity;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;

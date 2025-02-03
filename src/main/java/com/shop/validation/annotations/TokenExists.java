@@ -1,6 +1,6 @@
-package com.shop.validator.annotations;
+package com.shop.validation.annotations;
 
-import com.shop.validator.UserExistsValidator;
+import com.shop.validation.validator.TokenExistsValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -9,10 +9,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = {UserExistsValidator.class})
-@Target({ElementType.TYPE})
+@Constraint(validatedBy = {TokenExistsValidator.class})
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UserExists {
+public @interface TokenExists {
 
     String message() default "{does.not.exist}";
 

@@ -1,9 +1,12 @@
 package com.shop.controller;
 
 import com.shop.service.JwtTokenService;
+import com.shop.service.UserService;
+import com.shop.validation.groups.Login;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.shop.entity.User;
 
@@ -11,11 +14,12 @@ import com.shop.entity.User;
 @RequiredArgsConstructor
 public class LoginController {
 
-   private JwtTokenService jwtTokenService;
+   private final UserService userService;
+   private final JwtTokenService jwtTokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User user, HttpServletResponse response) {
-        User authenticatedUser = jwtTokenService.authenticateUser(user, response);
-        return ResponseEntity.ok().body(authenticatedUser);
+    public User login(@RequestBody @Validated({Login.class}) User user, HttpServletResponse response) {
+        jwtTokenService.authenticateUser(user, response);
+        return userService.findByEmail(user.getEmail());
     }
 }

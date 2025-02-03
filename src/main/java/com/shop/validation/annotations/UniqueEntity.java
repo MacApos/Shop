@@ -1,6 +1,6 @@
-package com.shop.validator.annotations;
+package com.shop.validation.annotations;
 
-import com.shop.validator.UserAlreadyEnabledValidator;
+import com.shop.validation.validator.UniqueEntityValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -9,12 +9,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = {UserAlreadyEnabledValidator.class})
-@Target({ElementType.FIELD})
+@Constraint(validatedBy = {UniqueEntityValidator.class})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UserAlreadyEnabled {
+public @interface UniqueEntity {
+    Class<?> service();
 
-    String message() default "{user.already.enabled}";
+    String[] fields();
+
+    String message() default "";
 
     Class<?>[] groups() default {};
 

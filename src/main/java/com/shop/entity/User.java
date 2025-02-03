@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.service.UserService;
-import com.shop.validator.annotations.UserExists;
-import com.shop.validator.annotations.UserAlreadyEnabled;
-import com.shop.validator.groups.CheckFirst;
-import com.shop.validator.annotations.UniqueEntity;
-import com.shop.validator.groups.Exists;
+import com.shop.validation.annotations.UserExists;
+import com.shop.validation.annotations.UserAlreadyEnabled;
+import com.shop.validation.groups.AlreadyEnabled;
+import com.shop.validation.groups.CheckFirst;
+import com.shop.validation.annotations.UniqueEntity;
+import com.shop.validation.groups.Exists;
+import com.shop.validation.groups.Login;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -23,7 +25,7 @@ import java.util.List;
 @UniqueEntity(groups = {CheckFirst.class}, service = UserService.class, fields = {"username", "email"})
 @UserExists(groups = {Exists.class})
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User implements Identifiable<Long>{
+public class User implements Identifiable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,19 +43,21 @@ public class User implements Identifiable<Long>{
     @Size(min = 3)
     private String lastname;
 
-    //    custom validator
+    //    custom validation
     @NotNull
+    @NotNull(groups = Login.class)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    //    custom validator
+    //    custom validation
     @Column(unique = true)
     @NotNull
+    @NotNull(groups = Login.class)
     @Size(min = 3)
     @Email
     private String email;
 
-    @UserAlreadyEnabled
+    @AssertFalse(groups = {AlreadyEnabled.class}, message = "{user.already.enabled}")
     @ColumnDefault("false")
     @JsonIgnore
     private boolean enabled = false;

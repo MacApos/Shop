@@ -2,7 +2,6 @@ package com.shop.listener;
 
 import com.shop.event.SendEmailEvent;
 import com.shop.service.EmailService;
-import com.shop.service.RegistrationTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;

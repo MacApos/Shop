@@ -1,8 +1,8 @@
-package com.shop.validator;
+package com.shop.validation.validator;
 
 import com.shop.entity.RegistrationToken;
 import com.shop.service.RegistrationTokenService;
-import com.shop.validator.annotations.TokenExists;
+import com.shop.validation.annotations.TokenExists;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;

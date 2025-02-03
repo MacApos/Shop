@@ -106,7 +106,7 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
 
         RegistrationToken token = new RegistrationToken(userService.findByUsername("admin"));
         token.setToken("test");
-        token.setExpiryDate(LocalDateTime.now().plusSeconds(1200));
+        token.setExpiryDate(LocalDateTime.now().plusSeconds(1));
         registrationTokenService.save(token);
 
     }

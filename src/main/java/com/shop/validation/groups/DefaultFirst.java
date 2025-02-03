@@ -1,4 +1,4 @@
-package com.shop.validator.groups;
+package com.shop.validation.groups;
 
 import jakarta.validation.GroupSequence;
 import jakarta.validation.groups.Default;

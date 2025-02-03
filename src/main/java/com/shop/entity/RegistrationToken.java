@@ -1,7 +1,7 @@
 package com.shop.entity;
 
-import com.shop.validator.annotations.TokenExists;
-import com.shop.validator.groups.Exists;
+import com.shop.validation.annotations.TokenExists;
+import com.shop.validation.groups.Exists;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +22,8 @@ public class RegistrationToken implements Identifiable<Long>{
 
     @NotNull
     @Size(min = 3)
-    @TokenExists(groups = Exists.class)
+    @TokenExists
+            (groups = Exists.class)
     private String token;
 
     @NotNull
@@ -31,7 +32,7 @@ public class RegistrationToken implements Identifiable<Long>{
     private User user;
 
     @NotNull
-    @Future
+    @Future(message = "{user.token.is.expired}")
     private LocalDateTime expiryDate;
 
     public RegistrationToken() {

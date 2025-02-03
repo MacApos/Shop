@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JwtTokenService {
     private final AuthenticationManager authManager;
-    private final UserService userService;
     private final JwtEncoder jwtEncoder;
     private final Long expiry = 3600L;
 
@@ -49,7 +48,7 @@ public class JwtTokenService {
         response.addCookie(cookie);
     }
 
-    public User authenticateUser(User user, HttpServletResponse response){
+    public void authenticateUser(User user, HttpServletResponse response){
         String email = user.getEmail();
         String password = user.getPassword();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
@@ -57,8 +56,15 @@ public class JwtTokenService {
 
         String token = createToken(authentication);
         setJwtAuthorizationCookie(response, token);
-
-        return userService.findByEmail(email);
     }
 
+    public void authWithoutPassword(User user, HttpServletResponse response){
+        String email = user.getEmail();
+        String password = user.getPassword();
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication authentication = authManager.authenticate(authenticationToken);
+
+        String token = createToken(authentication);
+        setJwtAuthorizationCookie(response, token);
+    }
 }

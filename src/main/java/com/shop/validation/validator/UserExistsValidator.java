@@ -1,8 +1,8 @@
-package com.shop.validator;
+package com.shop.validation.validator;
 
 import com.shop.entity.User;
 import com.shop.service.UserService;
-import com.shop.validator.annotations.UserExists;
+import com.shop.validation.annotations.UserExists;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;

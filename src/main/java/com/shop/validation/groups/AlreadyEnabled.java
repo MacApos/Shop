@@ -1,4 +1,4 @@
-package com.shop.validator.groups;
+package com.shop.validation.groups;
 
 public interface AlreadyEnabled {
 }

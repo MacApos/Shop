@@ -6,7 +6,6 @@ import com.shop.mapper.UserMapper;
 import com.shop.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Example;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -63,11 +62,5 @@ public class UserService implements ServiceInterface<User> {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         entityManager.persist(user);
-    }
-
-    @Transactional
-    public void enableUser(User user) {
-        user.setEnabled(true);
-        save(user);
     }
 }

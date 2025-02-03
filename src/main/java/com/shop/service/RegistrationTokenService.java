@@ -12,10 +12,10 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @Service
 @RequiredArgsConstructor
 public class RegistrationTokenService {
-    private final RegistrationTokenRepository registrationtokenRepository;
+    private final RegistrationTokenRepository registrationTokenRepository;
     private final LocalValidatorFactoryBean validatorFactory;
 
-    public RegistrationToken generateToken(User user) {
+    public RegistrationToken generateAndSaveToken(User user) {
         RegistrationToken token = new RegistrationToken(user);
         token.setToken();
         token.setExpiryDate();
@@ -23,22 +23,26 @@ public class RegistrationTokenService {
         return token;
     }
 
-    public RegistrationToken validateToken(String token) throws BindException {
-        RegistrationToken registrationToken = findByToken(token);
-        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(registrationToken,
-                "registrationToken");
-        validatorFactory.validate(registrationToken, bindingResult);
+    public <T> void validateEntity(T entity) throws BindException {
+        String simpleName = entity.getClass().getSimpleName();
+        simpleName = Character.toUpperCase(simpleName.charAt(0)) + simpleName.substring(1);
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entity, simpleName);
+        validatorFactory.validate(entity, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
-        return registrationToken;
+    }
+
+    public void validateToken(RegistrationToken token) throws BindException {
+        RegistrationToken existingToken = findByToken(token.getToken());
+        validateEntity(existingToken);
     }
 
     public RegistrationToken findByToken(String token) {
-        return registrationtokenRepository.findByToken(token);
+        return registrationTokenRepository.findByToken(token);
     }
 
     public void save(RegistrationToken token) {
-        registrationtokenRepository.save(token);
+        registrationTokenRepository.save(token);
     }
 }
