@@ -57,7 +57,7 @@ public class User implements Identifiable<Long> {
     @Email
     private String email;
 
-    @AssertFalse(groups = {AlreadyEnabled.class}, message = "{user.already.enabled}")
+//    @AssertFalse(groups = {AlreadyEnabled.class}, message = "{user.already.enabled}")
     @ColumnDefault("false")
     @JsonIgnore
     private boolean enabled = false;

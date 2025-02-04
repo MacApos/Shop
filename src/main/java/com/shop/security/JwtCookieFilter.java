@@ -19,7 +19,7 @@ public class JwtCookieFilter extends OncePerRequestFilter {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equalsIgnoreCase("jwt")) {
-                    mutableHttpServerRequest.putHeader("Authorization", "Bearer "+cookie.getValue());
+                    mutableHttpServerRequest.putHeader("Authorization", "Bearer " + cookie.getValue());
                 }
             }
         }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.shop.entity.RoleEnum.*;
+
 @Component
 @RequiredArgsConstructor
 public class ApplicationStartupListener implements ApplicationListener<ApplicationReadyEvent> {
@@ -83,16 +85,14 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
     }
 
     public void createUsers() {
-        String roleUser = "ROLE_USER";
-        String roleAdmin = "ROLE_ADMIN";
-        Map<User, List<String>> users = Map.of(
+        Map<User, List<RoleEnum>> users = Map.of(
                 new User("admin", "Adamin", "Nowak", "admin", "admin@gmail.com"),
-                List.of(roleUser, roleAdmin),
+                List.of(ROLE_USER, ROLE_ADMIN),
                 new User("user", "Andrzej", "Userski", "user", "user@gmail.com"),
-                List.of(roleUser)
+                List.of(ROLE_USER)
         );
 
-        for (Map.Entry<User, List<String>> entry : users.entrySet()) {
+        for (Map.Entry<User, List<RoleEnum>> entry : users.entrySet()) {
             User user = entry.getKey();
             User byUsername = userService.findByUsername(user.getUsername());
 
@@ -106,7 +106,7 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
 
         RegistrationToken token = new RegistrationToken(userService.findByUsername("admin"));
         token.setToken("test");
-        token.setExpiryDate(LocalDateTime.now().plusSeconds(1));
+        token.setExpiryDate(LocalDateTime.now().plusSeconds(1200));
         registrationTokenService.save(token);
 
     }

@@ -33,9 +33,10 @@ public class RegistrationTokenService {
         }
     }
 
-    public void validateToken(RegistrationToken token) throws BindException {
+    public RegistrationToken validateToken(RegistrationToken token) throws BindException {
         RegistrationToken existingToken = findByToken(token.getToken());
         validateEntity(existingToken);
+        return existingToken;
     }
 
     public RegistrationToken findByToken(String token) {

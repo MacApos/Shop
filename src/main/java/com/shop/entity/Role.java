@@ -10,7 +10,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private RoleEnum name;
 
     @ManyToOne
     @JoinColumn(name="email", referencedColumnName = "email")
@@ -19,7 +20,7 @@ public class Role {
     public Role() {
     }
 
-    public Role(String name, User user) {
+    public Role(RoleEnum name, User user) {
         this.name = name;
         this.user = user;
     }

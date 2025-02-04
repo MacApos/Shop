@@ -1,10 +1,13 @@
 package com.shop.entity;
 
 import com.shop.validation.annotations.TokenExists;
+import com.shop.validation.groups.Current;
 import com.shop.validation.groups.Exists;
+import com.shop.validation.groups.Expired;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -13,7 +16,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-public class RegistrationToken implements Identifiable<Long>{
+public class RegistrationToken implements Identifiable<Long> {
     private static final int expiration = 24;
 
     @Id
@@ -22,8 +25,7 @@ public class RegistrationToken implements Identifiable<Long>{
 
     @NotNull
     @Size(min = 3)
-    @TokenExists
-            (groups = Exists.class)
+    @TokenExists(groups = Exists.class)
     private String token;
 
     @NotNull

@@ -65,6 +65,7 @@ public class UserControllerTest {
     private User existingUser;
     private User userWithExpiredToken;
     private final String validToken = "validToken";
+    private final String invalidToken = "invalidToken";
     private final String expiredToken = "expiredToken";
 
     @BeforeAll
@@ -117,7 +118,7 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON);
     }
 
-    private MockHttpServletRequestBuilder getPostRequestBuilder(String uriTemplate, String paramName, String paramValue) {
+    private MockHttpServletRequestBuilder getRequestBuilder(String uriTemplate, String paramName, String paramValue) {
         return get(uriTemplate)
                 .param(paramName, paramValue)
                 .contentType(MediaType.APPLICATION_JSON);
@@ -162,7 +163,7 @@ public class UserControllerTest {
 
     @Test
     void givenValidToken_whenGetRequestToConfirmRegistration_thenStatusIsOk() throws Exception {
-        mockMvc.perform(getPostRequestBuilder(
+        mockMvc.perform(getRequestBuilder(
                         "/user/confirm-registration",
                         "token",
                         validToken))
@@ -172,10 +173,10 @@ public class UserControllerTest {
     @Test
     void givenInvalidToken_whenGetRequestToConfirmRegistration_thenBadRequest() throws Exception {
         String message = messageSourceService.getMessage("does.not.exist");
-        mockMvc.perform(getPostRequestBuilder(
+        mockMvc.perform(getRequestBuilder(
                         "/user/confirm-registration",
                         "token",
-                        "invalidToken"))
+                        invalidToken))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.token").value(message));
     }
@@ -183,7 +184,7 @@ public class UserControllerTest {
     @Test
     void givenExpiredToken_whenGetRequestToConfirmRegistration_thenBadRequest() throws Exception {
         String message = messageSourceService.getMessage("user.token.is.expired");
-        mockMvc.perform(getPostRequestBuilder(
+        mockMvc.perform(getRequestBuilder(
                         "/user/confirm-registration",
                         "token",
                         expiredToken))
@@ -192,14 +193,14 @@ public class UserControllerTest {
     }
 
     @Test
-    void givenExpiredToken_whenGetRequestToResendRegistrationToken_thenBadRequest() throws Exception {
-        RegistrationToken registrationToken = new RegistrationToken(userWithExpiredToken);
-        registrationToken.setToken();
-        mockMvc.perform(getPostRequestBuilder(
-                        "/user/resend-verification-token",
+    void givenInvalidToken_whenGetRequestToResendRegistrationToken_thenBadRequest() throws Exception {
+        String message = messageSourceService.getMessage("does.not.exist");
+        mockMvc.perform(getRequestBuilder(
+                        "/user/resend-registration-token",
                         "token",
-                        expiredToken))
-                .andExpect(status().isBadRequest());
+                        invalidToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.token").value(message));
     }
 
 }

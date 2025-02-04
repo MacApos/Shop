@@ -1,12 +1,17 @@
 package com.shop.controller;
 
 import com.shop.entity.RegistrationToken;
+import com.shop.entity.Role;
+import com.shop.entity.RoleEnum;
 import com.shop.entity.User;
 import com.shop.event.SendEmailEvent;
 import com.shop.service.JwtTokenService;
 import com.shop.service.RegistrationTokenService;
+import com.shop.service.RoleService;
 import com.shop.service.UserService;
+import com.shop.validation.groups.Current;
 import com.shop.validation.groups.DefaultFirst;
+import com.shop.validation.groups.Exists;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,56 +28,52 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final RegistrationTokenService registrationTokenService;
+    private final RoleService roleService;
     private final JwtTokenService jwtTokenService;
+    private final RegistrationTokenService registrationTokenService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Value("${react.origin}")
     private String origin;
 
     private void sendRegistrationToken(User user, HttpServletRequest request) {
-        RegistrationToken token = registrationTokenService.generateAndSaveToken(user);
+        RegistrationToken registrationToken = registrationTokenService.generateAndSaveToken(user);
         SendEmailEvent userSendEmailEvent = new SendEmailEvent(
                 user.getEmail(),
                 "registration.confirm.subject",
                 "registration-confirm.html",
                 request.getLocale(),
                 Map.of("user", user,
-                        "url", String.format("%sconfirm-registration?token=%s", origin, token)));
+                        "url", String.format("%sconfirm-registration?token=%s", origin,
+                                registrationToken.getToken())));
         eventPublisher.publishEvent(userSendEmailEvent);
     }
 
     @PostMapping("/create")
     public User createUser(@RequestBody @Validated(DefaultFirst.class) User user, HttpServletRequest request) {
         userService.save(user);
-        sendRegistrationToken(user, request);
-        return user;
-    }
-
-    @GetMapping("/resend-registration-token")
-    public User resendRegistrationToken(@RequestParam
-//                                            @Validated(Exists.class)
-                                            RegistrationToken registrationToken,
-                                        HttpServletRequest request) throws BindException {
-        registrationTokenService.validateToken(registrationToken);
-        RegistrationToken checkedToken = registrationTokenService.findByToken(registrationToken.getToken());
-        registrationTokenService.validateToken(checkedToken);
-        User user = checkedToken.getUser();
+        roleService.save(new Role(RoleEnum.ROLE_USER, user));
         sendRegistrationToken(user, request);
         return user;
     }
 
     @GetMapping("/confirm-registration")
-    public User confirmRegistration(@RequestParam
-//                                        @Validated(Exists.class)
-                                        RegistrationToken registrationToken,
+    public User confirmRegistration(@Validated({Exists.class, Current.class}) RegistrationToken token,
                                     HttpServletResponse response) throws BindException {
-        RegistrationToken checkedToken = registrationTokenService.findByToken(registrationToken.getToken());
-        registrationTokenService.validateToken(checkedToken);
-        User user = checkedToken.getUser();
+        RegistrationToken validatedToken = registrationTokenService.validateToken(token);
+        User user = validatedToken.getUser();
         user.setEnabled(true);
         userService.save(user);
-        jwtTokenService.authenticateUser(user, response);
+        jwtTokenService.authWithoutPassword(user, response);
+        return user;
+    }
+
+    @GetMapping("/resend-registration-token")
+    public User resendRegistrationTokenByUsername(@Validated({Exists.class}) RegistrationToken token,
+                                                  HttpServletRequest request) {
+        RegistrationToken existingToken = registrationTokenService.findByToken(token.getToken());
+        User user = existingToken.getUser();
+        sendRegistrationToken(user, request);
         return user;
     }
 

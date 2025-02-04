@@ -1,5 +1,6 @@
 package com.shop.service;
 
+import com.shop.entity.Role;
 import com.shop.entity.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,12 +9,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +27,7 @@ public class JwtTokenService {
     private final AuthenticationManager authManager;
     private final JwtEncoder jwtEncoder;
     private final Long expiry = 3600L;
+    private final RoleService roleService;
 
     private String createToken(Authentication authentication) {
         Instant now = Instant.now();
@@ -48,7 +54,7 @@ public class JwtTokenService {
         response.addCookie(cookie);
     }
 
-    public void authenticateUser(User user, HttpServletResponse response){
+    public void authenticateUser(User user, HttpServletResponse response) {
         String email = user.getEmail();
         String password = user.getPassword();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
@@ -58,11 +64,17 @@ public class JwtTokenService {
         setJwtAuthorizationCookie(response, token);
     }
 
-    public void authWithoutPassword(User user, HttpServletResponse response){
+    public void authWithoutPassword(User user, HttpServletResponse response) {
         String email = user.getEmail();
-        String password = user.getPassword();
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
-        Authentication authentication = authManager.authenticate(authenticationToken);
+        List<Role> roles = roleService.findByUser(user);
+        List<GrantedAuthority> authorities = roles
+                .stream()
+                .distinct()
+                .map(p -> new SimpleGrantedAuthority(p.getName().name()))
+                .collect(Collectors.toList());
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = createToken(authentication);
         setJwtAuthorizationCookie(response, token);
