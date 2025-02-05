@@ -1,6 +1,6 @@
-package com.shop.validation.annotations;
+package com.shop.validation.annotation;
 
-import com.shop.validation.validator.UserExistsValidator;
+import com.shop.validator.ConfirmPasswordValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -9,12 +9,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = {UserExistsValidator.class})
+@Constraint(validatedBy = {ConfirmPasswordValidator.class})
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UserExists {
+public @interface ConfirmPassword {
 
-    String message() default "{does.not.exist}";
+    String message() default "{invalid.password.confirmation}";
 
     Class<?>[] groups() default {};
 

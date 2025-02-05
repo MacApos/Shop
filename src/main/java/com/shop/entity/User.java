@@ -3,29 +3,26 @@ package com.shop.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.shop.service.UserService;
-import com.shop.validation.annotations.UserExists;
-import com.shop.validation.annotations.UserAlreadyEnabled;
-import com.shop.validation.groups.AlreadyEnabled;
-import com.shop.validation.groups.CheckFirst;
-import com.shop.validation.annotations.UniqueEntity;
-import com.shop.validation.groups.Exists;
-import com.shop.validation.groups.Login;
+import com.shop.validation.annotation.UserAlreadyExist;
+import com.shop.validation.annotation.UserExists;
+import com.shop.validation.annotation.ValidPassword;
+import com.shop.validation.group.AlreadyExists;
+import com.shop.validation.group.Exists;
+import com.shop.validation.group.Login;
+import com.shop.validation.group.ResetPassword;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
-//import org.hibernate.boot.model.internal.XMLContext.*;
-
 
 import java.util.List;
 
 @Entity
 @Data
-@UniqueEntity(groups = {CheckFirst.class}, service = UserService.class, fields = {"username", "email"})
-@UserExists(groups = {Exists.class})
+//@UniqueEntity(groups = {CheckFirst.class}, service = UserService.class, fields = {"username", "email"})
+@UserAlreadyExist(groups = AlreadyExists.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User implements Identifiable<Long> {
+public class    User implements Identifiable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,21 +40,21 @@ public class User implements Identifiable<Long> {
     @Size(min = 3)
     private String lastname;
 
-    //    custom validation
     @NotNull
     @NotNull(groups = Login.class)
+    @ValidPassword
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     //    custom validation
     @Column(unique = true)
     @NotNull
-    @NotNull(groups = Login.class)
     @Size(min = 3)
     @Email
+    @NotNull(groups = {Login.class})
+    @UserExists(groups = {Exists.class})
     private String email;
 
-//    @AssertFalse(groups = {AlreadyEnabled.class}, message = "{user.already.enabled}")
     @ColumnDefault("false")
     @JsonIgnore
     private boolean enabled = false;

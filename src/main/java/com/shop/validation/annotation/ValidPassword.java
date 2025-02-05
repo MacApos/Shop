@@ -1,20 +1,21 @@
-package com.shop.validation.annotations;
+package com.shop.validation.annotation;
 
-import com.shop.validation.validator.TokenExistsValidator;
+import com.shop.validation.validator.ValidPasswordValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import org.passay.PasswordValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = {TokenExistsValidator.class})
+@Constraint(validatedBy = {ValidPasswordValidator.class})
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TokenExists {
+public @interface ValidPassword {
 
-    String message() default "{does.not.exist}";
+    String message() default "";
 
     Class<?>[] groups() default {};
 

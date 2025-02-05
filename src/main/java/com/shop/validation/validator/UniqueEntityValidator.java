@@ -1,7 +1,7 @@
 package com.shop.validation.validator;
 
 import com.shop.service.MessageService;
-import com.shop.validation.annotations.UniqueEntity;
+import com.shop.validation.annotation.UniqueEntity;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UniqueEntityValidator implements ConstraintValidator<UniqueEntity, Object> {
     private final ApplicationContext context;
-    private final MessageSource messageSource;
-    private final MessageService messageSourceService;
+    private final MessageService messageService;
 
     private Class<?> service;
     private List<String> fields = new ArrayList<>();
@@ -70,7 +69,7 @@ public class UniqueEntityValidator implements ConstraintValidator<UniqueEntity, 
 
     private void addConstraintViolation(ConstraintValidatorContext validatorContext, String entityName, String field) {
         validatorContext
-                .buildConstraintViolationWithTemplate(messageSourceService.getMessage(
+                .buildConstraintViolationWithTemplate(messageService.getMessage(
                         String.join(".", entityName.toLowerCase(), field, "already.exists")
                 ))
                 .addPropertyNode(field)

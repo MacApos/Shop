@@ -20,7 +20,6 @@ public class UserService implements ServiceInterface<User> {
     private final EntityManager entityManager;
     private final UserMapper userMapper;
 
-
     public boolean exists(User user) {
         Example<User> userDTOExample = Example.of(user);
         boolean exists = userRepository.exists(userDTOExample);
@@ -49,12 +48,22 @@ public class UserService implements ServiceInterface<User> {
         return userRepository.existsById(id);
     }
 
+    @Override
+    public boolean existsBy(String username) {
+        return existsByUsername(username);
+    }
+
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
-    public boolean existsByUsernameOrEmail(String username, String email) {
-        return userRepository.existsByUsernameOrEmail(username, email);
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+
+    public boolean existsByUsernameOrEmail(User user) {
+        return userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail());
     }
 
     @Transactional

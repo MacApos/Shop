@@ -1,6 +1,6 @@
 package com.shop.validation.validator;
 
-import com.shop.validation.annotations.UserAlreadyEnabled;
+import com.shop.validation.annotation.UserAlreadyEnabled;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

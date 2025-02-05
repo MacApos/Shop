@@ -43,6 +43,10 @@ public class RegistrationTokenService {
         return registrationTokenRepository.findByToken(token);
     }
 
+    public  boolean existsByToken(String token){
+        return registrationTokenRepository.existsByToken(token);
+    }
+
     public void save(RegistrationToken token) {
         registrationTokenRepository.save(token);
     }

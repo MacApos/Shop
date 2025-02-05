@@ -1,4 +1,4 @@
-package com.shop.validation.annotations;
+package com.shop.validation.annotation;
 
 import com.shop.validation.validator.UserAlreadyEnabledValidator;
 import jakarta.validation.Constraint;

@@ -1,13 +1,10 @@
 package com.shop.entity;
 
-import com.shop.validation.annotations.TokenExists;
-import com.shop.validation.groups.Current;
-import com.shop.validation.groups.Exists;
-import com.shop.validation.groups.Expired;
+import com.shop.validation.annotation.TokenExists;
+import com.shop.validation.group.Exists;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 

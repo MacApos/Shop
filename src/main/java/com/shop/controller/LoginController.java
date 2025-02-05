@@ -2,10 +2,9 @@ package com.shop.controller;
 
 import com.shop.service.JwtTokenService;
 import com.shop.service.UserService;
-import com.shop.validation.groups.Login;
+import com.shop.validation.group.Login;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.shop.entity.User;
