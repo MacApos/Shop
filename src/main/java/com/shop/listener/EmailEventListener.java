@@ -1,6 +1,6 @@
 package com.shop.listener;
 
-import com.shop.event.SendEmailEvent;
+import com.shop.event.EmailEvent;
 import com.shop.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class SendEmailEventListener implements ApplicationListener<SendEmailEvent> {
+public class EmailEventListener implements ApplicationListener<EmailEvent> {
     private final EmailService emailService;
 
     @Override
-    public void onApplicationEvent(SendEmailEvent event) {
+    public void onApplicationEvent(EmailEvent event) {
         emailService.sendHtmlMessage(event);
     }
 }

@@ -183,7 +183,7 @@ public class UserControllerTest {
 
     @Test
     void givenExpiredToken_whenGetRequestToConfirmRegistration_thenBadRequest() throws Exception {
-        String message = messageSourceService.getMessage("user.token.is.expired");
+        String message = messageSourceService.getMessage("token.expired");
         mockMvc.perform(getRequestBuilder(
                         "/user/confirm-registration",
                         "token",

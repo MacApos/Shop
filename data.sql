@@ -2,8 +2,7 @@ drop database if exists shop;
 
 create database if not exists shop
     character set utf8mb4
-    collate utf8mb4_unicode_ci;
-
+    collate utf8mb4_0900_as_cs;
 use shop;
 
 select * from category;
@@ -41,3 +40,5 @@ select r.* from role r left join user u on u.id = r.user_id where email = 'a';
 select email, name from role where email = 'a';
 
 insert into registration_token (user_id) value (1);
+
+select * from registration_token where token = 'teść';

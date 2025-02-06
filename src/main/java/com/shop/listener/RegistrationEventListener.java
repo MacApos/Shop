@@ -36,12 +36,12 @@ public class RegistrationEventListener implements ApplicationListener<Registrati
 
     private void sendHtmlMessage(User user, Locale locale, String token) {
         String to = user.getEmail();
-        String subject = messageService.getMessage("registration.confirm.subject", locale);
+        String subject = messageService.getMessage("confirm.registration.subject", locale);
         String url = String.format("%sconfirm-registration?token=%s", origin, token);
         Map<String, Object> variables = Map.of(
                 "user", user,
                 "url", url);
-        String template = "registration-confirm.html";
+        String template = "confirm-registration.html";
         emailService.sendHtmlMessage(to, subject, template, locale, variables);
     }
 }

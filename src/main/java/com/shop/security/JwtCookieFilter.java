@@ -13,6 +13,7 @@ public class JwtCookieFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         MutableHttpServerRequest mutableHttpServerRequest = new MutableHttpServerRequest(request);
 
         Cookie[] cookies = request.getCookies();

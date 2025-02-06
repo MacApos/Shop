@@ -96,7 +96,7 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
             User user = entry.getKey();
             User byUsername = userService.findByUsername(user.getUsername());
 
-            if (userService.existsByUsernameOrEmail(user.getUsername(), user.getEmail())) {
+            if (userService.existsByUsernameOrEmail(user)) {
                 continue;
             }
             user.setEnabled(true);

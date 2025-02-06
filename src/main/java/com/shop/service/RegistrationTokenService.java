@@ -3,11 +3,14 @@ package com.shop.service;
 import com.shop.entity.RegistrationToken;
 import com.shop.entity.User;
 import com.shop.repository.RegistrationTokenRepository;
+import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +26,7 @@ public class RegistrationTokenService {
         return token;
     }
 
-    public <T> void validateEntity(T entity) throws BindException {
+    public <T> void validateEntityWithLocalValidator(T entity) throws BindException {
         String simpleName = entity.getClass().getSimpleName();
         simpleName = Character.toUpperCase(simpleName.charAt(0)) + simpleName.substring(1);
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entity, simpleName);
@@ -33,9 +36,20 @@ public class RegistrationTokenService {
         }
     }
 
+    public <T> void validateEntity(T entity, Class<?>... groups) {
+        Validator validator;
+        try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+            validator = validatorFactory.getValidator();
+            Set<ConstraintViolation<T>> constraintViolations = validator.validate(entity, groups);
+            if(!constraintViolations.isEmpty()){
+                throw new ConstraintViolationException(constraintViolations);
+            }
+        }
+    }
+
     public RegistrationToken validateToken(RegistrationToken token) throws BindException {
         RegistrationToken existingToken = findByToken(token.getToken());
-        validateEntity(existingToken);
+        validateEntityWithLocalValidator(existingToken);
         return existingToken;
     }
 
@@ -43,7 +57,7 @@ public class RegistrationTokenService {
         return registrationTokenRepository.findByToken(token);
     }
 
-    public  boolean existsByToken(String token){
+    public boolean existsByToken(String token) {
         return registrationTokenRepository.existsByToken(token);
     }
 

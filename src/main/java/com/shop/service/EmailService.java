@@ -1,6 +1,6 @@
 package com.shop.service;
 
-import com.shop.event.SendEmailEvent;
+import com.shop.event.EmailEvent;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class EmailService {
         sendHtmlMessage(to, subject, htmlBody);
     }
 
-    public void sendHtmlMessage(SendEmailEvent event) {
+    public void sendHtmlMessage(EmailEvent event) {
         Locale locale = event.getLocale();
         String subject = messageService.getMessage(event.getSubjectCode(), locale);
         Context context = new Context(locale);
