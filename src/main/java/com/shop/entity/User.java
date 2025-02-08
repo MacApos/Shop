@@ -14,11 +14,11 @@ import java.util.List;
 
 @Entity
 @Data
-//@UniqueEntity(groups = {CheckFirst.class}, service = UserService.class, fields = {"username", "email"})
-@ConfirmPassword
-@UserAlreadyExist(groups = AlreadyExists.class)
+@ConfirmPassword(groups = {Create.class, ResetPassword.class})
+@UserAlreadyExist(groups = Create.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User implements Identifiable<Long> {
+public class
+User implements Identifiable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,21 +36,22 @@ public class User implements Identifiable<Long> {
     @Size(min = 3)
     private String lastname;
 
-    @NotNullSize
-    @NotNull(groups = Login.class)
-
-    @ValidPassword
+    @NotNull(groups = {Login.class, Create.class, ResetPassword.class})
+    @ValidPassword(groups = {Create.class, ResetPassword.class})
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @JsonIgnore
+    @Transient
+    @NotNull(groups = {Create.class, ResetPassword.class})
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passwordConfirm;
-
 
     //    custom validation
     @Column(unique = true)
+    // Default.class
     @NotNullEmail
-    @NotNullEmail(groups = {DefaultFirst.class})
+    // Exists.class
+    @NotNullEmail(groups = {Exists.class})
     @UserExists(groups = {Exists.class})
     private String email;
 

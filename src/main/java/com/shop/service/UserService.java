@@ -72,4 +72,8 @@ public class UserService implements ServiceInterface<User> {
         user.setPassword(encodedPassword);
         entityManager.persist(user);
     }
+
+    public void validatePassword(){
+
+    }
 }

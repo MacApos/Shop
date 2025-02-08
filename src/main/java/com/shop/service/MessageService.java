@@ -21,6 +21,11 @@ public class MessageService {
         return messageSource.getMessage(code, null, locale);
     }
 
+    public String getMessage(String code, Object[] args){
+        Locale locale = getLocale();
+        return messageSource.getMessage(code, args, locale);
+    }
+
     public String getMessage(String code, Locale locale){
         return messageSource.getMessage(code, null, locale);
     }

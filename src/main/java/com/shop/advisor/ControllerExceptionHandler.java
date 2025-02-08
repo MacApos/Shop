@@ -23,6 +23,7 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(BindException ex) {
         BindingResult bindingResult = ex.getBindingResult();
 
+        List<FieldError> fieldErrors1 = bindingResult.getFieldErrors();
         Map<String, List<String>> fieldErrors = bindingResult.getFieldErrors()
                 .stream()
                 .collect(Collectors.groupingBy(

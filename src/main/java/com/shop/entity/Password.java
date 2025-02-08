@@ -2,6 +2,7 @@ package com.shop.entity;
 
 import com.shop.validation.annotation.ConfirmPassword;
 import com.shop.validation.annotation.ValidPassword;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -11,11 +12,9 @@ public class Password {
     @ValidPassword
     private String password;
     private String passwordConfirm;
-    private String language;
 
-    public Password(String password, String passwordConfirm, String language) {
+    public Password(String password, String passwordConfirm) {
         this.password = password;
         this.passwordConfirm = passwordConfirm;
-        this.language = language;
     }
 }

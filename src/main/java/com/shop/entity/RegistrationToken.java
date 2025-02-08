@@ -1,7 +1,6 @@
 package com.shop.entity;
 
 import com.shop.validation.annotation.TokenExists;
-import com.shop.validation.group.DefaultFirst;
 import com.shop.validation.group.Exists;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
@@ -21,9 +20,10 @@ public class RegistrationToken implements Identifiable<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //    @NotNull
-    @NotNull(groups = DefaultFirst.class, message = "{invalid.token}")
-    @Size(min = 10, groups = DefaultFirst.class, message = "{invalid.token}")
+    @NotNull
+    @Size(min = 3)
+    @NotNull(groups = Exists.class, message = "{invalid.token}")
+    @Size(min = 3, groups = Exists.class, message = "{invalid.token}")
     @TokenExists(groups = Exists.class)
     private String token;
 

@@ -1,6 +1,6 @@
 package com.shop.validation.annotation;
 
-import com.shop.validator.ConfirmPasswordValidator;
+import com.shop.validation.validator.ConfirmPasswordValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
