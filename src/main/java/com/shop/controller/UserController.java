@@ -16,6 +16,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -30,6 +31,11 @@ public class UserController {
 
     @Value("${react.origin}")
     private String origin;
+
+    private void sendTokenEmail(String to, String subjectCode, String template, Map<String, Object> variables) {
+        EmailEvent emailEvent = new EmailEvent(to, subjectCode, template, variables);
+        eventPublisher.publishEvent(emailEvent);
+    }
 
     private void sendTokenEmail(User user, String subjectCode, String template, String url) {
         RegistrationToken registrationToken = registrationTokenService.generateAndSaveToken(user);
@@ -74,7 +80,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/send-reset-password-token")
+    @GetMapping("/send-password-reset-token")
     public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(DefaultAndExists.class) User user) {
         User existingUser = userService.findByEmail(user.getEmail());
         if (existingUser.isEnabled()) {
@@ -86,7 +92,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/check-reset-password-token")
+    @GetMapping("/check-password-reset-token")
     public ResponseEntity<?> checkResetPasswordToken(@Validated(DefaultAndExists.class) RegistrationToken token)
             throws BindException {
         registrationTokenService.validateToken(token);
@@ -106,12 +112,35 @@ public class UserController {
 
     @PostMapping("/update-email")
 //    @PreAuthorize("hasRole('ROLE_USER')")
-    public User updateUser(@RequestBody @Validated(DefaultAndUpdateEmail.class) User user) {
+    public User updateEmail(@RequestBody @Validated(DefaultAndUpdateEmail.class) User user) {
         String email = user.getEmail();
         String newEmail = user.getNewEmail();
         User existingUser = userService.findByEmail(email);
         existingUser.setNewEmail(newEmail);
         userService.save(existingUser);
+
+        Map<String, Object> variables = new HashMap<>(Map.of("user", user));
+        sendTokenEmail(email, "oldEmail", "oldEmailTemplate", variables);
+
+        RegistrationToken registrationToken = registrationTokenService.generateAndSaveToken(user);
+        variables.put("url", origin + "url" + registrationToken.getToken());
+        sendTokenEmail(email, "newEmail", "newEmailTemplate", variables);
+
         return existingUser;
+    }
+
+    @GetMapping("/confirm-email-update")
+    public ResponseEntity<?> confirmUpdateEmail(@Validated(DefaultAndExists.class) RegistrationToken token) throws BindException {
+        RegistrationToken registrationToken = registrationTokenService.validateToken(token);
+        User user = registrationToken.getUser();
+        user.setEmail(user.getNewEmail());
+        user.setNewEmail(null);
+        userService.save(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/update")
+    public User update(@RequestBody @Validated() User user){
+        return user;
     }
 }
