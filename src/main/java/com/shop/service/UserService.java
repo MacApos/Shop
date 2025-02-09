@@ -1,12 +1,10 @@
 package com.shop.service;
 
-import com.shop.entity.UserDTO;
 import com.shop.interceptor.ServiceInterface;
 import com.shop.mapper.UserMapper;
 import com.shop.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,22 +18,16 @@ public class UserService implements ServiceInterface<User> {
     private final EntityManager entityManager;
     private final UserMapper userMapper;
 
-    public boolean exists(User user) {
-        Example<User> userDTOExample = Example.of(user);
-        boolean exists = userRepository.exists(userDTOExample);
-        return exists;
-    }
-
-    public void updateDTO(User source, UserDTO target) {
-        userMapper.updateDTO(source, target);
-    }
-
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public User findByNewEmail(String newEmail) {
+        return userRepository.findByEmail(newEmail);
     }
 
     @Override
@@ -73,7 +65,4 @@ public class UserService implements ServiceInterface<User> {
         entityManager.persist(user);
     }
 
-    public void validatePassword(){
-
-    }
 }

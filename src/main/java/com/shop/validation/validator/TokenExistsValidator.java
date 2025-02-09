@@ -1,6 +1,5 @@
 package com.shop.validation.validator;
 
-import com.shop.entity.RegistrationToken;
 import com.shop.service.RegistrationTokenService;
 import com.shop.validation.annotation.TokenExists;
 import jakarta.validation.ConstraintValidator;
@@ -15,10 +14,6 @@ public class TokenExistsValidator implements ConstraintValidator<TokenExists, St
 
     @Override
     public boolean isValid(String registrationToken, ConstraintValidatorContext constraintValidatorContext) {
-        if (registrationToken == null) {
-            return false;
-        }
-        RegistrationToken existingToken = registrationTokenService.findByToken(registrationToken);
-        return existingToken != null;
+        return registrationTokenService.existsByToken(registrationToken);
     }
 }

@@ -6,6 +6,7 @@ import com.shop.repository.RegistrationTokenRepository;
 import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -19,7 +20,10 @@ public class RegistrationTokenService {
     private final LocalValidatorFactoryBean validatorFactory;
 
     public RegistrationToken generateAndSaveToken(User user) {
-        RegistrationToken token = new RegistrationToken(user);
+        RegistrationToken token = registrationTokenRepository.findByUser(user);
+        if (token == null) {
+            token = new RegistrationToken(user);
+        }
         token.setToken();
         token.setExpiryDate();
         save(token);
@@ -41,7 +45,7 @@ public class RegistrationTokenService {
         try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
             validator = validatorFactory.getValidator();
             Set<ConstraintViolation<T>> constraintViolations = validator.validate(entity, groups);
-            if(!constraintViolations.isEmpty()){
+            if (!constraintViolations.isEmpty()) {
                 throw new ConstraintViolationException(constraintViolations);
             }
         }

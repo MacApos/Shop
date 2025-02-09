@@ -9,6 +9,8 @@ public interface UserRepository extends BaseRepository<User, Long> {
 
     User findByEmail(String email);
 
+    User findByNewEmail(String newEmail);
+
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);

@@ -5,6 +5,8 @@ import jakarta.validation.Payload;
 import jakarta.validation.ReportAsSingleViolation;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.CompositionType;
+import org.hibernate.validator.constraints.ConstraintComposition;
 
 import java.lang.annotation.*;
 
@@ -15,6 +17,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {})
 @Repeatable(NotNullEmail.List.class)
 @ReportAsSingleViolation
+@ConstraintComposition(CompositionType.OR)
 public @interface NotNullEmail {
     String message() default "{jakarta.validation.constraints.Email.message}";
 

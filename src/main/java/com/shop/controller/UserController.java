@@ -3,23 +3,19 @@ package com.shop.controller;
 import com.shop.entity.*;
 import com.shop.event.EmailEvent;
 import com.shop.service.*;
-import com.shop.validation.group.Create;
-import com.shop.validation.group.Exists;
 import com.shop.validation.group.ResetPassword;
-import com.shop.validation.group.defaultFirst.DefaultAndCreateOrUpdate;
+import com.shop.validation.group.defaultFirst.DefaultAndCreate;
 import com.shop.validation.group.defaultFirst.DefaultAndExists;
-import com.shop.validation.group.defaultFirst.DefaultAndResetPassword;
+import com.shop.validation.group.defaultFirst.DefaultAndUpdateEmail;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -31,39 +27,36 @@ public class UserController {
     private final JwtTokenService jwtTokenService;
     private final RegistrationTokenService registrationTokenService;
     private final ApplicationEventPublisher eventPublisher;
-    private final MessageService messageService;
 
     @Value("${react.origin}")
     private String origin;
 
-
-    private void sendTokenEmail(User user, Locale locale, String subjectCode, String template, String url,
-                                Map<String, Object> variables) {
+    private void sendTokenEmail(User user, String subjectCode, String template, String url) {
         RegistrationToken registrationToken = registrationTokenService.generateAndSaveToken(user);
-        variables.put("url", origin + url + registrationToken.getToken());
-        EmailEvent emailEvent = new EmailEvent(user.getEmail(), subjectCode, template, locale, variables);
+        Map<String, Object> variables = Map.of(
+                "user", user,
+                "url", origin + url + registrationToken.getToken());
+        EmailEvent emailEvent = new EmailEvent(user.getEmail(), subjectCode, template, variables);
         eventPublisher.publishEvent(emailEvent);
     }
 
-    private void sendRegistrationTokenEmail(User user, Locale locale) {
-        sendTokenEmail(user, locale,
+    private void sendRegistrationTokenEmail(User user) {
+        sendTokenEmail(user,
                 "confirm.registration.subject",
                 "confirm-registration.html",
-                "confirm-registration?token=",
-                Map.of("user", user));
+                "confirm-registration?token=");
     }
 
     @PostMapping("/create")
-    public User createUser(@RequestBody @Validated(DefaultAndCreateOrUpdate.class) User user,
-                           Locale locale) {
+    public User createUser(@RequestBody @Validated(DefaultAndCreate.class) User user) {
         userService.save(user);
         roleService.save(new Role(RoleEnum.ROLE_USER, user));
-        sendRegistrationTokenEmail(user, locale);
+        sendRegistrationTokenEmail(user);
         return new User();
     }
 
     @GetMapping("/confirm-registration")
-    public ResponseEntity<?> confirmRegistration(@Validated(Exists.class) RegistrationToken token,
+    public ResponseEntity<?> confirmRegistration(@Validated(DefaultAndExists.class) RegistrationToken token,
                                                  HttpServletResponse response) throws BindException {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User user = validatedToken.getUser();
@@ -74,42 +67,50 @@ public class UserController {
     }
 
     @GetMapping("/resend-registration-token")
-    public ResponseEntity<?> resendRegistrationToken(@Validated(Exists.class) RegistrationToken token,
-                                                     Locale locale) {
+    public ResponseEntity<?> resendRegistrationToken(@Validated(DefaultAndExists.class) RegistrationToken token) {
         RegistrationToken existingToken = registrationTokenService.findByToken(token.getToken());
         User user = existingToken.getUser();
-        sendRegistrationTokenEmail(user, locale);
+        sendRegistrationTokenEmail(user);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/send-reset-password-token")
-    public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(Exists.class) User user,
-                                                    Locale locale) {
+    public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(DefaultAndExists.class) User user) {
         User existingUser = userService.findByEmail(user.getEmail());
         if (existingUser.isEnabled()) {
-            sendTokenEmail(user, locale,
+            sendTokenEmail(existingUser,
                     "reset.password.subject",
                     "reset-password.html",
-                    "reset-password?token=",
-                    Map.of("user", user));
+                    "reset-password?token=");
         }
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/check-reset-password-token")
-    public ResponseEntity<?> checkResetPasswordToken(@Validated(Exists.class) RegistrationToken token)
+    public ResponseEntity<?> checkResetPasswordToken(@Validated(DefaultAndExists.class) RegistrationToken token)
             throws BindException {
         registrationTokenService.validateToken(token);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/reset-password")
-    public User resetPassword(@Validated(Exists.class) RegistrationToken token,
+    public User resetPassword(@Validated(DefaultAndExists.class) RegistrationToken token,
                               @RequestBody @Validated(ResetPassword.class)
                               User user) throws BindException {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User existingUser = validatedToken.getUser();
         user.setPassword(user.getPassword());
+        userService.save(existingUser);
+        return existingUser;
+    }
+
+    @PostMapping("/update-email")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+    public User updateUser(@RequestBody @Validated(DefaultAndUpdateEmail.class) User user) {
+        String email = user.getEmail();
+        String newEmail = user.getNewEmail();
+        User existingUser = userService.findByEmail(email);
+        existingUser.setNewEmail(newEmail);
         userService.save(existingUser);
         return existingUser;
     }

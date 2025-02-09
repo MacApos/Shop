@@ -15,10 +15,8 @@ import java.util.List;
 @Entity
 @Data
 @ConfirmPassword(groups = {Create.class, ResetPassword.class})
-@UserAlreadyExist(groups = Create.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class
-User implements Identifiable<Long> {
+public class User implements Identifiable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +24,7 @@ User implements Identifiable<Long> {
     @Column(unique = true)
     @NotNull
     @Size(min = 3)
+    @UsernameTaken(groups = Create.class)
     private String username;
 
     @NotNull
@@ -36,24 +35,26 @@ User implements Identifiable<Long> {
     @Size(min = 3)
     private String lastname;
 
-    @NotNull(groups = {Login.class, Create.class, ResetPassword.class})
+    @NotNull(groups = {DefaultPassword.class, Login.class})
     @ValidPassword(groups = {Create.class, ResetPassword.class})
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Transient
-    @NotNull(groups = {Create.class, ResetPassword.class})
+    @NotNull(groups = DefaultPassword.class)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passwordConfirm;
 
-    //    custom validation
     @Column(unique = true)
-    // Default.class
-    @NotNullEmail
-    // Exists.class
-    @NotNullEmail(groups = {Exists.class})
-    @UserExists(groups = {Exists.class})
+    @NotNullEmail(groups = DefaultEmail.class)
+    @EmailTaken(groups = Create.class)
+    @UserExists(groups = {Exists.class, UpdatedEmail.class})
     private String email;
+
+    @NotNullEmail(groups = DefaultEmail.class)
+    @EmailTaken(groups = UpdatedEmail.class)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String newEmail;
 
     @ColumnDefault("false")
     @JsonIgnore
