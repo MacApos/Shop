@@ -19,7 +19,7 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
     @Override
     public boolean isValid(String password, ConstraintValidatorContext constraintValidatorContext) {
         String language = LocaleContextHolder.getLocale().getLanguage();
-        String path = language.isEmpty() ? "messages" : "messages_" + language;
+        String path = language.equals("en") ? "messages" : "messages_" + language;
         Properties props = new Properties();
         try {
             props.load(new FileInputStream("src/main/resources/" + path + ".properties"));

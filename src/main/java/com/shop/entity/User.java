@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.validation.annotation.*;
 import com.shop.validation.group.*;
+import com.shop.validation.group.defaults.DefaultEmail;
+import com.shop.validation.group.defaults.DefaultNewEmail;
+import com.shop.validation.group.defaults.DefaultPassword;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -24,7 +27,7 @@ public class User implements Identifiable<Long> {
     @Column(unique = true)
     @NotNull
     @Size(min = 3)
-    @UsernameTaken(groups = Create.class)
+    @UsernameTaken(groups = {Create.class, UpdateUser.class})
     private String username;
 
     @NotNull
@@ -51,7 +54,7 @@ public class User implements Identifiable<Long> {
     @UserExists(groups = {Exists.class, UpdatedEmail.class})
     private String email;
 
-    @NotNullEmail(groups = DefaultEmail.class)
+    @NotNullEmail(groups = DefaultNewEmail.class)
     @EmailTaken(groups = UpdatedEmail.class)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String newEmail;
@@ -75,4 +78,12 @@ public class User implements Identifiable<Long> {
         this.email = email;
     }
 
+    public User(String username, String firstname, String lastname, String password, String passwordConfirm, String email) {
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.password = password;
+        this.passwordConfirm = passwordConfirm;
+        this.email = email;
+    }
 }

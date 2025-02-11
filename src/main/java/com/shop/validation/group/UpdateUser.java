@@ -1,4 +1,4 @@
 package com.shop.validation.group;
 
-public interface DefaultPassword {
+public interface UpdateUser {
 }

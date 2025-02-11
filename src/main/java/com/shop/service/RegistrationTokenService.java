@@ -3,10 +3,10 @@ package com.shop.service;
 import com.shop.entity.RegistrationToken;
 import com.shop.entity.User;
 import com.shop.repository.RegistrationTokenRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -51,9 +51,12 @@ public class RegistrationTokenService {
         }
     }
 
+    private final EntityManager entityManager;
     public RegistrationToken validateToken(RegistrationToken token) throws BindException {
         RegistrationToken existingToken = findByToken(token.getToken());
         validateEntityWithLocalValidator(existingToken);
+        existingToken.setAvailable(false);
+        save(existingToken);
         return existingToken;
     }
 

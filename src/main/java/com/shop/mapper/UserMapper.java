@@ -6,5 +6,5 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper extends GenericMapper<User> {
-    void updateDTO(User source, @MappingTarget User userDTO);
+//    void update(User source, @MappingTarget User target);
 }

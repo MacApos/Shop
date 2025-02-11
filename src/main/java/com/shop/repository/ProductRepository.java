@@ -8,7 +8,10 @@ import com.shop.entity.Product;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends BaseRepository<Product, Long> {
+public interface ProductRepository extends
+        JpaRepository<Product, Long>
+//        BaseRepository<Product, Long>
+{
     Product findByName(String name);
 
     Product findByNameAndCategory(String name, Category category);

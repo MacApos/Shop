@@ -94,7 +94,6 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
 
         for (Map.Entry<User, List<RoleEnum>> entry : users.entrySet()) {
             User user = entry.getKey();
-            User byUsername = userService.findByUsername(user.getUsername());
 
             if (userService.existsByUsernameOrEmail(user)) {
                 continue;

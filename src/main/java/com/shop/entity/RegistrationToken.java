@@ -1,13 +1,15 @@
 package com.shop.entity;
 
 import com.shop.validation.annotation.TokenExists;
-import com.shop.validation.group.DefaultToken;
+import com.shop.validation.group.defaults.DefaultToken;
 import com.shop.validation.group.Exists;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -34,6 +36,11 @@ public class RegistrationToken implements Identifiable<Long> {
     @NotNull
     @Future(message = "{expired.token}")
     private LocalDateTime expiryDate;
+
+    @ColumnDefault("true")
+    @NotNull
+    @AssertTrue(groups = DefaultToken.class)
+    private boolean available = true;
 
     public RegistrationToken() {
     }

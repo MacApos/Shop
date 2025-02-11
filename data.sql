@@ -1,18 +1,24 @@
 drop database if exists shop;
-
 create database if not exists shop
     character set utf8mb4
     collate utf8mb4_0900_as_cs;
 use shop;
 
-select * from category;
-select * from category where id = 1;
+select *
+from category;
+select *
+from category
+where id = 1;
 set @con = 'r';
 select @con;
-select * from category where hierarchy_path regexp '(?:^|-)1(?:-|$)';
-select * from category where hierarchy_path regexp '-?1-?';
+select *
+from category
+where hierarchy_path regexp '(?:^|-)1(?:-|$)';
+select *
+from category
+where hierarchy_path regexp '-?1-?';
 
-SET @regex_pattern = CONCAT('-?',5 ,'-?');
+SET @regex_pattern = CONCAT('-?', 5, '-?');
 SET @query = CONCAT('SELECT * FROM category WHERE parents_path REGEXP "', @regex_pattern, '"');
 PREPARE stmt FROM @query;
 EXECUTE stmt;
@@ -35,10 +41,20 @@ values (@admin, 'ROLE_ADMIN'),
        (@admin, 'ROLE_USER'),
        (@user, 'ROLE_USER');
 
-select username, password, enabled from user where email = 'a';
-select r.* from role r left join user u on u.id = r.user_id where email = 'a';
-select email, name from role where email = 'a';
+select username, password, enabled
+from user
+where email = 'a';
+select r.*
+from role r
+         left join user u on u.id = r.user_id
+where email = 'a';
+select email, name
+from role
+where email = 'a';
 
 insert into registration_token (user_id) value (1);
-
-select * from registration_token where token = 'teść';
+insert into user (email, firstname, lastname, password, username)
+    value ('john.doe@gmail.com', 'John', 'Doe', 'Password123', 'johnDoe');
+select *
+from registration_token
+where token = 'teść';

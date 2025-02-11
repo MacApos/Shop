@@ -1,11 +1,11 @@
-package com.shop.validation.group.defaultFirst;
+package com.shop.validation.group.sequence;
 
 import com.shop.validation.group.Create;
-import com.shop.validation.group.DefaultEmail;
-import com.shop.validation.group.DefaultPassword;
+import com.shop.validation.group.defaults.DefaultEmail;
+import com.shop.validation.group.defaults.DefaultPassword;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.groups.Default;
 
 @GroupSequence({Default.class, DefaultPassword.class, DefaultEmail.class, Create.class})
-public interface DefaultAndCreate {
+public interface CreateSequence {
 }

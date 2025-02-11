@@ -1,11 +1,11 @@
 package com.shop.repository;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.shop.common.CategoriesInitiation;
 import com.shop.entity.Category;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +13,7 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
+@Import(RepositoryConfiguration.class)
 public class CategoryRepositoryTest extends CategoriesInitiation {
     @Autowired
     private CategoryRepository categoryRepository;

@@ -4,9 +4,7 @@ import com.shop.entity.*;
 import com.shop.event.EmailEvent;
 import com.shop.service.*;
 import com.shop.validation.group.ResetPassword;
-import com.shop.validation.group.defaultFirst.DefaultAndCreate;
-import com.shop.validation.group.defaultFirst.DefaultAndExists;
-import com.shop.validation.group.defaultFirst.DefaultAndUpdateEmail;
+import com.shop.validation.group.sequence.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +52,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public User createUser(@RequestBody @Validated(DefaultAndCreate.class) User user) {
+    public User createUser(@RequestBody @Validated(CreateSequence.class) User user) {
         userService.save(user);
         roleService.save(new Role(RoleEnum.ROLE_USER, user));
         sendRegistrationTokenEmail(user);
@@ -62,7 +60,7 @@ public class UserController {
     }
 
     @GetMapping("/confirm-registration")
-    public ResponseEntity<?> confirmRegistration(@Validated(DefaultAndExists.class) RegistrationToken token,
+    public ResponseEntity<?> confirmRegistration(@Validated(ExistsSequence.class) RegistrationToken token,
                                                  HttpServletResponse response) throws BindException {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User user = validatedToken.getUser();
@@ -73,7 +71,7 @@ public class UserController {
     }
 
     @GetMapping("/resend-registration-token")
-    public ResponseEntity<?> resendRegistrationToken(@Validated(DefaultAndExists.class) RegistrationToken token) {
+    public ResponseEntity<?> resendRegistrationToken(@Validated(ExistsSequence.class) RegistrationToken token) {
         RegistrationToken existingToken = registrationTokenService.findByToken(token.getToken());
         User user = existingToken.getUser();
         sendRegistrationTokenEmail(user);
@@ -81,7 +79,7 @@ public class UserController {
     }
 
     @GetMapping("/send-password-reset-token")
-    public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(DefaultAndExists.class) User user) {
+    public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(ExistsSequence.class) User user) {
         User existingUser = userService.findByEmail(user.getEmail());
         if (existingUser.isEnabled()) {
             sendTokenEmail(existingUser,
@@ -92,17 +90,16 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/check-password-reset-token")
-    public ResponseEntity<?> checkResetPasswordToken(@Validated(DefaultAndExists.class) RegistrationToken token)
-            throws BindException {
-        registrationTokenService.validateToken(token);
-        return ResponseEntity.ok().build();
-    }
+//    @GetMapping("/check-password-reset-token")
+//    public ResponseEntity<?> checkResetPasswordToken(@Validated(ExistsSequence.class) RegistrationToken token)
+//            throws BindException {
+//        registrationTokenService.validateToken(token);
+//        return ResponseEntity.ok().build();
+//    }
 
     @PostMapping("/reset-password")
-    public User resetPassword(@Validated(DefaultAndExists.class) RegistrationToken token,
-                              @RequestBody @Validated(ResetPassword.class)
-                              User user) throws BindException {
+    public User resetPassword(@Validated(ExistsSequence.class) RegistrationToken token,
+                              @RequestBody @Validated(ResetPassword.class) User user) throws BindException {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User existingUser = validatedToken.getUser();
         user.setPassword(user.getPassword());
@@ -112,7 +109,7 @@ public class UserController {
 
     @PostMapping("/update-email")
 //    @PreAuthorize("hasRole('ROLE_USER')")
-    public User updateEmail(@RequestBody @Validated(DefaultAndUpdateEmail.class) User user) {
+    public User updateEmail(@RequestBody @Validated(UpdateEmailSequence.class) User user) {
         String email = user.getEmail();
         String newEmail = user.getNewEmail();
         User existingUser = userService.findByEmail(email);
@@ -130,7 +127,8 @@ public class UserController {
     }
 
     @GetMapping("/confirm-email-update")
-    public ResponseEntity<?> confirmUpdateEmail(@Validated(DefaultAndExists.class) RegistrationToken token) throws BindException {
+    public ResponseEntity<?> confirmUpdateEmail(@Validated(ExistsSequence.class) RegistrationToken token)
+            throws BindException {
         RegistrationToken registrationToken = registrationTokenService.validateToken(token);
         User user = registrationToken.getUser();
         user.setEmail(user.getNewEmail());
@@ -139,8 +137,21 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/update-password")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+    public User updatePassword(@RequestBody @Validated(UpdatePasswordSequence.class) User user) {
+        User existingUser = userService.findByUsername(user.getUsername());
+        userService.update(user, existingUser);
+        userService.save(existingUser);
+        return existingUser;
+    }
+
     @PostMapping("/update")
-    public User update(@RequestBody @Validated() User user){
-        return user;
+//    @PreAuthorize("hasRole('ROLE_USER')")
+    public User update(@RequestBody @Validated(UpdateSequence.class) User user) {
+        User existingUser = userService.findByUsername(user.getUsername());
+        userService.update(user, existingUser);
+        userService.save(existingUser);
+        return existingUser;
     }
 }

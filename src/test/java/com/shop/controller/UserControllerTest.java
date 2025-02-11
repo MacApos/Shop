@@ -22,11 +22,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -70,14 +72,14 @@ public class UserControllerTest {
 
     @BeforeAll
     public void init() {
-        newUser = new User("johnDoe", "John", "Doe", "Password123",
-                "john.doe@gmail.com");
-        invalidUser = new User("JD", "John", "Doe", "Password456",
-                "j.d@gmail.com");
-        existingUser = new User("janeDoe", "Jane", "Doe", "Password789",
-                "jane.doe@gmail.com");
-        userWithExpiredToken = new User("fooBar", "Foo", "Bar", "FooBar123",
-                "foo.bar@gmail.com");
+        newUser = new User("johnDoe", "John", "Doe",
+                "P@ssword123", "P@ssword123", "john.doe@gmail.com");
+        invalidUser = new User("JD", "John", "Doe",
+                "P@ssword456", "P@ssword456", "j.d@gmail.com");
+        existingUser = new User("janeDoe", "Jane", "Doe",
+                "P@ssword789", "P@ssword789", "jane.doe@gmail.com");
+        userWithExpiredToken = new User("fooBar", "Foo", "Bar",
+                "FooBar|23", "FooBar|23", "foo.bar@gmail.com");
         userWithExpiredToken.setEnabled(true);
 
         saveUserAndToken(existingUser, validToken, null);
@@ -89,6 +91,7 @@ public class UserControllerTest {
                 "firstname", user.getFirstname(),
                 "lastname", user.getLastname(),
                 "password", user.getPassword(),
+                "passwordConfirm", user.getPasswordConfirm(),
                 "email", user.getEmail());
         try {
             return objectMapper.writeValueAsString(map);
@@ -102,13 +105,11 @@ public class UserControllerTest {
         RegistrationToken token = new RegistrationToken();
         token.setUser(user);
         token.setToken(tokenName);
-
         if (expiryDate == null) {
             token.setExpiryDate();
         } else {
             token.setExpiryDate(expiryDate);
         }
-
         registrationTokenService.save(token);
     }
 
@@ -168,6 +169,10 @@ public class UserControllerTest {
                         "token",
                         validToken))
                 .andExpect(status().isOk());
+        assertThat(registrationTokenService.findByToken(validToken))
+                .isNotNull()
+                .extracting(RegistrationToken::isAvailable)
+                .isEqualTo(false);
     }
 
     @Test
@@ -175,6 +180,17 @@ public class UserControllerTest {
         String message = messageSourceService.getMessage("does.not.exist");
         mockMvc.perform(getRequestBuilder(
                         "/user/confirm-registration",
+                        "token",
+                        invalidToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.token").value(message));
+    }
+
+    @Test
+    void givenUnavailableToken_whenGetRequestToResendRegistrationToken_thenBadRequest() throws Exception {
+        String message = messageSourceService.getMessage("does.not.exist");
+        mockMvc.perform(getRequestBuilder(
+                        "/user/resend-registration-token",
                         "token",
                         invalidToken))
                 .andExpect(status().isBadRequest())
@@ -202,5 +218,6 @@ public class UserControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.token").value(message));
     }
+
 
 }

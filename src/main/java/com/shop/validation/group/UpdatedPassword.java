@@ -1,4 +1,4 @@
 package com.shop.validation.group;
 
-public interface DefaultEmail {
+public interface UpdatedPassword {
 }

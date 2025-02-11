@@ -8,14 +8,17 @@ import com.shop.entity.Category;
 import java.util.List;
 
 @Repository
-public interface CategoryRepository extends BaseRepository<Category, Long> {
+public interface CategoryRepository extends
+        BaseRepository<Category, Long>
+//        JpaRepository<Category, Long>
+{
     List<Category> findAllChildrenByParent(Category category);
 
     List<Category> findAllByParentIsNull();
 
     Category findByNameAndParent(String name, Category category);
 
-//    Test in CategoryServiceTest
+    //    Test in CategoryServiceTest
     Category findByNamePath(String path);
 
     Category findByName(String name);

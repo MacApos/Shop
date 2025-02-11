@@ -58,6 +58,10 @@ public class UserService implements ServiceInterface<User> {
         return userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail());
     }
 
+    public void update(User source, User target){
+        userMapper.update(source, target);
+    }
+
     @Transactional
     public void save(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
