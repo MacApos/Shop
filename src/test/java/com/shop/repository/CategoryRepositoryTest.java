@@ -13,7 +13,7 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-@Import(RepositoryConfiguration.class)
+//@Import(RepositoryConfiguration.class)
 public class CategoryRepositoryTest extends CategoriesInitiation {
     @Autowired
     private CategoryRepository categoryRepository;

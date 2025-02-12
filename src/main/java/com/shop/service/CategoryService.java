@@ -1,6 +1,5 @@
 package com.shop.service;
 
-import com.shop.interceptor.ServiceInterface;
 import com.shop.repository.CategoryRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -146,7 +145,6 @@ public class CategoryService implements ServiceInterface<Category> {
         return parents;
     }
 
-    @Override
     public Category findById(Long id) {
         return categoryRepository.findById(id).orElse(null);
     }
@@ -154,10 +152,6 @@ public class CategoryService implements ServiceInterface<Category> {
     @Override
     public boolean existsById(Long id) {
         return categoryRepository.existsById(id);
-    }
-
-    public boolean existsByNameAndParent(String name, Category parent) {
-        return categoryRepository.existsByNameAndParent(name, parent);
     }
 
     public Category findByName(String name) {
@@ -183,11 +177,6 @@ public class CategoryService implements ServiceInterface<Category> {
 
     public List<Category> findAll() {
         return categoryRepository.findAll();
-    }
-
-
-    public Category findByPath(String path) {
-        return categoryRepository.findByNamePath(path);
     }
 
     public String normalizeName(String unnormalized) {

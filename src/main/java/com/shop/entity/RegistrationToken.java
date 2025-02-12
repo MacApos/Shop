@@ -34,12 +34,15 @@ public class RegistrationToken implements Identifiable<Long> {
     private User user;
 
     @NotNull
-    @Future(message = "{expired.token}")
+    @Future(message = "{expired.token}"
+//            , groups = DefaultToken.class
+    )
     private LocalDateTime expiryDate;
 
     @ColumnDefault("true")
     @NotNull
-    @AssertTrue(groups = DefaultToken.class)
+    @AssertTrue
+//            (groups = DefaultToken.class)
     private boolean available = true;
 
     public RegistrationToken() {

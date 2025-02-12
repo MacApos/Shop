@@ -6,8 +6,8 @@ import com.shop.entity.User;
 
 @Repository
 public interface UserRepository extends
-        BaseRepository<User, Long>
-//        JpaRepository<User, Long>
+//        BaseRepository<User, Long>
+        JpaRepository<User, Long>
 {
     User findByUsername(String username);
 

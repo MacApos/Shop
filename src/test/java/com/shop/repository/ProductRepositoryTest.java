@@ -14,7 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-@Import(RepositoryConfiguration.class)
+//@Import(RepositoryConfiguration.class)
 public class ProductRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;

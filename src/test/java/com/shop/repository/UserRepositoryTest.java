@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-@Import(RepositoryConfiguration.class)
+//@Import(RepositoryConfiguration.class)
 @ActiveProfiles("test")
 public class UserRepositoryTest {
     @Autowired

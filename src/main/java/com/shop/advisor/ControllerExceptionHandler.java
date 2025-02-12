@@ -1,5 +1,7 @@
 package com.shop.advisor;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,23 @@ import java.util.stream.Collectors;
 public class ControllerExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, List<String>>> handleValidationExceptions(ConstraintViolationException ex) {
+        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+        Map<String, List<String>> errors = constraintViolations.stream()
+                .collect(Collectors.groupingBy(
+                        violation -> violation.getPropertyPath().toString(),
+                        Collectors.mapping(ConstraintViolation::getMessage, Collectors.toList()))
+                );
+
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(BindException ex) {
         BindingResult bindingResult = ex.getBindingResult();
 
-        List<FieldError> fieldErrors1 = bindingResult.getFieldErrors();
         Map<String, List<String>> fieldErrors = bindingResult.getFieldErrors()
                 .stream()
                 .collect(Collectors.groupingBy(

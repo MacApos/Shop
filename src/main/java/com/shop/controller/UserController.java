@@ -127,7 +127,9 @@ public class UserController {
     }
 
     @GetMapping("/confirm-email-update")
-    public ResponseEntity<?> confirmUpdateEmail(@Validated(ExistsSequence.class) RegistrationToken token)
+    public ResponseEntity<?> confirmUpdateEmail(
+//            @Validated(ExistsSequence.class)
+            RegistrationToken token)
             throws BindException {
         RegistrationToken registrationToken = registrationTokenService.validateToken(token);
         User user = registrationToken.getUser();

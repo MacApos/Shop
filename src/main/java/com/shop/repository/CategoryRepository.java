@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends
-        BaseRepository<Category, Long>
-//        JpaRepository<Category, Long>
+//        BaseRepository<Category, Long>
+        JpaRepository<Category, Long>
 {
     List<Category> findAllChildrenByParent(Category category);
 

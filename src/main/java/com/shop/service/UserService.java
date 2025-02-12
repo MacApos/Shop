@@ -1,6 +1,5 @@
 package com.shop.service;
 
-import com.shop.interceptor.ServiceInterface;
 import com.shop.mapper.UserMapper;
 import com.shop.repository.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -30,7 +29,6 @@ public class UserService implements ServiceInterface<User> {
         return userRepository.findByEmail(newEmail);
     }
 
-    @Override
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }

@@ -50,7 +50,7 @@ public class User implements Identifiable<Long> {
 
     @Column(unique = true)
     @NotNullEmail(groups = DefaultEmail.class)
-    @EmailTaken(groups = Create.class)
+//    @EmailTaken(groups = Create.class)
     @UserExists(groups = {Exists.class, UpdatedEmail.class})
     private String email;
 

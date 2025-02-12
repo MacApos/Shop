@@ -2,10 +2,16 @@ package com.shop.listener;
 
 import com.shop.entity.*;
 import com.shop.service.*;
+import com.shop.validation.group.sequence.CreateSequence;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -107,8 +113,5 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
         token.setToken("test");
         token.setExpiryDate(LocalDateTime.now().plusSeconds(1200));
         registrationTokenService.save(token);
-
     }
-
-
 }
