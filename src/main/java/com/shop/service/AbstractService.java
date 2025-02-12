@@ -1,14 +1,12 @@
 package com.shop.service;
 
 import com.shop.mapper.GenericMapper;
-import jakarta.persistence.EntityManager;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -21,7 +19,6 @@ public abstract class AbstractService<T> {
     private LocalValidatorFactoryBean validatorFactory;
 
     private GenericMapper<T> mapper;
-
 
     private JpaRepository<T, Long> repository;
 
@@ -37,7 +34,7 @@ public abstract class AbstractService<T> {
         return repository.existsById(id);
     }
 
-    void validate(T entity, Class<?>... groups) {
+    public void validate(T entity, Class<?>... groups) {
         if (groups.length == 0) {
             groups = new Class[]{Default.class};
         }
@@ -49,7 +46,7 @@ public abstract class AbstractService<T> {
     }
 
     @Autowired
-    public AbstractService(JpaRepository<T, Long> repository) {
+    public void setRepository(JpaRepository<T, Long> repository) {
         this.repository = repository;
     }
 

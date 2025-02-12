@@ -3,51 +3,58 @@ package com.shop.entity;
 import com.shop.mapper.UserMapper;
 import com.shop.mapper.UserMapperImpl;
 import com.shop.repository.UserRepository;
+import com.shop.service.MessageService;
 import com.shop.service.UserService;
 import com.shop.validation.group.sequence.CreateSequence;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
+import jakarta.validation.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import java.util.Locale;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-@Import({
-//        RepositoryConfiguration.class,
-        UserService.class})
+@Import(UserService.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class UserValidationTest {
     @TestConfiguration
     static class UserValidationTestConfiguration {
-//        @Bean
-//        public PasswordEncoder encoder() {
-//            return new BCryptPasswordEncoder();
-//        }
+        @Bean
+        public MessageService messageSourceService(MessageSource messageSource){
+            return new MessageService(messageSource);
+        }
 
         @Bean
         public UserMapper userMapper() {
             return new UserMapperImpl();
         }
+
+        @Bean
+        public LocalValidatorFactoryBean factoryBean() {
+            return new LocalValidatorFactoryBean();
+        }
     }
 
     @MockitoBean
     private PasswordEncoder encoder;
+
+    @Autowired
+    private LocalValidatorFactoryBean factoryBean;
 
     @Autowired
     private UserMapper userMapper;
@@ -58,11 +65,13 @@ class UserValidationTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MessageService messageService;
+
     private User newUser;
     private User invalidUser;
     private User existingUser;
     private User userWithExpiredToken;
-    private Validator validator;
 
     @BeforeAll
     public void init() {
@@ -76,17 +85,16 @@ class UserValidationTest {
                 "foo.bar@gmail.com");
         existingUser.setEnabled(true);
         userService.save(existingUser);
-
-        try (ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
-            validator = validatorFactory.getValidator();
-        }
     }
 
     @Test
     void givenUserWithTooShortUsername_whenCreateUser_thenReturnConstraintValidation() {
-//        userRepository.validate(existingUser, CreateSequence.class);
-//        Set<ConstraintViolation<User>> validation = validator.validate(existingUser, CreateSequence.class);
-//        assertThat(validation).isNotEmpty();
+      
+        String message = messageService.getMessage("expired.token", locale);
+
+//        assertThatThrownBy(() -> userService.validate(existingUser, CreateSequence.class))
+//                .isInstanceOf(ConstraintViolationException.class)
+//                .hasMessage("");
     }
 
 //    @Test

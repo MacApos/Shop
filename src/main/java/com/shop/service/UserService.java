@@ -11,7 +11,7 @@ import com.shop.entity.User;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements ServiceInterface<User> {
+public class UserService extends AbstractService<User> implements ServiceInterface<User> {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EntityManager entityManager;

@@ -51,10 +51,6 @@ public class RegistrationTokenService extends AbstractService<RegistrationToken>
     public RegistrationToken validateToken(RegistrationToken token) throws BindException {
         RegistrationToken existingToken = findByToken(token.getToken());
         validateEntityWithLocalValidator(existingToken);
-
-//        validate(existingToken);
-        RegistrationToken byId = findById(existingToken.getId());
-
         existingToken.setAvailable(false);
         save(existingToken);
         return existingToken;
