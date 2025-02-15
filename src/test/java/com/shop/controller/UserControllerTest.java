@@ -17,13 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -37,14 +35,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private MessageService messageSourceService;
+    private MessageService messageService;
 
     @Autowired
     private UserService userService;
@@ -134,7 +132,7 @@ public class UserControllerTest {
     @Test
     void givenUserWithTooShortUsername_whenPostRequestToUserCreate_thenBadRequest() throws Exception {
         String json = toJson(invalidUser);
-        String message = messageSourceService.getMessage("jakarta.validation.constraints.Size.message");
+        String message = messageService.getMessage("jakarta.validation.constraints.Size.message");
         message = message.replace("{min}", "3");
 
         mockMvc.perform(postRequestBuilder("/user/create", json))
@@ -145,7 +143,7 @@ public class UserControllerTest {
     void givenUserWithTooShortUsername_whenInternationalizedPostRequestToUserCreate_thenBadRequest() throws Exception {
         String json = toJson(invalidUser);
         Locale locale = new Locale("PL", "pl");
-        String message = messageSourceService.getMessage("jakarta.validation.constraints.Size.message", locale);
+        String message = messageService.getMessage("jakarta.validation.constraints.Size.message", locale);
         message = message.replace("{min}", "3");
 
         mockMvc.perform(postRequestBuilder("/user/create", json).locale(locale))
@@ -154,7 +152,7 @@ public class UserControllerTest {
 
     @Test
     void givenUserWithTakenUsername_whenPostRequestToUserCreate_thenBadRequest() throws Exception {
-        String message = messageSourceService.getMessage("user.username.already.exists");
+        String message = messageService.getMessage("user.username.already.exists");
         mockMvc.perform(postRequestBuilder(
                         "/user/create",
                         toJson(existingUser)))
@@ -171,13 +169,13 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
         assertThat(registrationTokenService.findByToken(validToken))
                 .isNotNull()
-                .extracting(RegistrationToken::isAvailable)
+                .extracting(RegistrationToken::isActive)
                 .isEqualTo(false);
     }
 
     @Test
     void givenInvalidToken_whenGetRequestToConfirmRegistration_thenBadRequest() throws Exception {
-        String message = messageSourceService.getMessage("does.not.exist");
+        String message = messageService.getMessage("does.not.exist");
         mockMvc.perform(getRequestBuilder(
                         "/user/confirm-registration",
                         "token",
@@ -188,7 +186,7 @@ public class UserControllerTest {
 
     @Test
     void givenUnavailableToken_whenGetRequestToResendRegistrationToken_thenBadRequest() throws Exception {
-        String message = messageSourceService.getMessage("does.not.exist");
+        String message = messageService.getMessage("does.not.exist");
         mockMvc.perform(getRequestBuilder(
                         "/user/resend-registration-token",
                         "token",
@@ -199,7 +197,7 @@ public class UserControllerTest {
 
     @Test
     void givenExpiredToken_whenGetRequestToConfirmRegistration_thenBadRequest() throws Exception {
-        String message = messageSourceService.getMessage("token.expired");
+        String message = messageService.getMessage("token.expired");
         mockMvc.perform(getRequestBuilder(
                         "/user/confirm-registration",
                         "token",
@@ -210,7 +208,7 @@ public class UserControllerTest {
 
     @Test
     void givenInvalidToken_whenGetRequestToResendRegistrationToken_thenBadRequest() throws Exception {
-        String message = messageSourceService.getMessage("does.not.exist");
+        String message = messageService.getMessage("does.not.exist");
         mockMvc.perform(getRequestBuilder(
                         "/user/resend-registration-token",
                         "token",

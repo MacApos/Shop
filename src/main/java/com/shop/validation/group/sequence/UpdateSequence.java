@@ -1,9 +1,9 @@
 package com.shop.validation.group.sequence;
 
-import com.shop.validation.group.UpdateUser;
+import com.shop.validation.group.Update;
+import com.shop.validation.group.defaults.DefaultUpdateUser;
 import jakarta.validation.GroupSequence;
-import jakarta.validation.groups.Default;
 
-@GroupSequence({Default.class, UpdateUser.class})
+@GroupSequence({DefaultUpdateUser.class, Update.class})
 public interface UpdateSequence {
 }

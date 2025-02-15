@@ -15,19 +15,11 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {})
-@Repeatable(NotNullEmail.List.class)
-@ReportAsSingleViolation
-@ConstraintComposition(CompositionType.OR)
+//@ReportAsSingleViolation
 public @interface NotNullEmail {
     String message() default "{jakarta.validation.constraints.Email.message}";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    @Target({ElementType.TYPE, ElementType.FIELD})
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface List {
-        NotNullEmail[] value();
-    }
 }

@@ -1,4 +1,4 @@
 package com.shop.validation.group.defaults;
 
-public interface DefaultNewEmail {
+public interface DefaultNewEmail extends DefaultEmail{
 }

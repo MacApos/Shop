@@ -9,15 +9,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = {PasswordConstraintValidator.class})
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = {PasswordConstraintValidator.class})
 public @interface ValidPassword {
 
-    String message() default "";
+    String message() default "{jakarta.validation.constraints.NotNull.message}";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
 }

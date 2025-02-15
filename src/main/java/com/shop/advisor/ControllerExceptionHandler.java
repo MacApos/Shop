@@ -2,7 +2,6 @@ package com.shop.advisor;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -17,7 +16,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class ControllerExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -29,7 +27,6 @@ public class ControllerExceptionHandler {
                         violation -> violation.getPropertyPath().toString(),
                         Collectors.mapping(ConstraintViolation::getMessage, Collectors.toList()))
                 );
-
         return ResponseEntity.badRequest().body(errors);
     }
 

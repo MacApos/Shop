@@ -2,8 +2,10 @@ package com.shop.service;
 
 import com.shop.entity.RegistrationToken;
 import com.shop.entity.User;
-import com.shop.mapper.UserMapper;
 import com.shop.repository.RegistrationTokenRepository;
+import com.shop.validation.annotation.ValidToken;
+import com.shop.validation.group.sequence.ValidTokenSequence;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -38,20 +40,10 @@ public class RegistrationTokenService extends AbstractService<RegistrationToken>
         }
     }
 
-//    public <T> void validateEntity(T entity, Class<?>... groups) {
-//        if (groups.length == 0) {
-//            groups = new Class[]{Default.class};
-//        }
-//        Set<ConstraintViolation<T>> constraintViolations = validatorFactory.validate(entity, groups);
-//        if (!constraintViolations.isEmpty()) {
-//            throw new ConstraintViolationException(constraintViolations);
-//        }
-//    }
-
     public RegistrationToken validateToken(RegistrationToken token) throws BindException {
         RegistrationToken existingToken = findByToken(token.getToken());
-        validateEntityWithLocalValidator(existingToken);
-        existingToken.setAvailable(false);
+        this.validate(existingToken, ValidTokenSequence.class);
+        existingToken.setActive(false);
         save(existingToken);
         return existingToken;
     }
