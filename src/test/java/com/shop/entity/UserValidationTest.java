@@ -69,12 +69,10 @@ class UserValidationTest {
         assertThat(violations).isNotEmpty();
 
         List<Tuple> tuples = expectedViolations.entrySet().stream().flatMap(e -> {
-            Object key = e.getKey();
-            Object value = e.getValue();
-            if (value instanceof List<?> values) {
-                return values.stream().map(v -> tuple(key, v));
+            if (e.getValue() instanceof List<?> values) {
+                return values.stream().map(v -> tuple(e.getKey(), v));
             }
-            return Stream.of(tuple(key, value));
+            return Stream.of(tuple(e.getKey(), e.getValue()));
         }).toList();
 
         assertThat(violations)
