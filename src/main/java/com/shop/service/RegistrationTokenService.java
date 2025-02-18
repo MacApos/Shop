@@ -33,16 +33,16 @@ public class RegistrationTokenService extends AbstractService<RegistrationToken>
     public <T> void validateEntityWithLocalValidator(T entity) throws BindException {
         String simpleName = entity.getClass().getSimpleName();
         simpleName = Character.toUpperCase(simpleName.charAt(0)) + simpleName.substring(1);
-        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entity, simpleName);
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entity,  simpleName);
         validatorFactory.validate(entity, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
     }
 
-    public RegistrationToken validateToken(RegistrationToken token) throws BindException {
+    public RegistrationToken validateToken(RegistrationToken token) {
         RegistrationToken existingToken = findByToken(token.getToken());
-        this.validate(existingToken, ValidTokenSequence.class);
+        validate(existingToken, ValidTokenSequence.class);
         existingToken.setActive(false);
         save(existingToken);
         return existingToken;

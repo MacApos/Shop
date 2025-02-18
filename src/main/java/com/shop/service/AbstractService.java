@@ -26,10 +26,6 @@ public abstract class AbstractService<T> {
         mapper.update(source, target);
     }
 
-    public T findById(Long id) {
-        return repository.findById(id).orElse(null);
-    }
-
     public boolean existsById(Long id) {
         return repository.existsById(id);
     }
@@ -55,9 +51,9 @@ public abstract class AbstractService<T> {
         this.validatorFactory = validatorFactory;
     }
 
-    @Autowired
-    public void setMapper(GenericMapper<T> mapper) {
-        this.mapper = mapper;
-    }
+//    @Autowired
+//    public void setMapper(GenericMapper<T> mapper) {
+//        this.mapper = mapper;
+//    }
 
 }

@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +56,7 @@ public class UserController {
 
     @GetMapping("/confirm-registration")
     public ResponseEntity<?> confirmRegistration(@Validated(ExistsSequence.class) RegistrationToken token,
-                                                 HttpServletResponse response) throws BindException {
+                                                 HttpServletResponse response)  {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User user = validatedToken.getUser();
         user.setEnabled(true);
@@ -89,18 +88,13 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("/check-password-reset-token")
-//    public ResponseEntity<?> checkResetPasswordToken(@Validated(ExistsSequence.class) RegistrationToken token)
-//            throws BindException {
-//        registrationTokenService.validateToken(token);
-//        return ResponseEntity.ok().build();
-//    }
-
     @PostMapping("/reset-password")
     public User resetPassword(@Validated(ExistsSequence.class) RegistrationToken token,
-                              @RequestBody @Validated(ResetPassword.class) User user) throws BindException {
+                              @RequestBody @Validated(ResetPassword.class) User user) {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User existingUser = validatedToken.getUser();
+        existingUser.setPassword("pass");
+        userService.validate(existingUser, ResetPassword.class);
         user.setPassword(user.getPassword());
         userService.save(existingUser);
         return existingUser;
@@ -135,8 +129,7 @@ public class UserController {
     }
 
     @GetMapping("/confirm-update-email")
-    public ResponseEntity<?> confirmUpdateEmail(@Validated(ExistsSequence.class) RegistrationToken token)
-            throws BindException {
+    public ResponseEntity<?> confirmUpdateEmail(@Validated(ExistsSequence.class) RegistrationToken token) {
         RegistrationToken registrationToken = registrationTokenService.validateToken(token);
         User user = registrationToken.getUser();
         user.setEmail(user.getNewEmail());

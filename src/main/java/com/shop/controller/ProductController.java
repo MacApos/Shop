@@ -1,6 +1,8 @@
 package com.shop.controller;
 
+import com.shop.entity.CartItem;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.shop.entity.Category;
 import com.shop.entity.Product;
@@ -31,4 +33,5 @@ public class ProductController {
         Category category = categoryService.findById(id);
         return productService.findAllByCategory(category);
     }
+
 }

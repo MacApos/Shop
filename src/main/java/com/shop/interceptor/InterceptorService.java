@@ -27,5 +27,4 @@ public class InterceptorService<T> implements HandlerInterceptor {
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
-
 }

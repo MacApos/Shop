@@ -24,37 +24,44 @@ PREPARE stmt FROM @query;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
-insert into user(username, password, enabled, email)
-values ('b', '$2a$12$87.hiWT69Dw/26pgLf96TerHU/McZRyZi/3libAOCJ4DRUsvQ0BSG', 1, 'b'),
-       ('c', '$2a$12$L2P/54EPLdH8gXVgVTfOYuEGnvArlLHB76eaARbExTcfYBG1mg8pe', 1, 'c');
+insert into user(enabled, email, firstname, lastname, password, username)
+values (true, 'adamnian@gmial.com', 'Adamnian', 'Nowakczyk',
+        '$2a$10$ylTLTLPnxnl85HL9iuJA6eLLKWJ7chN/Hrlmp2gNLnB5hDy.WzIRe', 'adamnian'),
+       (true, 'usek@gmial.com', 'Usek', 'Juserczyk',
+        '$2a$10$ylTLTLPnxnl85HL9iuJA6eLLKWJ7chN/Hrlmp2gNLnB5hDy.WzIRe', 'usek');
 
-set @admin = (select email
-              from user
-              where username like 'b');
-set @user = (select email
-             from user
-             where username like 'c');
-select @admin;
-select @user;
-insert into role(user_id, name)
-values (@admin, 'ROLE_ADMIN'),
-       (@admin, 'ROLE_USER'),
-       (@user, 'ROLE_USER');
+set @adminEmail = (select email
+                   from user
+                   where username like 'admin');
+set @userEmail = (select email
+                  from user
+                  where username like 'user');
 
-select username, password, enabled
-from user
-where email = 'a';
-select r.*
-from role r
-         left join user u on u.id = r.user_id
-where email = 'a';
-select email, name
-from role
-where email = 'a';
+insert into role(email, name)
+values (@adminEmail, 'ROLE_ADMIN'),
+       (@adminEmail, 'ROLE_USER'),
+       (@userEmail, 'ROLE_USER');
 
-insert into registration_token (user_id) value (1);
-insert into user (email, firstname, lastname, password, username)
-    value ('john.doe@gmail.com', 'John', 'Doe', 'Password123', 'johnDoe');
-select *
-from registration_token
-where token = 'teść';
+set @adminId = (select id
+                from user
+                where email like @adminEmail);
+set @userId = (select id
+               from user
+               where email like @userEmail);
+
+insert into cart (user_id) value (@userId);
+set @userCart = (select id
+                 from cart
+                 where user_id like @userId);
+
+set @product1 = (select id from product where name like 'Czapka 1');
+set @product2 = (select id from product where name like 'Dywan wzor 1');
+set @product3 = (select id from product where name like 'Torba 1');
+
+truncate  cart_item;
+insert into cart_item (quantity, cart_id, product_id)
+values (2, @userCart, @product1),
+       (1, @userCart, @product2),
+       (1, @userCart, @product3);
+
+

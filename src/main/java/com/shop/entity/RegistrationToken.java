@@ -24,6 +24,7 @@ public class RegistrationToken implements Identifiable<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Size(min = 3)
     @NotNull(message = "{invalid.token}", groups = DefaultToken.class)
     @Size(min = 3, message = "{invalid.token}", groups = DefaultToken.class)
     @TokenExists(groups = Exists.class)
