@@ -1,5 +1,6 @@
 package com.shop.controller;
 
+import com.shop.service.AuthenticationService;
 import com.shop.service.JwtTokenService;
 import com.shop.service.UserService;
 import com.shop.validation.group.Login;
@@ -14,9 +15,9 @@ import com.shop.entity.User;
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
-
     private final UserService userService;
     private final JwtTokenService jwtTokenService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
     public User login(@RequestBody @Validated(Login.class) User user, HttpServletResponse response) {
@@ -32,6 +33,7 @@ public class LoginController {
     @GetMapping("/user-access")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> userAccess() {
+        authenticationService.getAuthenticatedUser();
         return ResponseEntity.ok("user success");
     }
 

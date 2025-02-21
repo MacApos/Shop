@@ -21,6 +21,10 @@ public class CartService extends AbstractService<CartItem> {
         return cartRepository.findByUser(user);
     }
 
+    public Cart findByEmail(String email) {
+        return cartRepository.findByEmail(email);
+    }
+
     public Cart findOrCreate(User user) {
         Cart cart = cartRepository.findByUser(user);
         if (cart == null) {

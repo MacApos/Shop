@@ -2,6 +2,8 @@ package com.shop.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Data
@@ -14,10 +16,14 @@ public class Role {
     private RoleEnum name;
 
     @ManyToOne
-    @JoinColumn(name="email", referencedColumnName = "email")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     public Role() {
+    }
+
+    public Role(User user) {
+        this.user = user;
     }
 
     public Role(RoleEnum name, User user) {

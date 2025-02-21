@@ -70,7 +70,7 @@ public class JwtTokenService {
         List<GrantedAuthority> authorities = roles
                 .stream()
                 .distinct()
-                .map(p -> new SimpleGrantedAuthority(p.getName().name()))
+                .map(r -> new SimpleGrantedAuthority(r.getName().name()))
                 .collect(Collectors.toList());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);

@@ -5,9 +5,11 @@ import com.shop.entity.User;
 import com.shop.repository.RegistrationTokenRepository;
 import com.shop.validation.annotation.ValidToken;
 import com.shop.validation.group.sequence.ValidTokenSequence;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -18,7 +20,9 @@ public class RegistrationTokenService extends AbstractService<RegistrationToken>
         implements ServiceInterface<RegistrationToken> {
     private final RegistrationTokenRepository registrationTokenRepository;
     private final LocalValidatorFactoryBean validatorFactory;
+    private final EntityManager entityManager;
 
+    @Transactional
     public RegistrationToken generateAndSaveToken(User user) {
         RegistrationToken token = registrationTokenRepository.findByUser(user);
         if (token == null) {
@@ -26,7 +30,8 @@ public class RegistrationTokenService extends AbstractService<RegistrationToken>
         }
         token.setToken();
         token.setExpiryDate();
-        save(token);
+        entityManager.persist(token);
+        entityManager.flush();
         return token;
     }
 
@@ -40,6 +45,7 @@ public class RegistrationTokenService extends AbstractService<RegistrationToken>
         }
     }
 
+    @Transactional
     public RegistrationToken validateToken(RegistrationToken token) {
         RegistrationToken existingToken = findByToken(token.getToken());
         validate(existingToken, ValidTokenSequence.class);
@@ -56,7 +62,14 @@ public class RegistrationTokenService extends AbstractService<RegistrationToken>
         return registrationTokenRepository.existsByToken(token);
     }
 
+    @Transactional
     public void save(RegistrationToken token) {
-        registrationTokenRepository.save(token);
+        entityManager.persist(token);
+        entityManager.flush();
+//        registrationTokenRepository.save(token);
+    }
+
+    public void delete(RegistrationToken token) {
+        registrationTokenRepository.delete(token);
     }
 }

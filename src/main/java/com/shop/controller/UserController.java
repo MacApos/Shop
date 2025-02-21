@@ -10,10 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -56,7 +59,7 @@ public class UserController {
 
     @GetMapping("/confirm-registration")
     public ResponseEntity<?> confirmRegistration(@Validated(ExistsSequence.class) RegistrationToken token,
-                                                 HttpServletResponse response)  {
+                                                 HttpServletResponse response) {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User user = validatedToken.getUser();
         user.setEnabled(true);
@@ -121,11 +124,11 @@ public class UserController {
         Map<String, Object> variables = new HashMap<>(Map.of("user", user));
         sendTokenEmail(email, "oldEmail", "oldEmailTemplate", variables);
 
-        RegistrationToken registrationToken = registrationTokenService.generateAndSaveToken(user);
+        RegistrationToken registrationToken = registrationTokenService.generateAndSaveToken(existingUser);
         variables.put("url", origin + "url" + registrationToken.getToken());
         sendTokenEmail(email, "newEmail", "newEmailTemplate", variables);
 
-        return existingUser;
+        return user;
     }
 
     @GetMapping("/confirm-update-email")

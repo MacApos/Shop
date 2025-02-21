@@ -10,8 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.util.*;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(
-        columnNames = {"name", "parent_id"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "parent_id"}))
 @Data
 @NoArgsConstructor
 public class Category implements Comparable<Category>,  Identifiable<Long>{

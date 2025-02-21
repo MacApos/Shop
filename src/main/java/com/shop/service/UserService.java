@@ -57,7 +57,7 @@ public class UserService extends AbstractService<User> implements ServiceInterfa
         return userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail());
     }
 
-    public void update(User source, User target){
+    public void update(User source, User target) {
         userMapper.update(source, target);
     }
 
@@ -66,6 +66,13 @@ public class UserService extends AbstractService<User> implements ServiceInterfa
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
         entityManager.persist(user);
+        entityManager.flush();
     }
 
+    @Transactional
+    public void delete(User user) {
+        entityManager.remove(user);
+        entityManager.flush();
+//        userRepository.delete(user);
+    }
 }

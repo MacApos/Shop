@@ -62,9 +62,13 @@ public class User implements Identifiable<Long> {
     @JsonIgnore
     private boolean enabled = false;
 
-    @Transient
     @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Role> roles;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RegistrationToken registrationToken;
 
     public User() {
     }

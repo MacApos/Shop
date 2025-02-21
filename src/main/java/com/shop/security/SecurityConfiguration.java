@@ -149,7 +149,8 @@ public class SecurityConfiguration {
         JdbcDaoImpl jdbcDaoImpl = new JdbcDaoImpl();
         jdbcDaoImpl.setDataSource(dataSource);
         jdbcDaoImpl.setUsersByUsernameQuery("select email, password, enabled from user where email = ?");
-        jdbcDaoImpl.setAuthoritiesByUsernameQuery("select email, name from role where email = ?");
+        jdbcDaoImpl.setAuthoritiesByUsernameQuery("select u.email, r.name from role r " +
+                                                  "left join user u on r.user_id = u.id where u.email=?");
         return jdbcDaoImpl;
     }
 

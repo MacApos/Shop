@@ -30,6 +30,7 @@ values (true, 'adamnian@gmial.com', 'Adamnian', 'Nowakczyk',
        (true, 'usek@gmial.com', 'Usek', 'Juserczyk',
         '$2a$10$ylTLTLPnxnl85HL9iuJA6eLLKWJ7chN/Hrlmp2gNLnB5hDy.WzIRe', 'usek');
 
+
 set @adminEmail = (select email
                    from user
                    where username like 'admin');
@@ -37,31 +38,43 @@ set @userEmail = (select email
                   from user
                   where username like 'user');
 
-insert into role(email, name)
-values (@adminEmail, 'ROLE_ADMIN'),
-       (@adminEmail, 'ROLE_USER'),
-       (@userEmail, 'ROLE_USER');
-
 set @adminId = (select id
                 from user
-                where email like @adminEmail);
+                where username like 'admin');
 set @userId = (select id
                from user
-               where email like @userEmail);
+               where username like 'user');
+
+insert into role(user_id, name)
+values (@adminId, 'ROLE_ADMIN'),
+       (@adminId, 'ROLE_USER'),
+       (@userId, 'ROLE_USER');
 
 insert into cart (user_id) value (@userId);
 set @userCart = (select id
                  from cart
                  where user_id like @userId);
 
-set @product1 = (select id from product where name like 'Czapka 1');
-set @product2 = (select id from product where name like 'Dywan wzor 1');
-set @product3 = (select id from product where name like 'Torba 1');
+set @product1 = (select id
+                 from product
+                 where name like 'Czapka 1');
+set @product2 = (select id
+                 from product
+                 where name like 'Dywan wzór 1');
+set @product3 = (select id
+                 from product
+                 where name like 'Torba 1');
 
-truncate  cart_item;
+select @product1;
+select @product2;
+select @product3;
+
+truncate cart_item;
 insert into cart_item (quantity, cart_id, product_id)
 values (2, @userCart, @product1),
        (1, @userCart, @product2),
        (1, @userCart, @product3);
 
+select * from cart where user_id = (select id from user where email like 'user@gmail.com');
 
+select u.email, r.name from role r left join user u on r.user_id = u.id where u.email=?;
