@@ -32,4 +32,13 @@ public class Cart  {
     public Cart(User user) {
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+               "id=" + id +
+               ", user=" + user +
+               ", cartItems=" + cartItems +
+               '}';
+    }
 }

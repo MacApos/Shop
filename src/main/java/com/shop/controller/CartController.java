@@ -8,9 +8,11 @@ import com.shop.entity.User;
 import com.shop.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,10 +42,10 @@ public class CartController {
         return principal == null ? cart.getCartItems() : cartItemService.findByCart(cart);
     }
 
-//    @PostMapping("/add")
+    //    @PostMapping("/add")
     @GetMapping("/add")
     public void add(Principal principal,
-//                    @RequestBody @Validated CartItem cartItem,
+                    @RequestBody @Validated CartItem cartItem,
                     HttpSession session) {
         Cart sessionCart = new Cart();
         CartItem cartItem1 = new CartItem(1, productService.findByName("Czapka 1"), sessionCart);
@@ -52,16 +54,17 @@ public class CartController {
         sessionCart.setCartItems(List.of(cartItem1, cartItem2, cartItem3));
         String s;
         try {
-             s = objectMapper.writeValueAsString(sessionCart);
+            s = objectMapper.writeValueAsString(sessionCart);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        session.setAttribute("sessionCart", s);
+        session.setAttribute("sessionCart", sessionCart);
+        Object attribute = (Cart) session.getAttribute("sessionCart");
 
-//        Cart cart;
-//        CartItem existingCartItem = null;
-//        int quantity = cartItem.getQuantity();
-//
+        Cart cart = new Cart();
+        CartItem existingCartItem = null;
+        int quantity = cartItem.getQuantity();
+////        v1
 //        if (principal == null) {
 //            cart = (Cart) session.getAttribute("cart");
 //
@@ -86,43 +89,7 @@ public class CartController {
 //                cart = new Cart();
 //                cartService.save(cart);
 //            } else {
-//                existingCartItem = cartItemService.findByProductAndCart(cart, cartItem.getProduct());
-//            }
-//
-//            if (existingCartItem == null) {
-//                cartItem.setCart(cart);
-//            } else {
-//                existingCartItem.addQuantity(quantity);
-//                cartItem = existingCartItem;
-//            }
-//            cartItemService.save(cartItem);
-//    }
-
-//        if (principal == null) {
-//            cart = (Cart) session.getAttribute("cart");
-//
-//            if (cart == null) {
-//                cart = new Cart();
-//                session.setAttribute("cart", cart);
-//            } else {
-//                List<CartItem> cartItems = cart.getCartItems();
-//                int index = cartItems.indexOf(cartItem);
-//                if (index > -1) {
-//                    existingCartItem = cartItems.get(index);
-//                    existingCartItem.addQuantity(quantity);
-//                    return;
-//                }
-//            }
-//            cartItem.setCart(cart);
-//        } else {
-//            User user = userService.findByEmail(principal.getName());
-//            cart = cartService.findByUser(user);
-//
-//            if (cart == null) {
-//                cart = new Cart();
-//                cartService.save(cart);
-//            } else {
-//                existingCartItem = cartItemService.findByProductAndCart(cart, cartItem.getProduct());
+//                existingCartItem = cartItemService.findByProductAndCart(cart, quantity);
 //            }
 //
 //            if (existingCartItem == null) {
@@ -134,6 +101,78 @@ public class CartController {
 //            cartItemService.save(cartItem);
 //        }
 
+//        v2
+        List<CartItem> cartItems = new ArrayList<>();
+        int index = -1;
+        if (principal == null) {
+            cart = (Cart) session.getAttribute("cart");
+            if (cart == null) {
+                cart = new Cart();
+            } else {
+                cartItems = cart.getCartItems();
+                index = cartItems.indexOf(cartItem);
+            }
+            if (index == -1) {
+                cartItem.setCart(cart);
+            } else {
+                existingCartItem = cartItems.get(index);
+                existingCartItem.addQuantity(quantity);
+            }
+            session.setAttribute("cart", cart);
+        } else {
+            User user = userService.findByEmail(principal.getName());
+            cart = cartService.findByUser(user);
+
+            if (cart == null) {
+                cart = new Cart();
+                cartService.save(cart);
+            } else {
+                existingCartItem = cartItemService.findByProductAndCart(cart, cartItem.getProduct());
+            }
+
+            if (existingCartItem == null) {
+                cartItem.setCart(cart);
+            } else {
+                existingCartItem.addQuantity(quantity);
+                cartItem = existingCartItem;
+            }
+            cartItemService.save(cartItem);
+        }
+
+//        v3
+        boolean isAuthenticated = principal != null;
+        if (isAuthenticated) {
+            User user = userService.findByEmail(principal.getName());
+            cart = cartService.findByUser(user);
+        } else {
+            cart = (Cart) session.getAttribute("cart");
+        }
+
+        if (cart == null) {
+            cart = new Cart();
+            if (isAuthenticated) {
+                cartService.save(cart);
+            }
+        } else if (isAuthenticated) {
+            existingCartItem = cartItemService.findByProductAndCart(cart, cartItem.getProduct());
+        } else {
+            List<CartItem> items = cart.getCartItems();
+            int i = items.indexOf(cartItem);
+            existingCartItem = i > -1 ? items.get(i) : null;
+        }
+
+        if (existingCartItem == null) {
+            cartItem.setCart(cart);
+        } else {
+            existingCartItem.addQuantity(quantity);
+            cartItem = existingCartItem;
+        }
+
+        if (isAuthenticated) {
+            cartItemService.save(cartItem);
+        } else {
+            session.setAttribute("cart", cart);
+        }
     }
 
     @GetMapping("/update")

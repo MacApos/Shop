@@ -39,4 +39,14 @@ public class CartItem {
     public void addQuantity(int quantityToAdd) {
         quantity += quantityToAdd;
     }
+
+    @Override
+    public String toString() {
+        return "CartItem{" +
+               "id=" + id +
+               ", quantity=" + quantity +
+               ", product=" + product +
+               ", cart=" + cart.getId() +
+               '}';
+    }
 }
