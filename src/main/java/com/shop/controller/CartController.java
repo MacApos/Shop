@@ -102,10 +102,10 @@ public class CartController {
 //        }
 
 //        v2
-        List<CartItem> cartItems = new ArrayList<>();
-        int index = -1;
         if (principal == null) {
             cart = (Cart) session.getAttribute("cart");
+            List<CartItem> cartItems = new ArrayList<>();
+            int index = -1;
             if (cart == null) {
                 cart = new Cart();
             } else {
@@ -122,14 +122,12 @@ public class CartController {
         } else {
             User user = userService.findByEmail(principal.getName());
             cart = cartService.findByUser(user);
-
             if (cart == null) {
                 cart = new Cart();
                 cartService.save(cart);
             } else {
                 existingCartItem = cartItemService.findByProductAndCart(cart, cartItem.getProduct());
             }
-
             if (existingCartItem == null) {
                 cartItem.setCart(cart);
             } else {
