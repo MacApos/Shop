@@ -25,7 +25,7 @@ public class CartItem {
     @ManyToOne
     private Product product;
 
-//    @NotNull
+    //    @NotNull
     @ManyToOne
     @JsonBackReference
     private Cart cart;
@@ -49,10 +49,10 @@ public class CartItem {
     @Override
     public String toString() {
         return "CartItem{" +
-               "id=" + id +
-               ", quantity=" + quantity +
-               ", product=" + product +
-               ", cart=" + cart.getId() +
-               '}';
+                "id=" + id +
+                ", quantity=" + quantity +
+                ", product=" + product +
+                ", cart=" + cart +
+                '}';
     }
 }

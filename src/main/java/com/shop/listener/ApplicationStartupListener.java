@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.shop.entity.RoleEnum.*;
 
@@ -44,6 +45,11 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
                 List.of("Różne dywany", "Inne dywany"),
                 List.of("Czapki", "Ubrania")
         ));
+
+        categories = categories
+                .stream()
+                .sorted(Comparator.comparingInt(List::size))
+                .collect(Collectors.toCollection(ArrayList::new));
 
         for (List<String> category : categories) {
             String name = category.get(0);

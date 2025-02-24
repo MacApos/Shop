@@ -50,4 +50,17 @@ public class Product implements Identifiable<Long>{
         this.path = path;
         this.category = category;
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "category=" + category +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", image='" + image + '\'' +
+                ", path='" + path + '\'' +
+                '}';
+    }
 }

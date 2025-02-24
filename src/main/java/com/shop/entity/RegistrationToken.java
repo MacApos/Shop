@@ -61,4 +61,15 @@ public class RegistrationToken implements Identifiable<Long> {
     public void setExpiryDate() {
         this.expiryDate = LocalDateTime.now().plusHours(expiration);
     }
+
+    @Override
+    public String toString() {
+        return "RegistrationToken{" +
+                "active=" + active +
+                ", id=" + id +
+                ", token='" + token + '\'' +
+                ", user=" + user.getId() +
+                ", expiryDate=" + expiryDate +
+                '}';
+    }
 }

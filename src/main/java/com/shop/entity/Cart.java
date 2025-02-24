@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Data
-public class Cart  {
+public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,6 +21,7 @@ public class Cart  {
     @OneToOne
     private User user;
 
+    @Transient
     @OneToMany(mappedBy = "cart")
     @JsonManagedReference
     private List<CartItem> cartItems;
@@ -35,9 +36,8 @@ public class Cart  {
     @Override
     public String toString() {
         return "Cart{" +
-               "id=" + id +
-               ", user=" + user +
-               ", cartItems=" + cartItems +
-               '}';
+                "id=" + id +
+                ", user=" + user +
+                '}';
     }
 }

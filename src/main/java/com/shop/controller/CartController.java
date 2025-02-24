@@ -42,7 +42,9 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    public void add(@RequestBody @Validated CartItem cartItem) {
+    public void add(@RequestBody
+//                        @Validated
+                        CartItem cartItem) {
         User user = authenticationService.getAuthenticatedUser();
 
         Cart cart = cartService.findByUser(user);

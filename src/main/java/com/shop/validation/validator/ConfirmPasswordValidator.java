@@ -1,6 +1,5 @@
 package com.shop.validation.validator;
 
-import com.shop.entity.Password;
 import com.shop.entity.User;
 import com.shop.service.MessageService;
 import com.shop.validation.annotation.ConfirmPassword;

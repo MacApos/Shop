@@ -1,6 +1,7 @@
 package com.shop.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.*;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "parent_id"}))
 @Data
 @NoArgsConstructor
-public class Category implements Comparable<Category>,  Identifiable<Long>{
+public class Category implements Comparable<Category>, Identifiable<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,16 +26,18 @@ public class Category implements Comparable<Category>,  Identifiable<Long>{
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference
+    @JsonManagedReference
     private Category parent;
 
     @Transient
-    private Set<Category> children = new TreeSet<>();
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    private List<Product> products = new ArrayList<>();
+    private Set<Category> children;
+
+    @Transient
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private List<Product> products;
 
     public Category(String name) {
         this.name = name;
@@ -78,11 +81,11 @@ public class Category implements Comparable<Category>,  Identifiable<Long>{
     @Override
     public String toString() {
         return "Category{" +
-               "id=" + id +
-               ", name='" + name + '\'' +
-               ", namePath='" + namePath + '\'' +
-               ", hierarchyPath='" + hierarchyPath + '\'' +
-               ", parent=" + parent +
-               '}';
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", namePath='" + namePath + '\'' +
+                ", hierarchyPath='" + hierarchyPath + '\'' +
+                ", parent=" + parent +
+                '}';
     }
 }

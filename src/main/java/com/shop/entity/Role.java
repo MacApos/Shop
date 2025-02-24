@@ -30,4 +30,13 @@ public class Role {
         this.name = name;
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name=" + name +
+                ", user=" + user +
+                '}';
+    }
 }

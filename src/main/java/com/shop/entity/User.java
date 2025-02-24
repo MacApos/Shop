@@ -62,6 +62,7 @@ public class User implements Identifiable<Long> {
     @JsonIgnore
     private boolean enabled = false;
 
+    @Transient
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Role> roles;
@@ -88,5 +89,18 @@ public class User implements Identifiable<Long> {
         this.password = password;
         this.passwordConfirm = passwordConfirm;
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "email='" + email + '\'' +
+                ", firstname='" + firstname + '\'' +
+                ", enabled=" + enabled +
+                ", id=" + id +
+                ", lastname='" + lastname + '\'' +
+                ", password='" + password + '\'' +
+                ", registrationToken=" + registrationToken +
+                '}';
     }
 }
