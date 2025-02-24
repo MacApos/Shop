@@ -20,11 +20,14 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
     private final UserService userService;
     private final RoleService roleService;
     private final RegistrationTokenService registrationTokenService;
+    private final CartService cartService;
+    private final CartItemService cartItemService;
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         createCategories();
         createUsers();
+        createCart();
     }
 
     public void createCategories() {
@@ -107,5 +110,25 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
         token.setToken("test");
         token.setExpiryDate(LocalDateTime.now().plusSeconds(1200));
         registrationTokenService.save(token);
+    }
+
+    public void createCart() {
+        User user = userService.findByUsername("user");
+        Cart cart = new Cart(user);
+        cartService.save(cart);
+
+        List<CartItem> cartItems = List.of(
+                new CartItem(1, productService.findByName("Czapka 1")),
+                new CartItem(1, productService.findByName("Czapka 2")),
+                new CartItem(1, productService.findByName("Czerwony dywan"))
+        );
+
+        for (CartItem cartItem : cartItems) {
+            cartItem.setCart(cart);
+            cartItemService.save(cartItem);
+        }
+
+        List<CartItem> byCart = cartItemService.findByCart(cart);
+
     }
 }

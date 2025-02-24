@@ -16,6 +16,7 @@ public class Product implements Identifiable<Long>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
     private String name;
     private String description;
     private Double price;

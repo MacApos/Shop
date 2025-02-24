@@ -21,7 +21,6 @@ public class Cart  {
     @OneToOne
     private User user;
 
-    @NotNull
     @OneToMany(mappedBy = "cart")
     @JsonManagedReference
     private List<CartItem> cartItems;

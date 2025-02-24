@@ -25,10 +25,16 @@ public class CartItem {
     @ManyToOne
     private Product product;
 
-    @NotNull
+//    @NotNull
     @ManyToOne
     @JsonBackReference
     private Cart cart;
+
+
+    public CartItem(int quantity, Product product) {
+        this.quantity = quantity;
+        this.product = product;
+    }
 
     public CartItem(int quantity, Product product, Cart cart) {
         this.quantity = quantity;

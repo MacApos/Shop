@@ -22,7 +22,11 @@ public abstract class AbstractService<T> {
 
     private JpaRepository<T, Long> repository;
 
-    public void update(T source, T target){
+    public T findById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    public void update(T source, T target) {
         mapper.update(source, target);
     }
 

@@ -9,11 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
-public class CartService extends AbstractService<CartItem> {
+public class CartService extends AbstractService<Cart> {
     private final EntityManager entityManager;
     private final CartRepository cartRepository;
 
@@ -21,8 +19,8 @@ public class CartService extends AbstractService<CartItem> {
         return cartRepository.findByUser(user);
     }
 
-    public Cart findByEmail(String email) {
-        return cartRepository.findByEmail(email);
+    public Cart findByUserEmail(String email) {
+        return cartRepository.findByUserEmail(email);
     }
 
     public Cart findOrCreate(User user) {
