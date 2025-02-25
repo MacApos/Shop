@@ -74,7 +74,6 @@ public class ProductService implements ServiceInterface<Product> {
         return productRepository.findByPathAndCategory(path, category);
     }
 
-
     public void save(Product product) {
         Category category = product.getCategory();
         String name = product.getName();

@@ -2,7 +2,6 @@ package com.shop.service;
 
 import com.shop.mapper.UserMapper;
 import com.shop.repository.UserRepository;
-import com.shop.validation.group.ResetPassword;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

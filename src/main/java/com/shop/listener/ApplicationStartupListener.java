@@ -133,8 +133,5 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
             cartItem.setCart(cart);
             cartItemService.save(cartItem);
         }
-
-        List<CartItem> byCart = cartItemService.findByCart(cart);
-
     }
 }

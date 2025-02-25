@@ -1,13 +1,14 @@
 package com.shop.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -17,27 +18,20 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @OneToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @Transient
-    @OneToMany(mappedBy = "cart")
-    @JsonManagedReference
-    private List<CartItem> cartItems;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<CartItem> cartItems;
 
     public Cart() {
     }
 
     public Cart(User user) {
         this.user = user;
-    }
-
-    @Override
-    public String toString() {
-        return "Cart{" +
-                "id=" + id +
-                ", user=" + user +
-                '}';
     }
 }

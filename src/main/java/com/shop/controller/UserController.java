@@ -3,20 +3,17 @@ package com.shop.controller;
 import com.shop.entity.*;
 import com.shop.event.EmailEvent;
 import com.shop.service.*;
-import com.shop.validation.group.ResetPassword;
-import com.shop.validation.group.sequence.*;
+import com.shop.validation.user.group.expensive.ResetPassword;
+import com.shop.validation.user.group.sequence.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -47,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public User createUser(@RequestBody @Validated(CreateSequence.class) User user) {
+    public User createUser(@RequestBody @Validated(CreateUserSequence.class) User user) {
         userService.save(user);
         roleService.save(new Role(RoleEnum.ROLE_USER, user));
         sendTokenEmail(user,
@@ -58,7 +55,7 @@ public class UserController {
     }
 
     @GetMapping("/confirm-registration")
-    public ResponseEntity<?> confirmRegistration(@Validated(ExistsSequence.class) RegistrationToken token,
+    public ResponseEntity<?> confirmRegistration(@Validated(UserExistsSequence.class) RegistrationToken token,
                                                  HttpServletResponse response) {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User user = validatedToken.getUser();
@@ -69,7 +66,7 @@ public class UserController {
     }
 
     @GetMapping("/resend-registration-token")
-    public ResponseEntity<?> resendRegistrationToken(@Validated(ExistsSequence.class) RegistrationToken token) {
+    public ResponseEntity<?> resendRegistrationToken(@Validated(UserExistsSequence.class) RegistrationToken token) {
         RegistrationToken existingToken = registrationTokenService.findByToken(token.getToken());
         User user = existingToken.getUser();
         sendTokenEmail(user,
@@ -80,7 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/send-reset-password-token")
-    public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(ExistsSequence.class) User user) {
+    public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(UserExistsSequence.class) User user) {
         User existingUser = userService.findByEmail(user.getEmail());
         if (existingUser.isEnabled()) {
             sendTokenEmail(existingUser,
@@ -92,7 +89,7 @@ public class UserController {
     }
 
     @PostMapping("/reset-password")
-    public User resetPassword(@Validated(ExistsSequence.class) RegistrationToken token,
+    public User resetPassword(@Validated(UserExistsSequence.class) RegistrationToken token,
                               @RequestBody @Validated(ResetPassword.class) User user) {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User existingUser = validatedToken.getUser();
@@ -132,7 +129,7 @@ public class UserController {
     }
 
     @GetMapping("/confirm-update-email")
-    public ResponseEntity<?> confirmUpdateEmail(@Validated(ExistsSequence.class) RegistrationToken token) {
+    public ResponseEntity<?> confirmUpdateEmail(@Validated(UserExistsSequence.class) RegistrationToken token) {
         RegistrationToken registrationToken = registrationTokenService.validateToken(token);
         User user = registrationToken.getUser();
         user.setEmail(user.getNewEmail());
@@ -143,7 +140,7 @@ public class UserController {
 
     @PostMapping("/update")
 //    @PreAuthorize("hasRole('ROLE_USER')")
-    public User update(@RequestBody @Validated(UpdateSequence.class) User user) {
+    public User update(@RequestBody @Validated(UpdateUserSequence.class) User user) {
         User existingUser = userService.findByUsername(user.getUsername());
         userService.update(user, existingUser);
         userService.save(existingUser);

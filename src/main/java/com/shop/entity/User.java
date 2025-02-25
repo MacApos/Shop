@@ -3,20 +3,25 @@ package com.shop.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.shop.validation.annotation.*;
-import com.shop.validation.group.*;
-import com.shop.validation.group.defaults.DefaultUpdateUser;
-import com.shop.validation.group.defaults.DefaultEmail;
-import com.shop.validation.group.defaults.DefaultNewEmail;
+import com.shop.validation.user.annotation.*;
+import com.shop.validation.user.annotation.UserExists;
+import com.shop.validation.user.group.defaults.DefaultPassword;
+import com.shop.validation.user.group.defaults.DefaultUpdateUser;
+import com.shop.validation.user.group.defaults.DefaultEmail;
+import com.shop.validation.user.group.defaults.DefaultNewEmail;
+import com.shop.validation.user.group.expensive.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
 @ConfirmPassword(groups = ResetPassword.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Identifiable<Long> {
@@ -27,7 +32,7 @@ public class User implements Identifiable<Long> {
     @Column(unique = true)
     @NotNull(groups = DefaultUpdateUser.class)
     @Size(min = 3, groups = DefaultUpdateUser.class)
-    @UsernameTaken(groups = {Create.class, Update.class})
+    @UsernameTaken(groups = {CreateUser.class, UpdateUser.class})
     private String username;
 
     @NotNull(groups = DefaultUpdateUser.class)
@@ -38,7 +43,7 @@ public class User implements Identifiable<Long> {
     @Size(min = 3, groups = DefaultUpdateUser.class)
     private String lastname;
 
-    @NotNull(groups = Login.class)
+    @NotNull(groups = DefaultPassword.class)
     @ValidPassword(groups = ResetPassword.class)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -49,8 +54,8 @@ public class User implements Identifiable<Long> {
 
     @Column(unique = true)
     @NotNullEmail(groups = DefaultEmail.class)
-    @EmailTaken(groups = Create.class)
-    @UserExists(groups = Exists.class)
+    @EmailTaken(groups = CreateUser.class)
+    @UserExists(groups = UserExists.class)
     private String email;
 
     @NotNullEmail(groups = DefaultNewEmail.class)
@@ -63,16 +68,21 @@ public class User implements Identifiable<Long> {
     private boolean enabled = false;
 
     @Transient
-    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @JsonIgnore
     private List<Role> roles;
 
-    @JsonIgnore
+    @Transient
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private RegistrationToken registrationToken;
 
-    public User() {
-    }
+    @Transient
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @JsonIgnore
+    private Cart cart;
 
     public User(String username, String firstname, String lastname, String password, String email) {
         this.username = username;
@@ -89,18 +99,5 @@ public class User implements Identifiable<Long> {
         this.password = password;
         this.passwordConfirm = passwordConfirm;
         this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "email='" + email + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", enabled=" + enabled +
-                ", id=" + id +
-                ", lastname='" + lastname + '\'' +
-                ", password='" + password + '\'' +
-                ", registrationToken=" + registrationToken +
-                '}';
     }
 }

@@ -1,12 +1,9 @@
 {
   "quantity": 1,
-  "cart": {
-    "email": "user@gmail.com"
-  },
   "product": {
-    "name": "Dywan wzór 1",
+    "id": 4,
     "category": {
-      "name": "Jednokolorowe dywany"
+      "id": 6
     }
   }
 }

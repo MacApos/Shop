@@ -19,7 +19,7 @@ public interface CategoryRepository extends
     Category findByNameAndParent(String name, Category category);
 
     //    Test in CategoryServiceTest
-    Category findByNamePath(String path);
+    Category findByPath(String path);
 
     Category findByName(String name);
 

@@ -2,11 +2,13 @@ package com.shop.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +20,6 @@ public class Role {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
-
-    public Role() {
-    }
 
     public Role(User user) {
         this.user = user;

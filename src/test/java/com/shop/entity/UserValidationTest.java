@@ -3,9 +3,9 @@ package com.shop.entity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.service.MessageService;
 import com.shop.service.UserService;
-import com.shop.validation.group.sequence.CreateSequence;
-import com.shop.validation.group.sequence.UpdateEmailSequence;
-import com.shop.validation.group.sequence.UpdateSequence;
+import com.shop.validation.user.group.sequence.CreateUserSequence;
+import com.shop.validation.user.group.sequence.UpdateEmailSequence;
+import com.shop.validation.user.group.sequence.UpdateUserSequence;
 import jakarta.validation.*;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeAll;
@@ -96,7 +96,7 @@ class UserValidationTest {
                 "password", nullMessage,
                 "passwordConfirm", nullMessage,
                 "email", nullMessage);
-        assertEqualViolations(expectedValidations, user, CreateSequence.class);
+        assertEqualViolations(expectedValidations, user, CreateUserSequence.class);
     }
 
     @Test
@@ -112,17 +112,17 @@ class UserValidationTest {
                 "lastname", replace
         );
         List<Tuple> tuples = mapToTupleList(expectedViolations);
-        assertEqualViolations(tuples, user, CreateSequence.class);
-        assertEqualViolations(tuples, user, UpdateSequence.class);
+        assertEqualViolations(tuples, user, CreateUserSequence.class);
+        assertEqualViolations(tuples, user, UpdateUserSequence.class);
     }
 
     @Test
     void givenUserWithTakenUsernameAndEmail_thenReturnConstraintValidationException() {
         Map<String, Object> expectedViolations = new HashMap<>();
         expectedViolations.put("username", "user.username.already.exists");
-        assertEqualViolations(expectedViolations, existingUser, UpdateSequence.class);
+        assertEqualViolations(expectedViolations, existingUser, UpdateUserSequence.class);
         expectedViolations.put("email", "user.email.already.exists");
-        assertEqualViolations(expectedViolations, existingUser, CreateSequence.class);
+        assertEqualViolations(expectedViolations, existingUser, CreateUserSequence.class);
     }
 
     @Test
@@ -130,7 +130,7 @@ class UserValidationTest {
         User user = copyUser(newUser);
         user.setEmail("johndoegmailcom");
         Map<String, Object> expectedViolations = Map.of("email", invalidEmail);
-        assertEqualViolations(expectedViolations, user, CreateSequence.class);
+        assertEqualViolations(expectedViolations, user, CreateUserSequence.class);
     }
 
     @Test
@@ -141,7 +141,7 @@ class UserValidationTest {
         Map<String, Object> expectedViolations = Map.of(
                 "password", nullMessage,
                 "passwordConfirm", nullMessage);
-        assertEqualViolations(expectedViolations, user, CreateSequence.class);
+        assertEqualViolations(expectedViolations, user, CreateUserSequence.class);
     }
 
     @Test
@@ -157,7 +157,7 @@ class UserValidationTest {
                 "passwordConfirm", messageService.getMessage(invalidPasswordConfirmation)
         );
         List<Tuple> tuples = mapToTupleList(expectedViolations);
-        assertEqualViolations(tuples, user, CreateSequence.class);
+        assertEqualViolations(tuples, user, CreateUserSequence.class);
     }
 
     @Test
@@ -165,7 +165,7 @@ class UserValidationTest {
         User user = copyUser(newUser);
         user.setPasswordConfirm("password");
         Map<String, Object> expectedViolations = Map.of("passwordConfirm", invalidPasswordConfirmation);
-        assertEqualViolations(expectedViolations, user, CreateSequence.class);
+        assertEqualViolations(expectedViolations, user, CreateUserSequence.class);
     }
 
     @Test

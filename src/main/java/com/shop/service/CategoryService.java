@@ -85,8 +85,8 @@ public class CategoryService implements ServiceInterface<Category> {
             Category cat = categories.get(i);
             List<Category> children = categoryRepository.findAllChildrenByParent(cat);
             if (!children.isEmpty()) {
-                categories.addAll(children);
                 cat.setChildren(new TreeSet<>(children));
+                categories.addAll(children);
             }
         }
         return category;
@@ -95,11 +95,11 @@ public class CategoryService implements ServiceInterface<Category> {
 
     public Set<Category> getHierarchy() {
         List<Category> categories = categoryRepository.findAllByParentIsNull();
-        Set<Category> set = new TreeSet<>();
+        Set<Category> categorySet = new TreeSet<>();
         for (Category grandparent : categories) {
-            set.add(findChildren(grandparent));
+            categorySet.add(findChildren(grandparent));
         }
-        return set;
+        return categorySet;
     }
 
 
@@ -162,11 +162,6 @@ public class CategoryService implements ServiceInterface<Category> {
         return categoryRepository.findByNameAndParent(category.getName(), category.getParent());
     }
 
-    public String[] splitPathAroundProduct(String path) {
-        path = path.replace("/search/", "");
-        return path.split("/product/");
-    }
-
     public List<Category> findAllByParentCategory(Category category) {
         return categoryRepository.findAllChildrenByParent(category);
     }
@@ -192,8 +187,8 @@ public class CategoryService implements ServiceInterface<Category> {
 
     @Transactional
     public void save(Category category) {
-        Category parent = category.getParent();
         String name = category.getName();
+        Category parent = category.getParent();
 
 //        if (parent != null) {
 //            categoryRepository.findById(parent.getId())
@@ -206,7 +201,7 @@ public class CategoryService implements ServiceInterface<Category> {
 //        }
 
         String normalizedName = normalizeName(name);
-        category.setNamePath(parent == null ? normalizedName : parent.getNamePath() + "/" + normalizedName);
+        category.setPath(parent == null ? normalizedName : parent.getPath() + "/" + normalizedName);
 
         entityManager.persist(category);
 //        if (parent != null) {
@@ -221,11 +216,11 @@ public class CategoryService implements ServiceInterface<Category> {
 //            category.setHierarchyPath(String.valueOf(category.getId()));
 //        }
 
-        if (parent == null) {
-            category.setHierarchyPath(String.valueOf(category.getId()));
-        } else {
-            category.setHierarchyPath(parent.getHierarchyPath() + "-" + category.getId());
-        }
+//        if (parent == null) {
+//            category.setHierarchyPath(String.valueOf(category.getId()));
+//        } else {
+//            category.setHierarchyPath(parent.getHierarchyPath() + "-" + category.getId());
+//        }
 //        entityManager.flush();
     }
 

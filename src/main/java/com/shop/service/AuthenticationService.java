@@ -19,7 +19,7 @@ public class AuthenticationService {
     public User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Jwt) {
-            return userService.findByUsername(authentication.getName());
+            return userService.findByEmail(authentication.getName());
         }
         throw new BadCredentialsException("");
     }

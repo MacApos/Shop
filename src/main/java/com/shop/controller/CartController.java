@@ -3,8 +3,11 @@ package com.shop.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.entity.Cart;
 import com.shop.entity.CartItem;
+import com.shop.entity.Product;
 import com.shop.entity.User;
 import com.shop.service.*;
+import com.shop.validation.product.group.CreateCartItem;
+import com.shop.validation.product.group.UpdateCartItem;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,31 +30,25 @@ public class CartController {
     private final ObjectMapper objectMapper;
 
     @GetMapping("/all")
-    public List<CartItem> cart(Principal principal, HttpSession session) {
-        Cart cart;
-        if (principal == null) {
-            cart = (Cart) session.getAttribute("cart");
-        } else {
-            User user = userService.findByEmail(principal.getName());
-            cart = cartService.findByUser(user);
-        }
+    public List<CartItem> cart() {
+        User user = authenticationService.getAuthenticatedUser();
+        Cart cart = cartService.findByUser(user);
+
         if (cart == null) {
             return List.of();
         }
-        return principal == null ? cart.getCartItems() : cartItemService.findByCart(cart);
+        return cartItemService.findByCart(cart);
     }
 
     @PostMapping("/add")
-    public void add(@RequestBody
-//                        @Validated
-                        CartItem cartItem) {
+    public void add(@RequestBody @Validated(CreateCartItem.class) CartItem cartItem) {
         User user = authenticationService.getAuthenticatedUser();
 
         Cart cart = cartService.findByUser(user);
         CartItem existingCartItem = null;
 
         if (cart == null) {
-            cart = new Cart();
+            cart = new Cart(user);
             cartService.save(cart);
         } else {
             existingCartItem = cartItemService.findByProductAndCart(cart, cartItem.getProduct());
@@ -178,7 +175,7 @@ public class CartController {
     }
 
     @GetMapping("/update")
-    public void update(Principal principal, HttpSession session) {
+    public void update(@RequestBody @Validated(UpdateCartItem.class) CartItem cartItem) {
 //        @RequestBody @Validated CartItem cartItem,x
         Cart cart = cartService.findByUserEmail("user@gmail.com");
 

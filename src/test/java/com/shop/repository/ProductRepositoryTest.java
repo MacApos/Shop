@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import com.shop.entity.Category;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
@@ -53,9 +52,9 @@ public class ProductRepositoryTest {
 
     @Test
     public void givenPathAndCategory_whenFindByPathAndCategory_thenReturnProduct() {
-        String path = product1.getPath();
-        Product product = productRepository.findByPathAndCategory(path, parent);
-        assertThat(product).extracting("path", "category").containsOnly(path, parent);
+        String normalizedName = product1.getPath();
+        Product product = productRepository.findByPathAndCategory(normalizedName, parent);
+        assertThat(product).extracting("path", "category").containsOnly(normalizedName, parent);
     }
 
 }

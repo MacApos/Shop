@@ -3,7 +3,7 @@ package com.shop.controller;
 import com.shop.service.AuthenticationService;
 import com.shop.service.JwtTokenService;
 import com.shop.service.UserService;
-import com.shop.validation.group.Login;
+import com.shop.validation.user.group.defaults.DefaultPassword;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class LoginController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public User login(@RequestBody @Validated(Login.class) User user, HttpServletResponse response) {
+    public User login(@RequestBody @Validated(DefaultPassword.class) User user, HttpServletResponse response) {
         jwtTokenService.authenticateUser(user, response);
         return userService.findByEmail(user.getEmail());
     }
