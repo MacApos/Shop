@@ -35,12 +35,12 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(unauthorized).body(Map.of("message", unauthorized.toString()));
     }
 
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    @ExceptionHandler(AuthorizationDeniedException.class)
-//    public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException() {
-//        HttpStatus forbidden = HttpStatus.FORBIDDEN;
-//        return ResponseEntity.status(forbidden).body(Map.of("message", forbidden.toString()));
-//    }
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException() {
+        HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        return ResponseEntity.status(forbidden).body(Map.of("message", forbidden.toString()));
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)

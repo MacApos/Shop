@@ -1,6 +1,6 @@
-package com.shop.validation.user.annotation;
+package com.shop.validation.cartItem.annotation;
 
-import com.shop.validation.user.validator.UserAlreadyExistValidator;
+import com.shop.validation.cartItem.validator.CartItemExistsValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -9,12 +9,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = {UserAlreadyExistValidator.class})
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UserAlreadyExist {
+@Constraint(validatedBy = {CartItemExistsValidator.class})
+public @interface CartItemExists {
 
-    String message() default "{user.username.already.exists}";
+    String message() default "{does.not.exist}";
 
     Class<?>[] groups() default {};
 

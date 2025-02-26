@@ -22,7 +22,7 @@ public class InterceptorService<T> implements HandlerInterceptor {
         String[] split = path.split("/");
         String id = split[split.length - 1];
 
-        if (serviceInterface.existsBy(id)) {
+        if (serviceInterface.existsById(Long.valueOf(id))) {
             return true;
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);

@@ -1,4 +1,4 @@
 package com.shop.validation.user.group.expensive;
 
-public interface UserExists {
+public interface UserExistsByEmail {
 }

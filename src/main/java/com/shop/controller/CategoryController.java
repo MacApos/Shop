@@ -1,6 +1,10 @@
 package com.shop.controller;
 
+import com.shop.validation.category.group.sequence.CreateCategorySequence;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.shop.entity.Category;
 import com.shop.service.CategoryService;
@@ -44,5 +48,9 @@ public class CategoryController {
         return categoryService.findParents(category);
     }
 
-
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<Object> create(@RequestBody @Validated(CreateCategorySequence.class) Category category) {
+        return ResponseEntity.ok().build();
+    }
 }

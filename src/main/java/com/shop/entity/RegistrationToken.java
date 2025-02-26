@@ -3,7 +3,7 @@ package com.shop.entity;
 import com.shop.validation.user.annotation.TokenExists;
 import com.shop.validation.user.annotation.ValidToken;
 import com.shop.validation.user.group.defaults.DefaultToken;
-import com.shop.validation.user.group.expensive.UserExists;
+import com.shop.validation.user.group.expensive.UserExistsByEmail;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Future;
@@ -29,7 +29,7 @@ public class RegistrationToken implements Identifiable<Long> {
     @Size(min = 3)
     @NotNull(message = "{invalid.token}", groups = DefaultToken.class)
     @Size(min = 3, message = "{invalid.token}", groups = DefaultToken.class)
-    @TokenExists(groups = UserExists.class)
+    @TokenExists(groups = UserExistsByEmail.class)
     private String token;
 
     @NotNull

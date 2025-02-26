@@ -1,7 +1,9 @@
 package com.shop.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.shop.validation.product.group.CreateCartItem;
+import com.shop.validation.cartItem.group.defaults.CreateCartItemDefaults;
+import com.shop.validation.product.annotation.ProductExistsById;
+import com.shop.validation.product.group.ProductExistsByIdGroup;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
@@ -21,7 +23,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class Product implements Identifiable<Long> {
     @Id
-    @NotNull(groups = CreateCartItem.class)
+    @NotNull(groups = CreateCartItemDefaults.class)
+    @ProductExistsById(groups = ProductExistsByIdGroup.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -39,7 +42,7 @@ public class Product implements Identifiable<Long> {
     private String path;
 
     @NotNull
-    @NotNull(groups = CreateCartItem.class)
+    @NotNull(groups = CreateCartItemDefaults.class)
     @Valid
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

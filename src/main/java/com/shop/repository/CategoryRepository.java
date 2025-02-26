@@ -10,16 +10,12 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends
 //        BaseRepository<Category, Long>
-        JpaRepository<Category, Long>
-{
+        JpaRepository<Category, Long> {
     List<Category> findAllChildrenByParent(Category category);
 
     List<Category> findAllByParentIsNull();
 
     Category findByNameAndParent(String name, Category category);
-
-    //    Test in CategoryServiceTest
-    Category findByPath(String path);
 
     Category findByName(String name);
 
@@ -30,6 +26,8 @@ public interface CategoryRepository extends
 
     @Query(value = "select * from category where hierarchy_path regexp concat('(?:^|-)',?1,'(?:-|$)');", nativeQuery = true)
     List<Category> findAllByParentId(Long id);
+
+    boolean existsByName(String name);
 
     boolean existsByNameAndParent(String name, Category parent);
 }

@@ -5,7 +5,6 @@ import com.shop.entity.CartItem;
 import com.shop.entity.Product;
 import com.shop.entity.User;
 import com.shop.repository.CartItemRepository;
-import com.shop.repository.CartRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CartItemService {
+public class CartItemService extends AbstractService<CartItem> implements ServiceInterface<CartItem> {
     private final EntityManager entityManager;
     private final CartItemRepository cartItemRepository;
 
@@ -23,13 +22,30 @@ public class CartItemService {
         return cartItemRepository.findByCart(cart);
     }
 
-    public CartItem findByProductAndCart(Cart cart,Product product) {
-        return cartItemRepository.findByCartAndProduct(cart, product);
+    public CartItem findByIdAndUser(Long id, User user) {
+        return cartItemRepository.findByIdAndEmail(id, user.getEmail());
+    }
+
+    public CartItem findByIdAndCart(Long id,Cart cart) {
+        return cartItemRepository.findByIdAndCart(id, cart);
+    }
+
+    public CartItem findByProductAndCart(Product product, Cart cart) {
+        return cartItemRepository.findByProductAndCart(product, cart);
+    }
+
+    public boolean existsByIdAndUser(Long id, User user) {
+        return cartItemRepository.existsByIdAndEmail(id, user.getEmail());
     }
 
     @Transactional
     public void save(CartItem cartItem) {
         entityManager.persist(cartItem);
+    }
+
+    @Transactional
+    public void delete(CartItem cartItem){
+        entityManager.remove(cartItem);
     }
 
 }

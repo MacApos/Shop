@@ -1,7 +1,7 @@
 package com.shop.validation.user.validator;
 
 import com.shop.service.UserService;
-import com.shop.validation.user.annotation.EmailTaken;
+import com.shop.validation.user.annotation.UniqueEmail;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class EmailTakenValidator implements ConstraintValidator<EmailTaken, String> {
+public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
     private final UserService userService;
 
     @Override

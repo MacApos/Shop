@@ -3,13 +3,15 @@ package com.shop.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+//import com.shop.validation.user.annotation.*;
 import com.shop.validation.user.annotation.*;
-import com.shop.validation.user.annotation.UserExists;
+//import com.shop.validation.user.annotation.UserExists;
 import com.shop.validation.user.group.defaults.DefaultPassword;
 import com.shop.validation.user.group.defaults.DefaultUpdateUser;
 import com.shop.validation.user.group.defaults.DefaultEmail;
 import com.shop.validation.user.group.defaults.DefaultNewEmail;
 import com.shop.validation.user.group.expensive.*;
+import com.shop.validation.user.group.expensive.UserExistsByEmail;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -32,7 +34,7 @@ public class User implements Identifiable<Long> {
     @Column(unique = true)
     @NotNull(groups = DefaultUpdateUser.class)
     @Size(min = 3, groups = DefaultUpdateUser.class)
-    @UsernameTaken(groups = {CreateUser.class, UpdateUser.class})
+    @UniqueUsername(groups = {CreateUser.class, UpdateUser.class})
     private String username;
 
     @NotNull(groups = DefaultUpdateUser.class)
@@ -54,12 +56,12 @@ public class User implements Identifiable<Long> {
 
     @Column(unique = true)
     @NotNullEmail(groups = DefaultEmail.class)
-    @EmailTaken(groups = CreateUser.class)
-    @UserExists(groups = UserExists.class)
+    @UniqueEmail(groups = CreateUser.class)
+    @UserExists(groups = UserExistsByEmail.class)
     private String email;
 
     @NotNullEmail(groups = DefaultNewEmail.class)
-    @EmailTaken(groups = UpdateEmail.class)
+    @UniqueEmail(groups = UpdateEmail.class)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String newEmail;
 

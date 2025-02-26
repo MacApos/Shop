@@ -75,6 +75,17 @@ values (2, @userCart, @product1),
        (1, @userCart, @product2),
        (1, @userCart, @product3);
 
-select * from cart where user_id = (select id from user where email like 'user@gmail.com');
+select *
+from cart
+where user_id = (select id from user where email like 'user@gmail.com');
 
-select u.email, r.name from role r left join user u on r.user_id = u.id where u.email=?;
+select u.email, r.name
+from role r
+         left join user u on r.user_id = u.id
+where u.email = ?;
+
+select ci.*
+from cart_item ci
+         left join cart c on ci.cart_id = c.id
+         left join user u on c.user_id = u.id
+where u.email = 'admin@gmail.com';

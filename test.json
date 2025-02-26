@@ -1,9 +1,6 @@
 {
-  "quantity": 1,
-  "product": {
-    "id": 4,
-    "category": {
-      "id": 6
-    }
+  "name": "newCategory",
+  "parent": {
+    "id": 1
   }
 }

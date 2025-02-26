@@ -1,7 +1,7 @@
 package com.shop.validation.user.validator;
 
 import com.shop.service.UserService;
-import com.shop.validation.user.annotation.UsernameTaken;
+import com.shop.validation.user.annotation.UniqueUsername;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UsernameTakenValidator implements ConstraintValidator<UsernameTaken, String> {
+public class UniqueUsernameValidator implements ConstraintValidator<UniqueUsername, String> {
     private final UserService userService;
 
     @Override

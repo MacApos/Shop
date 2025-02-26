@@ -145,6 +145,10 @@ public class CategoryService implements ServiceInterface<Category> {
         return parents;
     }
 
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
     public Category findById(Long id) {
         return categoryRepository.findById(id).orElse(null);
     }
@@ -152,6 +156,14 @@ public class CategoryService implements ServiceInterface<Category> {
     @Override
     public boolean existsById(Long id) {
         return categoryRepository.existsById(id);
+    }
+
+    public boolean existsByName(String name) {
+        return categoryRepository.existsByName(name);
+    }
+
+    public boolean existsByNameAndParent(Category category) {
+        return categoryRepository.existsByNameAndParent(category.getName(), category.getParent());
     }
 
     public Category findByName(String name) {
@@ -166,14 +178,6 @@ public class CategoryService implements ServiceInterface<Category> {
         return categoryRepository.findAllChildrenByParent(category);
     }
 
-    public void delete(Category category) {
-        categoryRepository.delete(category);
-    }
-
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
-    }
-
     public String normalizeName(String unnormalized) {
         if (unnormalized == null) {
             return null;
@@ -184,26 +188,23 @@ public class CategoryService implements ServiceInterface<Category> {
                 .replaceAll("[\\u0141-\\u0142]", "l");
     }
 
-
     @Transactional
     public void save(Category category) {
-        String name = category.getName();
-        Category parent = category.getParent();
-
-//        if (parent != null) {
-//            categoryRepository.findById(parent.getId())
-//                    .orElseThrow(() -> new Error("Parent category doesn't exist"));
-//        }
-//
-//        Category byNameAndParentCategory = categoryRepository.findByNameAndParent(name, parent);
-//        if (byNameAndParentCategory != null) {
-//            throw new Error("Category already exists");
-//        }
-
-        String normalizedName = normalizeName(name);
-        category.setPath(parent == null ? normalizedName : parent.getPath() + "/" + normalizedName);
-
         entityManager.persist(category);
+        Category parent = category.getParent();
+        String name = category.getName();
+        String normalizedName = normalizeName(name);
+        String breadcrumb;
+        if (parent == null) {
+            breadcrumb = name;
+        } else {
+            normalizedName = normalizeName(parent.getName()) + "-" + normalizedName;
+            breadcrumb = parent.getBreadcrumb() + "/" + name;
+        }
+        category.setPath(normalizedName + "-" + category.getId());
+        category.setBreadcrumb(breadcrumb);
+
+
 //        if (parent != null) {
 //            String parentPath;
 //            if (parent.getHierarchyPath() == null) {
@@ -224,5 +225,8 @@ public class CategoryService implements ServiceInterface<Category> {
 //        entityManager.flush();
     }
 
+    public void delete(Category category) {
+        categoryRepository.delete(category);
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.shop.interceptor;
 
+import com.shop.service.CartItemService;
 import com.shop.service.CategoryService;
 import com.shop.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
 
     private final CategoryService categoryService;
     private final ProductService productService;
+    private final CartItemService cartItemService;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -30,6 +32,10 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(new InterceptorService<>(productService))
                 .addPathPatterns(
                         "/product/{id:\\d+}");
+        registry.addInterceptor(new InterceptorService<>(cartItemService))
+                .addPathPatterns(
+                        "/cart-item/update/{id:\\d+}",
+                        "/cart-item/delete/{id:\\d+}");
     }
 
 }
