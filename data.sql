@@ -89,3 +89,12 @@ from cart_item ci
          left join cart c on ci.cart_id = c.id
          left join user u on c.user_id = u.id
 where u.email = 'admin@gmail.com';
+
+select 1
+from cart_item ci
+         inner join cart c on ci.cart_id = c.id
+         inner join user u on c.user_id = u.id
+where ci.id = 1 and u.email = 'user@gmail.com';
+
+select 1 from category where name like 'Category3' and parent_id = 2;
+

@@ -1,6 +1,7 @@
 package com.shop.service;
 
 import com.shop.entity.Product;
+import com.shop.mapper.ProductMapper;
 import com.shop.repository.CategoryRepository;
 import com.shop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService implements ServiceInterface<Product> {
+public class ProductService extends AbstractService<Product> {
     private final CategoryService categoryService;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;

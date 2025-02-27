@@ -26,7 +26,7 @@ import java.util.List;
 @NoArgsConstructor
 @ConfirmPassword(groups = ResetPassword.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User implements Identifiable<Long> {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -77,6 +77,7 @@ public class User implements Identifiable<Long> {
 
     @Transient
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     @JsonIgnore
     private RegistrationToken registrationToken;
 

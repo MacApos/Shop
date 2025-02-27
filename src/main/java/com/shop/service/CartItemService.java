@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CartItemService extends AbstractService<CartItem> implements ServiceInterface<CartItem> {
+public class CartItemService extends AbstractService<CartItem>{
     private final EntityManager entityManager;
     private final CartItemRepository cartItemRepository;
 
@@ -26,7 +26,7 @@ public class CartItemService extends AbstractService<CartItem> implements Servic
         return cartItemRepository.findByIdAndEmail(id, user.getEmail());
     }
 
-    public CartItem findByIdAndCart(Long id,Cart cart) {
+    public CartItem findByIdAndCart(Long id, Cart cart) {
         return cartItemRepository.findByIdAndCart(id, cart);
     }
 
@@ -35,7 +35,7 @@ public class CartItemService extends AbstractService<CartItem> implements Servic
     }
 
     public boolean existsByIdAndUser(Long id, User user) {
-        return cartItemRepository.existsByIdAndEmail(id, user.getEmail());
+        return cartItemRepository.existsByIdAndEmail(id, user.getEmail()) != null;
     }
 
     @Transactional
@@ -44,7 +44,7 @@ public class CartItemService extends AbstractService<CartItem> implements Servic
     }
 
     @Transactional
-    public void delete(CartItem cartItem){
+    public void delete(CartItem cartItem) {
         entityManager.remove(cartItem);
     }
 

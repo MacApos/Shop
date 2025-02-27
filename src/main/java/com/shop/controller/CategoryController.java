@@ -1,6 +1,8 @@
 package com.shop.controller;
 
+import com.shop.validation.category.group.defaults.UpdateCategoryDefaults;
 import com.shop.validation.category.group.sequence.CreateCategorySequence;
+import com.shop.validation.category.group.sequence.UpdateCategorySequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,8 +51,16 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> create(@RequestBody @Validated(CreateCategorySequence.class) Category category) {
+        categoryService.save(category);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Object> update(@RequestBody @Validated(UpdateCategorySequence.class) Category category) {
+        categoryService.save(category);
         return ResponseEntity.ok().build();
     }
 }

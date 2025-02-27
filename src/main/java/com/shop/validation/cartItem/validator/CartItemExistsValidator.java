@@ -18,6 +18,9 @@ public class CartItemExistsValidator implements ConstraintValidator<CartItemExis
 
     @Override
     public boolean isValid(CartItem cartItem, ConstraintValidatorContext constraintValidatorContext) {
+        if (cartItem == null || !cartItemService.existsById(cartItem.getId())) {
+            return false;
+        }
         User user = authenticationService.getAuthenticatedUser();
         return cartItemService.existsByIdAndUser(cartItem.getId(), user);
     }

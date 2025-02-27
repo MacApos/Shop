@@ -10,12 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shop.entity.User;
 
 @Service
-@RequiredArgsConstructor
-public class UserService extends AbstractService<User> implements ServiceInterface<User> {
+public class UserService extends AbstractService<User> {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EntityManager entityManager;
     private final UserMapper userMapper;
+
+    public UserService(EntityManager entityManager, UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+        this.entityManager = entityManager;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
+    }
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -36,11 +42,6 @@ public class UserService extends AbstractService<User> implements ServiceInterfa
     @Override
     public boolean existsById(Long id) {
         return userRepository.existsById(id);
-    }
-
-    @Override
-    public boolean existsBy(String username) {
-        return existsByUsername(username);
     }
 
     public boolean existsByUsername(String username) {
@@ -64,14 +65,12 @@ public class UserService extends AbstractService<User> implements ServiceInterfa
     public void save(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
+        user.setEnabled(true);
         entityManager.persist(user);
-        entityManager.flush();
     }
 
     @Transactional
     public void delete(User user) {
         entityManager.remove(user);
-        entityManager.flush();
-//        userRepository.delete(user);
     }
 }

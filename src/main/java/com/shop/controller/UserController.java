@@ -59,7 +59,6 @@ public class UserController {
                                                  HttpServletResponse response) {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User user = validatedToken.getUser();
-        user.setEnabled(true);
         userService.save(user);
         jwtTokenService.authWithoutPassword(user, response);
         return ResponseEntity.ok().build();
@@ -93,8 +92,6 @@ public class UserController {
                               @RequestBody @Validated(ResetPassword.class) User user) {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User existingUser = validatedToken.getUser();
-        existingUser.setPassword("pass");
-        userService.validate(existingUser, ResetPassword.class);
         user.setPassword(user.getPassword());
         userService.save(existingUser);
         return existingUser;
@@ -103,7 +100,7 @@ public class UserController {
     @PostMapping("/update-password")
 //    @PreAuthorize("hasRole('ROLE_USER')")
     public User updatePassword(@RequestBody @Validated(UpdatePasswordSequence.class) User user) {
-        User existingUser = userService.findByUsername(user.getUsername());
+        User existingUser = userService.findByEmail(user.getEmail());
         userService.update(user, existingUser);
         userService.save(existingUser);
         return existingUser;

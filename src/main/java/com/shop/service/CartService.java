@@ -3,6 +3,7 @@ package com.shop.service;
 import com.shop.entity.Cart;
 import com.shop.entity.CartItem;
 import com.shop.entity.User;
+import com.shop.mapper.CartMapper;
 import com.shop.repository.CartRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +18,6 @@ public class CartService extends AbstractService<Cart> {
 
     public Cart findByUser(User user) {
         return cartRepository.findByUser(user);
-    }
-
-    public Cart findByUserEmail(String email) {
-        return cartRepository.findByUserEmail(email);
-    }
-
-    public Cart findOrCreate(User user) {
-        Cart cart = cartRepository.findByUser(user);
-        if (cart == null) {
-            cart = new Cart(user);
-        }
-        return cart;
     }
 
     @Transactional

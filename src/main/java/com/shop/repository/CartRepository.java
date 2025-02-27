@@ -10,7 +10,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
     Cart findByUser(User user);
-
-    @Query(value = "select * from cart where user_id = (select id from user where email like :email);", nativeQuery = true)
-    Cart findByUserEmail(@Param("email") String email);
 }

@@ -19,11 +19,6 @@ public class UniqueCategoryValidator implements ConstraintValidator<UniqueCatego
         if (category == null) {
             return false;
         }
-        Category parent = category.getParent();
-        String name = category.getName();
-        if (parent == null) {
-            return !categoryService.existsByName(name);
-        }
         return !categoryService.existsByNameAndParent(category);
     }
 }

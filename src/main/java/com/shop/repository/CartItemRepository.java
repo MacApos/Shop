@@ -21,9 +21,9 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     @Query(value = """
             select ci.*
             from cart_item ci
-                     inner join cart c on ci.cart_id = c.id
-                     inner join user u on c.user_id = u.id
-            where ci.id=:id and u.email like :email;
+                    inner join cart c on ci.cart_id = c.id
+                    inner join user u on c.user_id = u.id
+            where ci.id = :id and u.email = :email;
             """, nativeQuery = true)
     CartItem findByIdAndEmail(@Param("id") Long id, @Param("email") String email);
 
@@ -32,7 +32,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
             from cart_item ci
                      inner join cart c on ci.cart_id = c.id
                      inner join user u on c.user_id = u.id
-            where ci.id=:id and u.email like :email;
+            where ci.id = :id and u.email = :email;
             """, nativeQuery = true)
-    boolean existsByIdAndEmail(@Param("id") Long id, @Param("email") String email);
+    Long existsByIdAndEmail(@Param("id") Long id, @Param("email") String email);
 }

@@ -1,9 +1,9 @@
 package com.shop.mapper;
 
+import com.shop.entity.Product;
 import com.shop.entity.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper extends GenericMapper<User> {
+public interface ProductMapper extends GenericMapper<Product> {
 }

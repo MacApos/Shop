@@ -15,14 +15,28 @@ public class ParentExistsByIdValidator implements ConstraintValidator<ParentExis
     private final CategoryService categoryService;
 
     @Override
-    public boolean isValid(Category parent, ConstraintValidatorContext constraintValidatorContext) {
-        if(parent==null){
+    public boolean isValid(Category category, ConstraintValidatorContext constraintValidatorContext) {
+        constraintValidatorContext.disableDefaultConstraintViolation();
+        constraintValidatorContext.buildConstraintViolationWithTemplate("{does.not.exist}")
+                .addPropertyNode("parent")
+                .addConstraintViolation();
+        Category parent = category.getParent();
+
+        if (parent == null) {
             return true;
         }
-        Long id = parent.getId();
-        if(id==null){
+        Long parentId = parent.getId();
+        if (parentId == null) {
             return false;
         }
-        return categoryService.existsById(id);
+        Long id = category.getId();
+        if (id != null && id.equals(parentId)) {
+            constraintValidatorContext.disableDefaultConstraintViolation();
+            constraintValidatorContext.buildConstraintViolationWithTemplate("{category.and.parent.equal}")
+                    .addConstraintViolation();
+            return false;
+        }
+
+        return categoryService.existsById(parentId);
     }
 }

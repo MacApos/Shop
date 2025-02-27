@@ -21,7 +21,7 @@ import java.util.Set;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "category_id"}))
 @Data
 @NoArgsConstructor
-public class Product implements Identifiable<Long> {
+public class Product {
     @Id
     @NotNull(groups = CreateCartItemDefaults.class)
     @ProductExistsById(groups = ProductExistsByIdGroup.class)

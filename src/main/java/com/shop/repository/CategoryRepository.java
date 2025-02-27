@@ -2,32 +2,29 @@ package com.shop.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.shop.entity.Category;
 
 import java.util.List;
 
 @Repository
-public interface CategoryRepository extends
-//        BaseRepository<Category, Long>
-        JpaRepository<Category, Long> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllChildrenByParent(Category category);
 
     List<Category> findAllByParentIsNull();
 
-    Category findByNameAndParent(String name, Category category);
-
     Category findByName(String name);
 
-    List<Category> findByParent(Category parent);
-
-    @Query(value = "select * from category", nativeQuery = true)
-    List<Category> findAllSQL();
-
-    @Query(value = "select * from category where hierarchy_path regexp concat('(?:^|-)',?1,'(?:-|$)');", nativeQuery = true)
-    List<Category> findAllByParentId(Long id);
+    Category findByNameAndParent(String name, Category category);
 
     boolean existsByName(String name);
 
+    boolean existsByNameAndParentIsNull(String name);
+
     boolean existsByNameAndParent(String name, Category parent);
+
+    @Query(value = "select 1 from category where name like 'Category3' and parent_id = 1;",
+            nativeQuery = true)
+    Long existsByNameAndParentId(@Param("name") String name, @Param("parentId") Long parentId);
 }

@@ -111,7 +111,7 @@ public class UserControllerTest {
         registrationTokenService.save(token);
     }
 
-    private MockHttpServletRequestBuilder postRequestBuilder(String uriTemplate, String content) {
+    public MockHttpServletRequestBuilder postRequestBuilder(String uriTemplate, String content) {
         return post(uriTemplate)
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON);

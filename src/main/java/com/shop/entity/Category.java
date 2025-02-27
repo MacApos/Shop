@@ -3,14 +3,14 @@ package com.shop.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shop.validation.cartItem.group.defaults.CreateCartItemDefaults;
-import com.shop.validation.category.annotation.CategoryExistsById;
-import com.shop.validation.category.annotation.ParentExistsById;
-import com.shop.validation.category.annotation.UniqueCategory;
-import com.shop.validation.category.annotation.ValidName;
-import com.shop.validation.category.group.expensive.CategoryExistsByIdGroup;
+import com.shop.validation.category.annotation.*;
+import com.shop.validation.category.group.database.ParentHasChildrenGroup;
+import com.shop.validation.category.group.defaults.DeleteCategoryDefaults;
+import com.shop.validation.category.group.database.CategoryExistsByIdGroup;
 import com.shop.validation.category.group.defaults.CreateCategoryDefaults;
-import com.shop.validation.category.group.expensive.ParentExistsByIdGroup;
-import com.shop.validation.category.group.expensive.UniqueCategoryGroup;
+import com.shop.validation.category.group.database.ParentExistsByIdGroup;
+import com.shop.validation.category.group.database.UniqueCategoryGroup;
+import com.shop.validation.category.group.defaults.ValidNameGroup;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,24 +27,24 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 @UniqueCategory(groups = UniqueCategoryGroup.class)
-public class Category implements Comparable<Category>, Identifiable<Long> {
+@ParentExistsById(groups = ParentExistsByIdGroup.class)
+public class Category implements Comparable<Category>{
     @Id
-    @NotNull(groups = CreateCartItemDefaults.class)
+    @NotNull(groups = {DeleteCategoryDefaults.class, CreateCartItemDefaults.class})
     @CategoryExistsById(groups = CategoryExistsByIdGroup.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotNull(groups = CreateCategoryDefaults.class)
     @Size(min = 3, groups = CreateCategoryDefaults.class)
-    @ValidName(groups = CreateCategoryDefaults.class)
+    @ValidName(groups = ValidNameGroup.class)
     private String name;
 
-    @Column(unique = true)
     private String path;
 
     private String breadcrumb;
 
-    @ParentExistsById(groups = ParentExistsByIdGroup.class)
+    @ParentHasChildren(groups = ParentHasChildrenGroup.class)
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference

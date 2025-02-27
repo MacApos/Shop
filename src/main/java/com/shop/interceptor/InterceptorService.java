@@ -1,5 +1,6 @@
 package com.shop.interceptor;
 
+import com.shop.service.AbstractService;
 import com.shop.service.ServiceInterface;
 import com.shop.service.ServiceInterface;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +14,7 @@ import org.springframework.web.servlet.HandlerMapping;
 
 @RequiredArgsConstructor
 public class InterceptorService<T> implements HandlerInterceptor {
-    private final ServiceInterface<T> serviceInterface;
+    private final AbstractService<T> serviceInterface;
 
     @Override
     public boolean preHandle(HttpServletRequest request, @Nullable HttpServletResponse response,

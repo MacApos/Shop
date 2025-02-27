@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Entity
 @Data
-public class RegistrationToken implements Identifiable<Long> {
+public class RegistrationToken {
     private static final int expiration = 24;
 
     @Id
@@ -60,16 +60,5 @@ public class RegistrationToken implements Identifiable<Long> {
 
     public void setExpiryDate() {
         this.expiryDate = LocalDateTime.now().plusHours(expiration);
-    }
-
-    @Override
-    public String toString() {
-        return "RegistrationToken{" +
-                "active=" + active +
-                ", id=" + id +
-                ", token='" + token + '\'' +
-                ", user=" + user.getId() +
-                ", expiryDate=" + expiryDate +
-                '}';
     }
 }

@@ -14,8 +14,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Service
 @RequiredArgsConstructor
-public class RegistrationTokenService extends AbstractService<RegistrationToken>
-        implements ServiceInterface<RegistrationToken> {
+public class RegistrationTokenService extends AbstractService<RegistrationToken> {
     private final RegistrationTokenRepository registrationTokenRepository;
     private final LocalValidatorFactoryBean validatorFactory;
     private final EntityManager entityManager;
@@ -36,7 +35,7 @@ public class RegistrationTokenService extends AbstractService<RegistrationToken>
     public <T> void validateEntityWithLocalValidator(T entity) throws BindException {
         String simpleName = entity.getClass().getSimpleName();
         simpleName = Character.toUpperCase(simpleName.charAt(0)) + simpleName.substring(1);
-        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entity,  simpleName);
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entity, simpleName);
         validatorFactory.validate(entity, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);

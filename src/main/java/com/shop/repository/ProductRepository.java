@@ -8,10 +8,7 @@ import com.shop.entity.Product;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends
-        JpaRepository<Product, Long>
-//        BaseRepository<Product, Long>
-{
+public interface ProductRepository extends JpaRepository<Product, Long> {
     Product findByName(String name);
 
     Product findByNameAndCategory(String name, Category category);
@@ -20,5 +17,5 @@ public interface ProductRepository extends
 
     List<Product> findAllByCategory(Category category);
 
-    boolean existsByNameAndCategory(String name , Category category);
+    boolean existsByNameAndCategory(String name, Category category);
 }

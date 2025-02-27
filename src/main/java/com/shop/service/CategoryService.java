@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryService implements ServiceInterface<Category> {
+public class CategoryService extends AbstractService<Category> {
     private final CategoryRepository categoryRepository;
     private final EntityManager entityManager;
 
@@ -149,10 +149,6 @@ public class CategoryService implements ServiceInterface<Category> {
         return categoryRepository.findAll();
     }
 
-    public Category findById(Long id) {
-        return categoryRepository.findById(id).orElse(null);
-    }
-
     @Override
     public boolean existsById(Long id) {
         return categoryRepository.existsById(id);
@@ -162,8 +158,18 @@ public class CategoryService implements ServiceInterface<Category> {
         return categoryRepository.existsByName(name);
     }
 
+    public boolean existsByNameAndNullParent(String name) {
+        return categoryRepository.existsByNameAndParentIsNull(name);
+    }
+
     public boolean existsByNameAndParent(Category category) {
-        return categoryRepository.existsByNameAndParent(category.getName(), category.getParent());
+        Category parent = category.getParent();
+        String name = category.getName();
+        if (parent == null) {
+            return categoryRepository.existsByNameAndParentIsNull(name);
+        }
+        Long parentId = parent.getId();
+        return categoryRepository.existsByNameAndParentId(name, parentId) != null;
     }
 
     public Category findByName(String name) {
@@ -198,6 +204,7 @@ public class CategoryService implements ServiceInterface<Category> {
         if (parent == null) {
             breadcrumb = name;
         } else {
+            parent = findById(parent.getId());
             normalizedName = normalizeName(parent.getName()) + "-" + normalizedName;
             breadcrumb = parent.getBreadcrumb() + "/" + name;
         }

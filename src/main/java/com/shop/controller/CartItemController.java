@@ -6,6 +6,7 @@ import com.shop.entity.User;
 import com.shop.service.*;
 import com.shop.validation.cartItem.group.defaults.UpdateCartItemDefaults;
 import com.shop.validation.cartItem.group.sequence.CreateCartItemSequence;
+import com.shop.validation.cartItem.group.sequence.DeleteCartItemSequence;
 import com.shop.validation.cartItem.group.sequence.UpdateCartItemSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -57,134 +58,23 @@ public class CartItemController {
             cartItem = existingCartItem;
         }
         cartItemService.save(cartItem);
-
-//        Cart cart = new Cart();
-//        CartItem existingCartItem = null;
-//        int quantity = cartItem.getQuantity();
-////        v1
-//        if (principal == null) {
-//            cart = (Cart) session.getAttribute("cart");
-//
-//            if (cart == null) {
-//                cart = new Cart();
-//                session.setAttribute("cart", cart);
-//            } else {
-//                List<CartItem> cartItems = cart.getCartItems();
-//                int index = cartItems.indexOf(cartItem);
-//                if (index > -1) {
-//                    existingCartItem = cartItems.get(index);
-//                    existingCartItem.addQuantity(quantity);
-//                    return;
-//                }
-//            }
-//            cartItem.setCart(cart);
-//        } else {
-//            User user = userService.findByEmail(principal.getName());
-//            cart = cartService.findByUser(user);
-//
-//            if (cart == null) {
-//                cart = new Cart();
-//                cartService.save(cart);
-//            } else {
-//                existingCartItem = cartItemService.findByProductAndCart(cart, quantity);
-//            }
-//
-//            if (existingCartItem == null) {
-//                cartItem.setCart(cart);
-//            } else {
-//                existingCartItem.addQuantity(quantity);
-//                cartItem = existingCartItem;
-//            }
-//            cartItemService.save(cartItem);
-//        }
-//
-////        v2
-//        if (principal == null) {
-//            cart = (Cart) session.getAttribute("cart");
-//            List<CartItem> cartItems = new ArrayList<>();
-//            int index = -1;
-//            if (cart == null) {
-//                cart = new Cart();
-//            } else {
-//                cartItems = cart.getCartItems();
-//                index = cartItems.indexOf(cartItem);
-//            }
-//            if (index == -1) {
-//                cartItem.setCart(cart);
-//            } else {
-//                existingCartItem = cartItems.get(index);
-//                existingCartItem.addQuantity(quantity);
-//            }
-//            session.setAttribute("cart", cart);
-//        } else {
-//            User user = userService.findByEmail(principal.getName());
-//            cart = cartService.findByUser(user);
-//            if (cart == null) {
-//                cart = new Cart();
-//                cartService.save(cart);
-//            } else {
-//                existingCartItem = cartItemService.findByProductAndCart(cart, cartItem.getProduct());
-//            }
-//            if (existingCartItem == null) {
-//                cartItem.setCart(cart);
-//            } else {
-//                existingCartItem.addQuantity(quantity);
-//                cartItem = existingCartItem;
-//            }
-//            cartItemService.save(cartItem);
-//        }
-//
-////        v3
-//        boolean isAuthenticated = principal != null;
-//        if (isAuthenticated) {
-//            User user = userService.findByEmail(principal.getName());
-//            cart = cartService.findByUser(user);
-//        } else {
-//            cart = (Cart) session.getAttribute("cart");
-//        }
-//
-//        if (cart == null) {
-//            cart = new Cart();
-//            if (isAuthenticated) {
-//                cartService.save(cart);
-//            }
-//        } else if (isAuthenticated) {
-//            existingCartItem = cartItemService.findByProductAndCart(cart, cartItem.getProduct());
-//        } else {
-//            List<CartItem> items = cart.getCartItems();
-//            int i = items.indexOf(cartItem);
-//            existingCartItem = i > -1 ? items.get(i) : null;
-//        }
-//
-//        if (existingCartItem == null) {
-//            cartItem.setCart(cart);
-//        } else {
-//            existingCartItem.addQuantity(quantity);
-//            cartItem = existingCartItem;
-//        }
-//
-//        if (isAuthenticated) {
-//            cartItemService.save(cartItem);
-//        } else {
-//            session.setAttribute("cart", cart);
-//        }
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Object> update(Principal principal, @PathVariable Long id,
+    @PutMapping("/update")
+    public ResponseEntity<Object> update(Principal principal,
                                          @RequestBody @Validated(UpdateCartItemSequence.class) CartItem cartItem) {
         User user = userService.findByEmail(principal.getName());
-        CartItem existingCartItem = cartItemService.findByIdAndUser(id, user);
+        CartItem existingCartItem = cartItemService.findByIdAndUser(cartItem.getId(), user);
         existingCartItem.setQuantity(cartItem.getQuantity());
         cartItemService.save(existingCartItem);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Object> delete(Principal principal, @PathVariable Long id, @RequestBody CartItem cartItem) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<Object> delete(Principal principal, @RequestBody @Validated(DeleteCartItemSequence.class) CartItem cartItem) {
         User user = userService.findByEmail(principal.getName());
-        CartItem existingCartItem = cartItemService.findByIdAndUser(id, user);
+        CartItem existingCartItem = cartItemService.findByIdAndUser(cartItem.getId(), user);
         cartItemService.delete(existingCartItem);
         return ResponseEntity.ok().build();
     }
