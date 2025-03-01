@@ -1,5 +1,7 @@
 package com.shop.service;
 
+import com.shop.entity.Product;
+import com.shop.mapper.CategoryMapper;
 import com.shop.repository.CategoryRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +14,15 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Service
-@RequiredArgsConstructor
 public class CategoryService extends AbstractService<Category> {
     private final CategoryRepository categoryRepository;
     private final EntityManager entityManager;
+
+    public CategoryService(CategoryRepository categoryRepository, EntityManager entityManager, CategoryMapper categoryMapper) {
+        super.setMapper(categoryMapper);
+        this.categoryRepository = categoryRepository;
+        this.entityManager = entityManager;
+    }
 
     private List<Category> sortCategories(List<Category> categories) {
         if (categories.size() > 1) {
@@ -92,7 +99,6 @@ public class CategoryService extends AbstractService<Category> {
         return category;
     }
 
-
     public Set<Category> getHierarchy() {
         List<Category> categories = categoryRepository.findAllByParentIsNull();
         Set<Category> categorySet = new TreeSet<>();
@@ -149,19 +155,6 @@ public class CategoryService extends AbstractService<Category> {
         return categoryRepository.findAll();
     }
 
-    @Override
-    public boolean existsById(Long id) {
-        return categoryRepository.existsById(id);
-    }
-
-    public boolean existsByName(String name) {
-        return categoryRepository.existsByName(name);
-    }
-
-    public boolean existsByNameAndNullParent(String name) {
-        return categoryRepository.existsByNameAndParentIsNull(name);
-    }
-
     public boolean existsByNameAndParent(Category category) {
         Category parent = category.getParent();
         String name = category.getName();
@@ -194,42 +187,56 @@ public class CategoryService extends AbstractService<Category> {
                 .replaceAll("[\\u0141-\\u0142]", "l");
     }
 
-    @Transactional
-    public void save(Category category) {
-        entityManager.persist(category);
+    public void populateCategory(Category category) {
         Category parent = category.getParent();
         String name = category.getName();
         String normalizedName = normalizeName(name);
         String breadcrumb;
+
         if (parent == null) {
             breadcrumb = name;
         } else {
             parent = findById(parent.getId());
+            category.setParent(parent);
             normalizedName = normalizeName(parent.getName()) + "-" + normalizedName;
             breadcrumb = parent.getBreadcrumb() + "/" + name;
         }
-        category.setPath(normalizedName + "-" + category.getId());
+        category.setPath(normalizedName);
         category.setBreadcrumb(breadcrumb);
+    }
 
+    @Override
+//    @Transactional
+    public void merge(Category category) {
+        populateCategory(category);
 
-//        if (parent != null) {
-//            String parentPath;
-//            if (parent.getHierarchyPath() == null) {
-//                parentPath = String.valueOf(parent.getId());
-//            } else {
-//                parentPath = parent.getHierarchyPath();
-//            }
-//            category.setHierarchyPath(parentPath + "-" + category.getId());
-//        } else {
-//            category.setHierarchyPath(String.valueOf(category.getId()));
-//        }
+        Category categoryTest = findById(10L);
+        Category parent = categoryTest.getParent();
 
-//        if (parent == null) {
-//            category.setHierarchyPath(String.valueOf(category.getId()));
-//        } else {
-//            category.setHierarchyPath(parent.getHierarchyPath() + "-" + category.getId());
-//        }
-//        entityManager.flush();
+//        Set<Category> children = parent.getChildren();
+//        children.remove(categoryTest);
+//        entityManager.merge(parent);
+
+        Category newParent = findById(4L);
+        newParent.setChildren(Set.of(categoryTest));
+        entityManager.merge(newParent);
+
+        categoryTest.setParent(newParent);
+        entityManager.merge(categoryTest);
+    }
+
+    @Transactional
+    public void test(Category category) {
+        populateCategory(category);
+        category.setPath(category.getPath() + "-" + category.getId());
+        entityManager.merge(category);
+    }
+
+    @Transactional
+    public void save(Category category) {
+        populateCategory(category);
+        entityManager.persist(category);
+        category.setPath(category.getPath() + "-" + category.getId());
     }
 
     public void delete(Category category) {

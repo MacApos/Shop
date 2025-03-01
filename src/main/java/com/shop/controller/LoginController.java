@@ -25,11 +25,6 @@ public class LoginController {
         return userService.findByEmail(user.getEmail());
     }
 
-    @GetMapping("/authenticated")
-    public ResponseEntity<?> authenticatedAccess() {
-        return ResponseEntity.ok("authenticated success");
-    }
-
     @GetMapping("/user-access")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> userAccess() {

@@ -1,13 +1,14 @@
 package com.shop.service;
 
 import com.shop.entity.Product;
-import com.shop.mapper.ProductMapper;
 import com.shop.repository.CategoryRepository;
 import com.shop.repository.ProductRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.shop.entity.Category;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class ProductService extends AbstractService<Product> {
     private final CategoryService categoryService;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final EntityManager entityManager;
 
     public List<Product> recursiveFindAllByCategory(Category category) {
         List<Category> children = categoryService.findAllByParentCategory(category);
@@ -54,13 +56,11 @@ public class ProductService extends AbstractService<Product> {
         return productRepository.findAll();
     }
 
-    public Product findById(Long id) {
-        return productRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public boolean existsById(Long id) {
-        return productRepository.existsById(id);
+    @Transactional
+    public void test() {
+        Product product = findById(10L);
+        product.setCategory(categoryService.findById(4L));
+        entityManager.merge(product);
     }
 
     public boolean existsByNameAndCategory(String name, Category category) {
@@ -73,6 +73,10 @@ public class ProductService extends AbstractService<Product> {
 
     public Product findByPathAndCategory(String path, Category category) {
         return productRepository.findByPathAndCategory(path, category);
+    }
+
+    public boolean existByCategoryId(Long categoryId) {
+        return productRepository.existsByCategoryId(categoryId) != null;
     }
 
     public void save(Product product) {

@@ -16,9 +16,6 @@ public class UniqueCategoryValidator implements ConstraintValidator<UniqueCatego
 
     @Override
     public boolean isValid(Category category, ConstraintValidatorContext constraintValidatorContext) {
-        if (category == null) {
-            return false;
-        }
         return !categoryService.existsByNameAndParent(category);
     }
 }

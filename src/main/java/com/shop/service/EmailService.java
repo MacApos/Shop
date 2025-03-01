@@ -46,7 +46,7 @@ public class EmailService {
     }
 
     public void sendHtmlMessage(EmailEvent event) {
-        Locale locale  = LocaleContextHolder.getLocale();
+        Locale locale = LocaleContextHolder.getLocale();
         String subject = messageService.getMessage(event.getSubjectCode(), locale);
         Context context = new Context(locale);
         context.setVariables(event.getVariables());

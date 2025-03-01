@@ -1,9 +1,7 @@
 package com.shop.service;
 
 import com.shop.entity.Cart;
-import com.shop.entity.CartItem;
 import com.shop.entity.User;
-import com.shop.mapper.CartMapper;
 import com.shop.repository.CartRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;

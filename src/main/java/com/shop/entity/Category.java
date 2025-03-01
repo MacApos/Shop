@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shop.validation.cartItem.group.defaults.CreateCartItemDefaults;
 import com.shop.validation.category.annotation.*;
-import com.shop.validation.category.group.database.ParentHasChildrenGroup;
+import com.shop.validation.category.group.database.ParentHasNoProductsGroup;
 import com.shop.validation.category.group.defaults.DeleteCategoryDefaults;
 import com.shop.validation.category.group.database.CategoryExistsByIdGroup;
 import com.shop.validation.category.group.defaults.CreateCategoryDefaults;
@@ -44,7 +44,7 @@ public class Category implements Comparable<Category>{
 
     private String breadcrumb;
 
-    @ParentHasChildren(groups = ParentHasChildrenGroup.class)
+    @ParentHasNoProducts(groups = ParentHasNoProductsGroup.class)
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference

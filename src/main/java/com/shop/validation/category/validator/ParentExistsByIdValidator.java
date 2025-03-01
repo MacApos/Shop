@@ -21,7 +21,6 @@ public class ParentExistsByIdValidator implements ConstraintValidator<ParentExis
                 .addPropertyNode("parent")
                 .addConstraintViolation();
         Category parent = category.getParent();
-
         if (parent == null) {
             return true;
         }
@@ -29,6 +28,7 @@ public class ParentExistsByIdValidator implements ConstraintValidator<ParentExis
         if (parentId == null) {
             return false;
         }
+
         Long id = category.getId();
         if (id != null && id.equals(parentId)) {
             constraintValidatorContext.disableDefaultConstraintViolation();

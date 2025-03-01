@@ -24,7 +24,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     boolean existsByNameAndParent(String name, Category parent);
 
-    @Query(value = "select 1 from category where name like 'Category3' and parent_id = 1;",
+    @Query(value = "select 1 from category where name like :name and parent_id = :parentId;",
             nativeQuery = true)
     Long existsByNameAndParentId(@Param("name") String name, @Param("parentId") Long parentId);
 }

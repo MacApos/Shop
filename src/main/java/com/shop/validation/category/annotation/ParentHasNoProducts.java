@@ -1,7 +1,6 @@
 package com.shop.validation.category.annotation;
 
-import com.shop.validation.category.validator.ParentExistsByIdValidator;
-import com.shop.validation.category.validator.ParentHasChildrenValidator;
+import com.shop.validation.category.validator.ParentHasNoProductsValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -12,10 +11,10 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {ParentHasChildrenValidator.class})
-public @interface ParentHasChildren {
+@Constraint(validatedBy = {ParentHasNoProductsValidator.class})
+public @interface ParentHasNoProducts {
 
-    String message() default "";
+    String message() default "{parent.has.products}";
 
     Class<?>[] groups() default {};
 

@@ -1,16 +1,17 @@
 package com.shop.controller;
 
-import com.shop.validation.category.group.defaults.UpdateCategoryDefaults;
-import com.shop.validation.category.group.sequence.CreateCategorySequence;
-import com.shop.validation.category.group.sequence.UpdateCategorySequence;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 import com.shop.entity.Category;
+import com.shop.repository.CategoryRepository;
 import com.shop.service.CategoryService;
 import com.shop.service.ProductService;
+import com.shop.validation.category.group.sequence.CreateCategorySequence;
+import com.shop.validation.category.group.sequence.UpdateCategorySequence;
+import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,7 @@ import java.util.Set;
 public class CategoryController {
     private final CategoryService categoryService;
     private final ProductService productService;
+    private final CategoryRepository categoryRepository;
 
     @GetMapping("/all")
     public List<Category> getAllCategories() {
@@ -50,17 +52,17 @@ public class CategoryController {
         return categoryService.findParents(category);
     }
 
-    @PostMapping("/create")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/admin/create")
     public ResponseEntity<Object> create(@RequestBody @Validated(CreateCategorySequence.class) Category category) {
         categoryService.save(category);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    private final EntityManager entityManager;
+
+    @PutMapping("/admin/update")
     public ResponseEntity<Object> update(@RequestBody @Validated(UpdateCategorySequence.class) Category category) {
-        categoryService.save(category);
+        categoryService.test(category);
         return ResponseEntity.ok().build();
     }
 }

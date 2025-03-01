@@ -4,8 +4,8 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,20 +16,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class ControllerExceptionHandler {
+public class GlobalExceptionHandler {
+
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNoResourceFoundException() {
         HttpStatus notFound = HttpStatus.NOT_FOUND;
         return ResponseEntity.status(notFound).body(Map.of("message", notFound.toString()));
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Map<String, Object>> handleBadCredentialsException() {
         HttpStatus unauthorized = HttpStatus.UNAUTHORIZED;
         return ResponseEntity.status(unauthorized).body(Map.of("message", unauthorized.toString()));
     }
 
-    @ExceptionHandler(AuthorizationDeniedException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException() {
         HttpStatus forbidden = HttpStatus.FORBIDDEN;
         return ResponseEntity.status(forbidden).body(Map.of("message", forbidden.toString()));
@@ -51,7 +52,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(BindException ex) {
-        BindingResult bindingResult = ex.getBindingResult();
+            BindingResult bindingResult = ex.getBindingResult();
 
         HashMap<String, Object> errors = new HashMap<>();
         bindingResult.getGlobalErrors().forEach(error -> errors.put(

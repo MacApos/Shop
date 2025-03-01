@@ -14,13 +14,12 @@ public class UserService extends AbstractService<User> {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EntityManager entityManager;
-    private final UserMapper userMapper;
 
-    public UserService(EntityManager entityManager, UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    public UserService(EntityManager entityManager, UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper, UserMapper userMapper1) {
+        super.setMapper(userMapper);
         this.entityManager = entityManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
     }
 
     public User findByUsername(String username) {
@@ -35,15 +34,6 @@ public class UserService extends AbstractService<User> {
         return userRepository.findByEmail(newEmail);
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public boolean existsById(Long id) {
-        return userRepository.existsById(id);
-    }
-
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
@@ -55,10 +45,6 @@ public class UserService extends AbstractService<User> {
 
     public boolean existsByUsernameOrEmail(User user) {
         return userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail());
-    }
-
-    public void update(User source, User target) {
-        userMapper.update(source, target);
     }
 
     @Transactional

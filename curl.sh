@@ -129,6 +129,7 @@ curl -X POST http://localhost:8080/category/create -H "Content-Type: application
 -d '{
     "name": "Category1"
 }'
+
 # invalid name
 curl -X POST http://localhost:8080/category/create -H "Content-Type: application/json" \
 -d '{
@@ -143,12 +144,14 @@ curl -X POST http://localhost:8080/category/create -H "Content-Type: application
       "id":1
     }
 }'
+
 # already exists
 ## no parent
 curl -X POST http://localhost:8080/category/create -H "Content-Type: application/json" \
 -d '{
     "name": "Category1"
 }'
+
 ## with parent
 curl -X POST http://localhost:8080/category/create -H "Content-Type: application/json" \
 -d '{
@@ -185,3 +188,10 @@ curl -X POST http://localhost:8080/category/create -H "Content-Type: application
     }
 }'
 
+# "/update"
+# valid name - no parent change
+curl -X POST http://localhost:8080/category/update -H "Content-Type: application/json" \
+-d '{
+    "id":10,
+    "name": "Nakrycia głowy"
+}'

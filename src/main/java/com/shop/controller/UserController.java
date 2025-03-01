@@ -102,7 +102,6 @@ public class UserController {
     public User updatePassword(@RequestBody @Validated(UpdatePasswordSequence.class) User user) {
         User existingUser = userService.findByEmail(user.getEmail());
         userService.update(user, existingUser);
-        userService.save(existingUser);
         return existingUser;
     }
 
@@ -140,7 +139,6 @@ public class UserController {
     public User update(@RequestBody @Validated(UpdateUserSequence.class) User user) {
         User existingUser = userService.findByUsername(user.getUsername());
         userService.update(user, existingUser);
-        userService.save(existingUser);
         return existingUser;
     }
 }
