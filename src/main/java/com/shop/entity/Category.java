@@ -9,6 +9,7 @@ import com.shop.validation.category.group.database.*;
 import com.shop.validation.category.group.defaults.DeleteCategoryDefaults;
 import com.shop.validation.category.group.defaults.CreateCategoryDefaults;
 import com.shop.validation.category.group.defaults.ValidNameGroup;
+import com.shop.validation.global.annotation.MinSize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,9 +26,10 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 @CategoryExists(groups = CategoryExistsGroup.class)
-@ParentExistsById(groups = ParentExistsByIdGroup.class)
-@ParentIsNotItselfChild(groups = ParentIsNotItselfChildGroup.class)
+@ParentExists(groups = ParentExistsGroup.class)
 @UniqueCategory(groups = UniqueCategoryGroup.class)
+@ParentHasNoProducts(groups = ParentHasNoProductsGroup.class)
+@ParentIsNotItselfChild(groups = ParentIsNotItselfChildGroup.class)
 @CategoryHasNoChild(groups = CategoryHasNoChildGroup.class)
 public class Category implements Comparable<Category>{
     @Id
@@ -35,20 +37,17 @@ public class Category implements Comparable<Category>{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(groups = CreateCategoryDefaults.class)
-    @Size(min = 3, groups = CreateCategoryDefaults.class)
+    @NotNull
+    @MinSize( groups = CreateCategoryDefaults.class)
     @ValidName(groups = ValidNameGroup.class)
     private String name;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String path;
 
-    @Transient
-    @ToString.Exclude
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private List<Category> hierarchy;
+    private String hierarchy;
 
-    @ParentHasNoProducts(groups = ParentHasNoProductsGroup.class)
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
@@ -57,7 +56,6 @@ public class Category implements Comparable<Category>{
     @Transient
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    @JsonIgnore
     private Set<Category> children;
 
     @Transient

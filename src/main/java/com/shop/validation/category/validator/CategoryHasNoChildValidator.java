@@ -9,7 +9,6 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-// remove
 @Component
 @RequiredArgsConstructor
 public class CategoryHasNoChildValidator implements ConstraintValidator<CategoryHasNoChild, Category> {
@@ -17,6 +16,7 @@ public class CategoryHasNoChildValidator implements ConstraintValidator<Category
 
     @Override
     public boolean isValid(Category category, ConstraintValidatorContext constraintValidatorContext) {
-        return !categoryService.existsByParent(category.getId());
+        Long id = category.getId();
+        return id != null && !categoryService.existsByParent(id);
     }
 }

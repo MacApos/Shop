@@ -3,6 +3,7 @@ package com.shop.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.validation.cartItem.group.defaults.CreateCartItemDefaults;
+import com.shop.validation.global.annotation.MinSize;
 import com.shop.validation.product.annotation.ProductExists;
 import com.shop.validation.product.annotation.UniqueProduct;
 import com.shop.validation.product.group.database.ProductExistsGroup;
@@ -35,17 +36,18 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(groups = CreateProductDefaults.class)
-    @Size(min = 3, groups = CreateProductDefaults.class)
+    @NotNull
+    @MinSize(groups = CreateProductDefaults.class)
     private String name;
 
-    @NotNull(groups = CreateProductDefaults.class)
-    @Size(min = 10, groups = CreateProductDefaults.class)
+    @NotNull
+    @MinSize(min = 10, groups = CreateProductDefaults.class)
     private String description;
 
+    @NotNull
+    @DecimalMin(value = "0.1")
     @NotNull(groups = CreateProductDefaults.class)
     @DecimalMin(value = "0.1", groups = CreateProductDefaults.class)
-    @ColumnDefault("0.1") // remove
     private Double price;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -54,6 +56,7 @@ public class Product {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String path;
 
+    @NotNull
     @NotNull(groups = {CreateProductDefaults.class, CreateCartItemDefaults.class})
     @Valid
     @ManyToOne

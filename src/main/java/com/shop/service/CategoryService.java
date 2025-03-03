@@ -1,5 +1,6 @@
 package com.shop.service;
 
+import com.shop.mapper.CategoryMapper;
 import com.shop.repository.CategoryRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import com.shop.entity.Category;
 
 import java.text.Normalizer;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -16,6 +18,7 @@ import java.util.stream.Stream;
 public class CategoryService extends AbstractService<Category> {
     private final CategoryRepository categoryRepository;
     private final EntityManager entityManager;
+    private final CategoryMapper categoryMapper;
 
     private List<Category> sortCategories(List<Category> categories) {
         if (categories.size() > 1) {
@@ -53,7 +56,7 @@ public class CategoryService extends AbstractService<Category> {
         Set<Category> set = new TreeSet<>();
 
         for (Category parent : parents) {
-            List<Category> children = categoryRepository.findAllByParent(parent);
+            List<Category> children = findAllByParent(parent);
             if (!children.isEmpty()) {
                 parent.setChildren(new TreeSet<>(recursiveFindChildren(children, parent.getId())));
             }
@@ -68,7 +71,7 @@ public class CategoryService extends AbstractService<Category> {
 
         for (int i = 0; i < parents.size(); i++) {
             Category parent = parents.get(i);
-            List<Category> foundChildren = categoryRepository.findAllByParent(parent);
+            List<Category> foundChildren = findAllByParent(parent);
             if (!foundChildren.isEmpty()) {
                 parents.addAll(foundChildren);
             } else {
@@ -79,6 +82,36 @@ public class CategoryService extends AbstractService<Category> {
     }
 
     public Set<Category> getHierarchy() {
+        List<Category> categories = new ArrayList<>(categoryRepository.findAllByParentIsNull());
+        TreeSet<Category> hierarchy = new TreeSet<>(categories);
+
+        Deque<Category> deque = new ArrayDeque<>(categories);
+        while (!deque.isEmpty()) {
+            Category currentCategory = deque.pop();
+            List<Category> children = findAllByParent(currentCategory);
+            if (!children.isEmpty()) {
+                currentCategory.setChildren(new TreeSet<>(children));
+                deque.addAll(children);
+            }
+        }
+        return hierarchy;
+    }
+
+    public Set<Category> getHierarchyV2() {
+        List<Category> categories = new ArrayList<>(categoryRepository.findAllByParentIsNull());
+        TreeSet<Category> hierarchy = new TreeSet<>(categories);
+        for (int i = 0; i < categories.size(); i++) {
+            Category category = categories.get(i);
+            List<Category> children = findAllByParent(category);
+            if (!children.isEmpty()) {
+                category.setChildren(new TreeSet<>(children));
+                categories.addAll(children);
+            }
+        }
+        return hierarchy;
+    }
+
+    public Set<Category> getHierarchyV3() {
         List<Category> categories = categoryRepository.findAllByParentIsNull();
         Set<Category> categorySet = new TreeSet<>();
         for (Category grandparent : categories) {
@@ -87,25 +120,12 @@ public class CategoryService extends AbstractService<Category> {
         return categorySet;
     }
 
-    public TreeSet<Category> getHierarchyV2() {
-        List<Category> categories = categoryRepository.findAllByParentIsNull();
-        TreeSet<Category> hierarchy = new TreeSet<>(categories);
-        for (int i = 0; i < categories.size(); i++) {
-            Category category = categories.get(i);
-            TreeSet<Category> children = new TreeSet<>(categoryRepository.findAllByParent(category));
-            if (!children.isEmpty()) {
-                category.setChildren(children);
-                categories.addAll(i + 1, children);
-            }
-        }
-        return hierarchy;
-    }
-
     public Category findChildren(Category category) {
         List<Category> categories = new ArrayList<>(List.of(category));
 
-        for (Category cat : categories) {
-            List<Category> children = categoryRepository.findAllByParent(cat);
+        for (int i = 0; i < categories.size(); i++) {
+            Category cat = categories.get(i);
+            List<Category> children = findAllByParent(cat);
             if (!children.isEmpty()) {
                 cat.setChildren(new TreeSet<>(children));
                 categories.addAll(children);
@@ -115,27 +135,79 @@ public class CategoryService extends AbstractService<Category> {
     }
 
     public List<Category> getHierarchyFlat() {
-        List<Category> categories = categoryRepository.findAllByParentIsNull();
+        List<Category> categories = new ArrayList<>(categoryRepository.findAllByParentIsNull());
         Collections.sort(categories);
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
-            List<Category> children = categoryRepository.findAllByParent(cat);
+            List<Category> children = findAllByParent(cat);
             if (!children.isEmpty()) {
                 Collections.sort(children);
-                int j = i;
-                children.forEach(child -> categories.add(j + 1 + children.indexOf(child), child));
+                categories.addAll(i + 1, children);
             }
         }
         return categories;
     }
 
+    private TreeSet<Category> filterCategories(List<Category> categories, Category category) {
+        return categories
+                .stream()
+                .filter(c -> !c.equals(category))
+                .collect(Collectors.toCollection(TreeSet::new));
+    }
 
-    public List<Category> getAlternativeParents(Category category) {
-        List<Category> categories = categoryRepository.findAllByParentIsNull();
-        TreeSet<Category> categories1 = new TreeSet<>(categories);
+    public Set<Category> getAlternativeParentsV2(Category category) {
+        List<Category> categories = new ArrayList<>(categoryRepository.findAllByParentIsNull());
+        Set<Category> alternatives = filterCategories(categories, category);
 
+        boolean found = false;
+        for (int i = 0; i < categories.size(); i++) {
+            Category currentCategory = categories.get(i);
+            List<Category> children = findAllByParent(currentCategory);
+            if (!children.isEmpty()) {
+                Set<Category> filtered;
+                if (!found && children.contains(category)) {
+                    found = true;
+                    filtered = filterCategories(children, category);
+                    if (filtered.isEmpty()) {
+                        continue;
+                    }
+                } else {
+                    filtered = new TreeSet<>(children);
+                }
+                currentCategory.setChildren(filtered);
+                categories.addAll(filtered);
+            }
+        }
+        return alternatives;
+    }
 
-        return List.of();
+    public Set<Category> getAlternativeParents(Category category) {
+        List<Category> categories = new ArrayList<>(categoryRepository.findAllByParentIsNull());
+        Set<Category> alternatives = filterCategories(categories, category);
+        Deque<Category> deque = new ArrayDeque<>(categories);
+
+        boolean found = false;
+        while (!deque.isEmpty()) {
+            Category currentCategory = deque.pop();
+            List<Category> children = findAllByParent(currentCategory);
+            if (!children.isEmpty()) {
+                Set<Category> filtered;
+                if (!found && children.contains(category)) {
+                    found = true;
+                    filtered = filterCategories(children, category);
+                    if (filtered.isEmpty()) {
+                        continue;
+                    }
+                } else {
+                    filtered = new TreeSet<>(children);
+                }
+
+                currentCategory.setChildren(filtered);
+                deque.addAll(filtered);
+            }
+        }
+
+        return alternatives;
     }
 
     public List<Category> findParents(Category category) {
@@ -173,14 +245,12 @@ public class CategoryService extends AbstractService<Category> {
         return categoryRepository.existsByParentId(id) != null;
     }
 
-    public boolean existsByNameAndParent(Category category) {
-        Category parent = category.getParent();
-        String name = category.getName();
-        if (parent == null) {
-            return categoryRepository.existsByNameAndParentIsNull(name);
-        }
-        Long parentId = parent.getId();
-        return categoryRepository.existsByNameAndParentId(name, parentId) != null;
+    public boolean existsByNameAndParent(String name, Category category) {
+        return categoryRepository.existsByNameAndParent(name, category);
+    }
+
+    public boolean existsByNameAndParentIsNull(String name) {
+        return categoryRepository.existsByNameAndParentIsNull(name);
     }
 
     public Category findByName(String name) {
@@ -206,29 +276,54 @@ public class CategoryService extends AbstractService<Category> {
     }
 
     public void populateCategory(Category category) {
-        String name = category.getName();
-        String normalizedName = normalizeName(name);
+        String normalizedName = normalizeName(category.getName());
+        String hierarchy = String.valueOf(category.getId());
         Category parent = category.getParent();
         if (parent != null) {
-            parent = findById(parent.getId());
-            category.setParent(parent);
+            String name = parent.getName();
+            if (name == null) {
+                parent = findById(parent.getId());
+            }
             normalizedName = normalizeName(parent.getName()) + "-" + normalizedName;
+            hierarchy = parent.getHierarchy() + "-" + hierarchy;
         }
+        normalizedName = normalizedName + "-" + category.getId();
         category.setPath(normalizedName);
+        category.setHierarchy(hierarchy);
+    }
+
+    public void updateHierarchy(Category category) {
+        List<Category> categories = findAllByParent(category);
+        Deque<Category> deque = new ArrayDeque<>(categories);
+        while (!deque.isEmpty()) {
+            Category currentCategory = deque.pop();
+            Category parent = currentCategory.getParent();
+            List<Category> children = findAllByParent(currentCategory);
+            if (!children.isEmpty()) {
+                deque.addAll(children);
+            }
+            currentCategory.setHierarchy(parent.getHierarchy() + "-" + currentCategory.getId());
+            entityManager.persist(currentCategory);
+        }
     }
 
     @Transactional
     public void update(Category category) {
-        populateCategory(category);
-        category.setPath(category.getPath() + "-" + category.getId());
-        entityManager.merge(category);
+        Long id = category.getId();
+        Category existingCategory = findById(id);
+        boolean newParent = !existingCategory.getParent().equals(category.getParent());
+        categoryMapper.update(category, existingCategory);
+        save(existingCategory);
+
+        if (newParent) {
+            updateHierarchy(existingCategory);
+        }
     }
 
     @Transactional
     public void save(Category category) {
-        populateCategory(category);
         entityManager.persist(category);
-        category.setPath(category.getPath() + "-" + category.getId());
+        populateCategory(category);
     }
 
     public void delete(Category category) {

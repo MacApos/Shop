@@ -1,7 +1,6 @@
 package com.shop.service;
 
 import com.shop.entity.Product;
-import com.shop.repository.CategoryRepository;
 import com.shop.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +16,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductService extends AbstractService<Product> {
-    private final CategoryService categoryService;
+    private final CategoryService categoryRepository;
     private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
     private final EntityManager entityManager;
 
     public List<Product> recursiveFindAllByCategory(Category category) {
-        List<Category> children = categoryService.findAllByParent(category);
+        List<Category> children = categoryRepository.findAllByParent(category);
         List<Product> productList = new ArrayList<>();
 
         if (!children.isEmpty()) {
@@ -59,7 +57,7 @@ public class ProductService extends AbstractService<Product> {
     @Transactional
     public void test() {
         Product product = findById(10L);
-        product.setCategory(categoryService.findById(4L));
+        product.setCategory(categoryRepository.findById(4L));
         entityManager.merge(product);
     }
 
@@ -87,15 +85,15 @@ public class ProductService extends AbstractService<Product> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product already exists.");
         }
         Long categoryId = category.getId();
-        if (categoryId == null || categoryService.findById(categoryId) == null) {
+        if (categoryId == null || categoryRepository.findById(categoryId) == null) {
             throw new Error("Category doesn't exists.");
         }
-        List<Category> children = categoryService.findAllByParent(category);
+        List<Category> children = categoryRepository.findAllByParent(category);
         if (!children.isEmpty()) {
             throw new Error("Can't add product to parent category.");
         }
 
-        product.setPath(categoryService.normalizeName(name));
+        product.setPath(categoryRepository.normalizeName(name));
         productRepository.save(product);
     }
 }

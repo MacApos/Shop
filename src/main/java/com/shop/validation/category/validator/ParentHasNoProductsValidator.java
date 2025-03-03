@@ -14,7 +14,8 @@ public class ParentHasNoProductsValidator implements ConstraintValidator<ParentH
     private final ProductService productService;
 
     @Override
-    public boolean isValid(Category parent, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(Category category, ConstraintValidatorContext constraintValidatorContext) {
+        Category parent = category.getParent();
         if (parent == null) {
             return true;
         }

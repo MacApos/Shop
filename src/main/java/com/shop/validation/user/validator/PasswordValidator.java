@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Component
-public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
+public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext constraintValidatorContext) {
@@ -29,7 +29,7 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
         }
 
         MessageResolver resolver = new PropertiesMessageResolver(props);
-        PasswordValidator validator = new PasswordValidator(resolver,
+        org.passay.PasswordValidator validator = new org.passay.PasswordValidator(resolver,
                 new LengthRule(8, 16),
                 new CharacterRule(EnglishCharacterData.UpperCase, 1),
                 new CharacterRule(EnglishCharacterData.LowerCase, 1),

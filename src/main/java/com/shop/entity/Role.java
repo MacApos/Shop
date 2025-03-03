@@ -1,6 +1,7 @@
 package com.shop.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -14,9 +15,11 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private RoleEnum name;
 
+    @NotNull
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;

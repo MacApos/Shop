@@ -20,6 +20,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     boolean existsByNameAndParentIsNull(String name);
 
+    boolean existsByNameAndParent(String name, Category category);
+
     @Query(value = "select 1 from category where parent_id = :parentId;", nativeQuery = true)
     Long existsByParentId(@Param("parentId") Long parentId);
 

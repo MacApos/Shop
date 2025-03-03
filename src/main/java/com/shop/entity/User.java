@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 //import com.shop.validation.user.annotation.*;
+import com.shop.validation.global.annotation.MinSize;
 import com.shop.validation.user.annotation.*;
 //import com.shop.validation.user.annotation.UserExists;
 import com.shop.validation.user.group.defaults.DefaultPassword;
@@ -31,20 +32,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    @NotNull(groups = DefaultUpdateUser.class)
-    @Size(min = 3, groups = DefaultUpdateUser.class)
+    @NotNull
+    @MinSize(groups = DefaultUpdateUser.class)
     @UniqueUsername(groups = {CreateUser.class, UpdateUser.class})
+    @Column(unique = true)
     private String username;
 
-    @NotNull(groups = DefaultUpdateUser.class)
-    @Size(min = 3, groups = DefaultUpdateUser.class)
+    @NotNull
+    @MinSize(groups = DefaultUpdateUser.class)
     private String firstname;
 
-    @NotNull(groups = DefaultUpdateUser.class)
-    @Size(min = 3, groups = DefaultUpdateUser.class)
+    @NotNull
+    @MinSize(groups = DefaultUpdateUser.class)
     private String lastname;
 
+    @NotNull
     @NotNull(groups = DefaultPassword.class)
     @ValidPassword(groups = ResetPassword.class)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -54,10 +56,11 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passwordConfirm;
 
-    @Column(unique = true)
+    @NotNull
     @NotNullEmail(groups = DefaultEmail.class)
     @UniqueEmail(groups = CreateUser.class)
     @UserExists(groups = UserExistsByEmail.class)
+    @Column(unique = true)
     private String email;
 
     @NotNullEmail(groups = DefaultNewEmail.class)

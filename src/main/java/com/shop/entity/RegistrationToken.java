@@ -1,5 +1,6 @@
 package com.shop.entity;
 
+import com.shop.validation.global.annotation.MinSize;
 import com.shop.validation.user.annotation.TokenExists;
 import com.shop.validation.user.annotation.ValidToken;
 import com.shop.validation.user.group.defaults.DefaultToken;
@@ -26,9 +27,8 @@ public class RegistrationToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 3)
-    @NotNull(message = "{invalid.token}", groups = DefaultToken.class)
-    @Size(min = 3, message = "{invalid.token}", groups = DefaultToken.class)
+    @NotNull
+    @MinSize(min = 10, message = "{invalid.token}", groups = DefaultToken.class)
     @TokenExists(groups = UserExistsByEmail.class)
     private String token;
 
@@ -42,9 +42,9 @@ public class RegistrationToken {
     @Future(message = "{expired.token}")
     private LocalDateTime expiryDate;
 
-    @ColumnDefault("true")
     @NotNull
     @AssertTrue(message = "{used.token}", groups = ValidToken.class)
+    @ColumnDefault("true")
     private boolean active = true;
 
     public RegistrationToken() {

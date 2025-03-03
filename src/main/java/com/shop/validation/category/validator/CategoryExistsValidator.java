@@ -16,9 +16,6 @@ public class CategoryExistsValidator implements ConstraintValidator<CategoryExis
     @Override
     public boolean isValid(Category category, ConstraintValidatorContext constraintValidatorContext) {
         Long id = category.getId();
-        if (id == null) {
-            return false;
-        }
-        return categoryService.existsById(id);
+        return id != null && categoryService.existsById(id);
     }
 }

@@ -1,6 +1,6 @@
 package com.shop.validation.user.annotation;
 
-import com.shop.validation.user.validator.PasswordConstraintValidator;
+import com.shop.validation.user.validator.PasswordValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {PasswordConstraintValidator.class})
+@Constraint(validatedBy = {PasswordValidator.class})
 public @interface ValidPassword {
 
     String message() default "{jakarta.validation.constraints.NotNull.message}";

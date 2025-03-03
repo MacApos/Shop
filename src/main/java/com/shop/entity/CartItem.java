@@ -27,10 +27,11 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Min(value =1)
     @Min(value = 1, groups = {CreateCartItemDefaults.class, UpdateCartItemDefaults.class})
-    @ColumnDefault("1")
     private int quantity = 1;
 
+    @NotNull
     @NotNull(groups = CreateCartItemDefaults.class)
     @Valid
     @ManyToOne

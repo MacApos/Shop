@@ -1,7 +1,6 @@
 package com.shop.validation.category.annotation;
 
-import com.shop.validation.category.validator.ParentExistsByIdValidator;
-import com.shop.validation.category.validator.ValidNameValidator;
+import com.shop.validation.category.validator.ParentExistsValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -12,8 +11,8 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {ParentExistsByIdValidator.class})
-public @interface ParentExistsById {
+@Constraint(validatedBy = {ParentExistsValidator.class})
+public @interface ParentExists {
 
     String message() default "{does.not.exist}";
 
