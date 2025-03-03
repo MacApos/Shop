@@ -1,7 +1,6 @@
 package com.shop.validation.product.annotation;
 
-import com.shop.validation.product.validator.ProductExistsByIdValidator;
-import com.shop.validation.user.validator.ConfirmPasswordValidator;
+import com.shop.validation.product.validator.UniqueProductValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -10,12 +9,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.FIELD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {ProductExistsByIdValidator.class})
-public @interface ProductExistsById {
+@Constraint(validatedBy = {UniqueProductValidator.class})
+public @interface UniqueProduct {
 
-    String message() default "{does.not.exist}";
+    String message() default "{already.exists}";
 
     Class<?>[] groups() default {};
 

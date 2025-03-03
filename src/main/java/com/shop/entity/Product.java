@@ -1,13 +1,19 @@
 package com.shop.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.validation.cartItem.group.defaults.CreateCartItemDefaults;
-import com.shop.validation.product.annotation.ProductExistsById;
-import com.shop.validation.product.group.ProductExistsByIdGroup;
+import com.shop.validation.product.annotation.ProductExists;
+import com.shop.validation.product.annotation.UniqueProduct;
+import com.shop.validation.product.group.database.ProductExistsGroup;
+import com.shop.validation.product.group.database.UniqueProductGroup;
+import com.shop.validation.product.group.defaults.CreateProductDefaults;
+import com.shop.validation.product.group.defaults.DeleteProductDefaults;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -21,28 +27,34 @@ import java.util.Set;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "category_id"}))
 @Data
 @NoArgsConstructor
+@ProductExists(groups = ProductExistsGroup.class)
+@UniqueProduct(groups = UniqueProductGroup.class)
 public class Product {
     @Id
-    @NotNull(groups = CreateCartItemDefaults.class)
-    @ProductExistsById(groups = ProductExistsByIdGroup.class)
+    @NotNull(groups = {DeleteProductDefaults.class, CreateCartItemDefaults.class})
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotNull(groups = CreateProductDefaults.class)
+    @Size(min = 3, groups = CreateProductDefaults.class)
     private String name;
 
+    @NotNull(groups = CreateProductDefaults.class)
+    @Size(min = 10, groups = CreateProductDefaults.class)
     private String description;
 
-    @DecimalMin(value = "0.1")
-    @ColumnDefault("0.1")
-    private Double price = 0.1;
+    @NotNull(groups = CreateProductDefaults.class)
+    @DecimalMin(value = "0.1", groups = CreateProductDefaults.class)
+    @ColumnDefault("0.1") // remove
+    private Double price;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String image;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String path;
 
-    @NotNull
-    @NotNull(groups = CreateCartItemDefaults.class)
+    @NotNull(groups = {CreateProductDefaults.class, CreateCartItemDefaults.class})
     @Valid
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

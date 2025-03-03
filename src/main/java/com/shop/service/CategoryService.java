@@ -1,7 +1,5 @@
 package com.shop.service;
 
-import com.shop.entity.Product;
-import com.shop.mapper.CategoryMapper;
 import com.shop.repository.CategoryRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -14,15 +12,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService extends AbstractService<Category> {
     private final CategoryRepository categoryRepository;
     private final EntityManager entityManager;
-
-    public CategoryService(CategoryRepository categoryRepository, EntityManager entityManager, CategoryMapper categoryMapper) {
-        super.setMapper(categoryMapper);
-        this.categoryRepository = categoryRepository;
-        this.entityManager = entityManager;
-    }
 
     private List<Category> sortCategories(List<Category> categories) {
         if (categories.size() > 1) {
@@ -60,7 +53,7 @@ public class CategoryService extends AbstractService<Category> {
         Set<Category> set = new TreeSet<>();
 
         for (Category parent : parents) {
-            List<Category> children = categoryRepository.findAllChildrenByParent(parent);
+            List<Category> children = categoryRepository.findAllByParent(parent);
             if (!children.isEmpty()) {
                 parent.setChildren(new TreeSet<>(recursiveFindChildren(children, parent.getId())));
             }
@@ -75,7 +68,7 @@ public class CategoryService extends AbstractService<Category> {
 
         for (int i = 0; i < parents.size(); i++) {
             Category parent = parents.get(i);
-            List<Category> foundChildren = categoryRepository.findAllChildrenByParent(parent);
+            List<Category> foundChildren = categoryRepository.findAllByParent(parent);
             if (!foundChildren.isEmpty()) {
                 parents.addAll(foundChildren);
             } else {
@@ -83,20 +76,6 @@ public class CategoryService extends AbstractService<Category> {
             }
         }
         return lastChildren;
-    }
-
-    public Category findChildren(Category category) {
-        List<Category> categories = new ArrayList<>(List.of(category));
-
-        for (int i = 0; i < categories.size(); i++) {
-            Category cat = categories.get(i);
-            List<Category> children = categoryRepository.findAllChildrenByParent(cat);
-            if (!children.isEmpty()) {
-                cat.setChildren(new TreeSet<>(children));
-                categories.addAll(children);
-            }
-        }
-        return category;
     }
 
     public Set<Category> getHierarchy() {
@@ -108,13 +87,39 @@ public class CategoryService extends AbstractService<Category> {
         return categorySet;
     }
 
+    public TreeSet<Category> getHierarchyV2() {
+        List<Category> categories = categoryRepository.findAllByParentIsNull();
+        TreeSet<Category> hierarchy = new TreeSet<>(categories);
+        for (int i = 0; i < categories.size(); i++) {
+            Category category = categories.get(i);
+            TreeSet<Category> children = new TreeSet<>(categoryRepository.findAllByParent(category));
+            if (!children.isEmpty()) {
+                category.setChildren(children);
+                categories.addAll(i + 1, children);
+            }
+        }
+        return hierarchy;
+    }
+
+    public Category findChildren(Category category) {
+        List<Category> categories = new ArrayList<>(List.of(category));
+
+        for (Category cat : categories) {
+            List<Category> children = categoryRepository.findAllByParent(cat);
+            if (!children.isEmpty()) {
+                cat.setChildren(new TreeSet<>(children));
+                categories.addAll(children);
+            }
+        }
+        return category;
+    }
 
     public List<Category> getHierarchyFlat() {
         List<Category> categories = categoryRepository.findAllByParentIsNull();
         Collections.sort(categories);
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
-            List<Category> children = categoryRepository.findAllChildrenByParent(cat);
+            List<Category> children = categoryRepository.findAllByParent(cat);
             if (!children.isEmpty()) {
                 Collections.sort(children);
                 int j = i;
@@ -122,6 +127,15 @@ public class CategoryService extends AbstractService<Category> {
             }
         }
         return categories;
+    }
+
+
+    public List<Category> getAlternativeParents(Category category) {
+        List<Category> categories = categoryRepository.findAllByParentIsNull();
+        TreeSet<Category> categories1 = new TreeSet<>(categories);
+
+
+        return List.of();
     }
 
     public List<Category> findParents(Category category) {
@@ -155,6 +169,10 @@ public class CategoryService extends AbstractService<Category> {
         return categoryRepository.findAll();
     }
 
+    public boolean existsByParent(Long id) {
+        return categoryRepository.existsByParentId(id) != null;
+    }
+
     public boolean existsByNameAndParent(Category category) {
         Category parent = category.getParent();
         String name = category.getName();
@@ -173,8 +191,8 @@ public class CategoryService extends AbstractService<Category> {
         return categoryRepository.findByNameAndParent(category.getName(), category.getParent());
     }
 
-    public List<Category> findAllByParentCategory(Category category) {
-        return categoryRepository.findAllChildrenByParent(category);
+    public List<Category> findAllByParent(Category category) {
+        return categoryRepository.findAllByParent(category);
     }
 
     public String normalizeName(String unnormalized) {
@@ -188,45 +206,19 @@ public class CategoryService extends AbstractService<Category> {
     }
 
     public void populateCategory(Category category) {
-        Category parent = category.getParent();
         String name = category.getName();
         String normalizedName = normalizeName(name);
-        String breadcrumb;
-
-        if (parent == null) {
-            breadcrumb = name;
-        } else {
+        Category parent = category.getParent();
+        if (parent != null) {
             parent = findById(parent.getId());
             category.setParent(parent);
             normalizedName = normalizeName(parent.getName()) + "-" + normalizedName;
-            breadcrumb = parent.getBreadcrumb() + "/" + name;
         }
         category.setPath(normalizedName);
-        category.setBreadcrumb(breadcrumb);
-    }
-
-    @Override
-//    @Transactional
-    public void merge(Category category) {
-        populateCategory(category);
-
-        Category categoryTest = findById(10L);
-        Category parent = categoryTest.getParent();
-
-//        Set<Category> children = parent.getChildren();
-//        children.remove(categoryTest);
-//        entityManager.merge(parent);
-
-        Category newParent = findById(4L);
-        newParent.setChildren(Set.of(categoryTest));
-        entityManager.merge(newParent);
-
-        categoryTest.setParent(newParent);
-        entityManager.merge(categoryTest);
     }
 
     @Transactional
-    public void test(Category category) {
+    public void update(Category category) {
         populateCategory(category);
         category.setPath(category.getPath() + "-" + category.getId());
         entityManager.merge(category);

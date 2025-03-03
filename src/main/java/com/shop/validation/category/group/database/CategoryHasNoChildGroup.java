@@ -1,4 +1,4 @@
 package com.shop.validation.category.group.database;
 
-public interface CategoryExistsByIdGroup {
+public interface CategoryHasNoChildGroup {
 }

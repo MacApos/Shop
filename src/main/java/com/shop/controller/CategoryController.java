@@ -1,15 +1,12 @@
 package com.shop.controller;
 
 import com.shop.entity.Category;
-import com.shop.repository.CategoryRepository;
 import com.shop.service.CategoryService;
-import com.shop.service.ProductService;
 import com.shop.validation.category.group.sequence.CreateCategorySequence;
+import com.shop.validation.category.group.sequence.DeleteCategorySequence;
 import com.shop.validation.category.group.sequence.UpdateCategorySequence;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +18,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    private final ProductService productService;
-    private final CategoryRepository categoryRepository;
 
     @GetMapping("/all")
     public List<Category> getAllCategories() {
@@ -58,11 +53,15 @@ public class CategoryController {
         return ResponseEntity.ok().build();
     }
 
-    private final EntityManager entityManager;
-
     @PutMapping("/admin/update")
     public ResponseEntity<Object> update(@RequestBody @Validated(UpdateCategorySequence.class) Category category) {
-        categoryService.test(category);
+        categoryService.update(category);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/admin/delete")
+    public ResponseEntity<Object> delete(@RequestBody @Validated(DeleteCategorySequence.class) Category category) {
+        categoryService.delete(category);
         return ResponseEntity.ok().build();
     }
 }

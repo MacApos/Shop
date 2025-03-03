@@ -27,12 +27,10 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Min(value = 1)
     @Min(value = 1, groups = {CreateCartItemDefaults.class, UpdateCartItemDefaults.class})
     @ColumnDefault("1")
     private int quantity = 1;
 
-    @NotNull
     @NotNull(groups = CreateCartItemDefaults.class)
     @Valid
     @ManyToOne
@@ -45,10 +43,6 @@ public class CartItem {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Cart cart;
-
-    public CartItem(int quantity) {
-        this.quantity = quantity;
-    }
 
     public CartItem(int quantity, Product product) {
         this.quantity = quantity;

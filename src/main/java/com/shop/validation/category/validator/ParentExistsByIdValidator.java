@@ -2,7 +2,6 @@ package com.shop.validation.category.validator;
 
 import com.shop.entity.Category;
 import com.shop.service.CategoryService;
-import com.shop.validation.category.annotation.CategoryExistsById;
 import com.shop.validation.category.annotation.ParentExistsById;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -16,10 +15,6 @@ public class ParentExistsByIdValidator implements ConstraintValidator<ParentExis
 
     @Override
     public boolean isValid(Category category, ConstraintValidatorContext constraintValidatorContext) {
-        constraintValidatorContext.disableDefaultConstraintViolation();
-        constraintValidatorContext.buildConstraintViolationWithTemplate("{does.not.exist}")
-                .addPropertyNode("parent")
-                .addConstraintViolation();
         Category parent = category.getParent();
         if (parent == null) {
             return true;

@@ -1,7 +1,6 @@
 package com.shop.validation.category.validator;
 
 import com.shop.entity.Category;
-import com.shop.service.CategoryService;
 import com.shop.service.ProductService;
 import com.shop.validation.category.annotation.ParentHasNoProducts;
 import jakarta.validation.ConstraintValidator;

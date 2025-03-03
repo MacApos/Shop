@@ -77,7 +77,7 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
                 new Product("Dywan wzór 1", categoriesMap.get("Jednokolorowe dywany")),
                 new Product("Dywan wzór 2", categoriesMap.get("Jednokolorowe dywany")),
                 new Product("Dywan do salonu", categoriesMap.get("Różne dywany")),
-                new Product("Dywan dla dziecka", categoriesMap.get("Różne dywany")),
+                new Product("Dywan do łazienki", categoriesMap.get("Różne dywany")),
                 new Product("Torba 1", categoriesMap.get("Inne")),
                 new Product("Torba 2", categoriesMap.get("Inne"))
         );

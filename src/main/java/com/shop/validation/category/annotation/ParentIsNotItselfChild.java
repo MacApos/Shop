@@ -1,7 +1,7 @@
 package com.shop.validation.category.annotation;
 
-import com.shop.validation.category.validator.CategoryExistsByIdValidator;
-import com.shop.validation.product.validator.ProductExistsByIdValidator;
+import com.shop.validation.category.validator.ParentHasNoProductsValidator;
+import com.shop.validation.category.validator.ParentIsNotItselfChildValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -10,12 +10,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.FIELD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {CategoryExistsByIdValidator.class})
-public @interface CategoryExistsById {
+@Constraint(validatedBy = {ParentIsNotItselfChildValidator.class})
+public @interface ParentIsNotItselfChild {
 
-    String message() default "{does.not.exist}";
+    String message() default "";
 
     Class<?>[] groups() default {};
 

@@ -1,6 +1,8 @@
 {
-  "name": "newCategory",
-  "parent": {
-    "id": 1
+  "id":1,
+  "name":"new product",
+  "description":"new product description",
+  "category": {
+    "id": 2
   }
 }

@@ -2,14 +2,12 @@ package com.shop.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.validation.cartItem.group.defaults.CreateCartItemDefaults;
 import com.shop.validation.category.annotation.*;
-import com.shop.validation.category.group.database.ParentHasNoProductsGroup;
+import com.shop.validation.category.group.database.*;
 import com.shop.validation.category.group.defaults.DeleteCategoryDefaults;
-import com.shop.validation.category.group.database.CategoryExistsByIdGroup;
 import com.shop.validation.category.group.defaults.CreateCategoryDefaults;
-import com.shop.validation.category.group.database.ParentExistsByIdGroup;
-import com.shop.validation.category.group.database.UniqueCategoryGroup;
 import com.shop.validation.category.group.defaults.ValidNameGroup;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -26,12 +24,14 @@ import java.util.*;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "parent_id"}))
 @Data
 @NoArgsConstructor
-@UniqueCategory(groups = UniqueCategoryGroup.class)
+@CategoryExists(groups = CategoryExistsGroup.class)
 @ParentExistsById(groups = ParentExistsByIdGroup.class)
+@ParentIsNotItselfChild(groups = ParentIsNotItselfChildGroup.class)
+@UniqueCategory(groups = UniqueCategoryGroup.class)
+@CategoryHasNoChild(groups = CategoryHasNoChildGroup.class)
 public class Category implements Comparable<Category>{
     @Id
     @NotNull(groups = {DeleteCategoryDefaults.class, CreateCartItemDefaults.class})
-    @CategoryExistsById(groups = CategoryExistsByIdGroup.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -40,9 +40,13 @@ public class Category implements Comparable<Category>{
     @ValidName(groups = ValidNameGroup.class)
     private String name;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String path;
 
-    private String breadcrumb;
+    @Transient
+    @ToString.Exclude
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<Category> hierarchy;
 
     @ParentHasNoProducts(groups = ParentHasNoProductsGroup.class)
     @ManyToOne
@@ -53,6 +57,7 @@ public class Category implements Comparable<Category>{
     @Transient
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
+    @JsonIgnore
     private Set<Category> children;
 
     @Transient

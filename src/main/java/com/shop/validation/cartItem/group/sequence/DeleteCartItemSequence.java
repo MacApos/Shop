@@ -5,5 +5,5 @@ import com.shop.validation.cartItem.group.defaults.DeleteCartItemDefaults;
 import jakarta.validation.GroupSequence;
 
 @GroupSequence({DeleteCartItemDefaults.class, CartItemExistsGroup.class})
-public class DeleteCartItemSequence {
+public interface DeleteCartItemSequence {
 }

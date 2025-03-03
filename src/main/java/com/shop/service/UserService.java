@@ -30,10 +30,6 @@ public class UserService extends AbstractService<User> {
         return userRepository.findByEmail(email);
     }
 
-    public User findByNewEmail(String newEmail) {
-        return userRepository.findByEmail(newEmail);
-    }
-
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }

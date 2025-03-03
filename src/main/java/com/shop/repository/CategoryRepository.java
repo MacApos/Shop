@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    List<Category> findAllChildrenByParent(Category category);
+    List<Category> findAllByParent(Category category);
 
     List<Category> findAllByParentIsNull();
 
@@ -18,13 +18,11 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Category findByNameAndParent(String name, Category category);
 
-    boolean existsByName(String name);
-
     boolean existsByNameAndParentIsNull(String name);
 
-    boolean existsByNameAndParent(String name, Category parent);
+    @Query(value = "select 1 from category where parent_id = :parentId;", nativeQuery = true)
+    Long existsByParentId(@Param("parentId") Long parentId);
 
-    @Query(value = "select 1 from category where name like :name and parent_id = :parentId;",
-            nativeQuery = true)
+    @Query(value = "select 1 from category where name like :name and parent_id = :parentId;", nativeQuery = true)
     Long existsByNameAndParentId(@Param("name") String name, @Param("parentId") Long parentId);
 }

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.shop.common.CategoriesInitiation;
 import com.shop.entity.Category;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +19,7 @@ public class CategoryRepositoryTest extends CategoriesInitiation {
 
     @Test
     public void givenParent_whenFindAllChildrenByParent_thenReturnAllCategoriesWithGivenParent() {
-        List<Category> children = categoryRepository.findAllChildrenByParent(parent1);
+        List<Category> children = categoryRepository.findAllByParent(parent1);
         assertThat(children)
                 .isNotEmpty()
                 .containsExactlyInAnyOrder(child1, child2)

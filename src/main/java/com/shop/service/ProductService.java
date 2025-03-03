@@ -23,7 +23,7 @@ public class ProductService extends AbstractService<Product> {
     private final EntityManager entityManager;
 
     public List<Product> recursiveFindAllByCategory(Category category) {
-        List<Category> children = categoryService.findAllByParentCategory(category);
+        List<Category> children = categoryService.findAllByParent(category);
         List<Product> productList = new ArrayList<>();
 
         if (!children.isEmpty()) {
@@ -42,7 +42,7 @@ public class ProductService extends AbstractService<Product> {
 
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
-            List<Category> children = categoryRepository.findAllChildrenByParent(cat);
+            List<Category> children = categoryRepository.findAllByParent(cat);
             if (children.isEmpty()) {
                 products.addAll(productRepository.findAllByCategory(cat));
             } else {
@@ -90,7 +90,7 @@ public class ProductService extends AbstractService<Product> {
         if (categoryId == null || categoryService.findById(categoryId) == null) {
             throw new Error("Category doesn't exists.");
         }
-        List<Category> children = categoryService.findAllByParentCategory(category);
+        List<Category> children = categoryService.findAllByParent(category);
         if (!children.isEmpty()) {
             throw new Error("Can't add product to parent category.");
         }
