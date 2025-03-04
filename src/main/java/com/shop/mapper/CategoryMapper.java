@@ -16,14 +16,14 @@ public abstract class CategoryMapper implements GenericMapper<Category> {
     @Mapping(target = "hierarchy", ignore = true)
     @Mapping(target = "children", ignore = true)
     @Mapping(target = "products", ignore = true)
-    @Mapping(target = "parent", qualifiedByName = "parentMapper")
+    @Mapping(target = "parent", qualifiedByName = "categoryMapper")
     public abstract void update(Category source, @MappingTarget Category target);
 
-    @Named("parentMapper")
-    public Category parentMapper(Category parent) {
-        if (parent == null) {
+    @Named("categoryMapper")
+    public Category parentMapper(Category category) {
+        if (category == null) {
             return null;
         }
-        return categoryRepository.findById(parent.getId()).orElse(null);
+        return categoryRepository.findById(category.getId()).orElse(null);
     }
 }

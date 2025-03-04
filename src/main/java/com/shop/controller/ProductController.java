@@ -3,6 +3,8 @@ package com.shop.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.validation.product.group.sequence.CreateProductSequence;
+import com.shop.validation.product.group.sequence.DeleteProductSequence;
+import com.shop.validation.product.group.sequence.UpdateProductSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +46,18 @@ public class ProductController {
     @PostMapping("/admin/create")
     public ResponseEntity<Objects> create(@RequestBody @Validated(CreateProductSequence.class) Product product){
         productService.save(product);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/admin/update")
+    public ResponseEntity<Objects> update(@RequestBody @Validated(UpdateProductSequence.class) Product product){
+        productService.update(product);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/admin/delete")
+    public ResponseEntity<Objects> delete(@RequestBody @Validated(DeleteProductSequence.class) Product product){
+        productService.delete(product);
         return ResponseEntity.ok().build();
     }
 }

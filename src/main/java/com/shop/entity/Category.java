@@ -12,7 +12,6 @@ import com.shop.validation.category.group.defaults.ValidNameGroup;
 import com.shop.validation.global.annotation.MinSize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

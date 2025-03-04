@@ -1,14 +1,13 @@
 package com.shop.service;
 
 import com.shop.entity.Product;
+import com.shop.mapper.ProductMapper;
 import com.shop.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.shop.entity.Category;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +15,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductService extends AbstractService<Product> {
-    private final CategoryService categoryRepository;
+    private final CategoryService categoryService;
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
     private final EntityManager entityManager;
 
     public List<Product> recursiveFindAllByCategory(Category category) {
-        List<Category> children = categoryRepository.findAllByParent(category);
+        List<Category> children = categoryService.findAllByParent(category);
         List<Product> productList = new ArrayList<>();
 
         if (!children.isEmpty()) {
@@ -40,7 +40,7 @@ public class ProductService extends AbstractService<Product> {
 
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
-            List<Category> children = categoryRepository.findAllByParent(cat);
+            List<Category> children = categoryService.findAllByParent(cat);
             if (children.isEmpty()) {
                 products.addAll(productRepository.findAllByCategory(cat));
             } else {
@@ -52,13 +52,6 @@ public class ProductService extends AbstractService<Product> {
 
     public List<Product> findAll() {
         return productRepository.findAll();
-    }
-
-    @Transactional
-    public void test() {
-        Product product = findById(10L);
-        product.setCategory(categoryRepository.findById(4L));
-        entityManager.merge(product);
     }
 
     public boolean existsByNameAndCategory(String name, Category category) {
@@ -77,23 +70,20 @@ public class ProductService extends AbstractService<Product> {
         return productRepository.existsByCategoryId(categoryId) != null;
     }
 
+    @Transactional
     public void save(Product product) {
-        Category category = product.getCategory();
-        String name = product.getName();
-        if (productRepository.findByNameAndCategory(name, category) != null) {
+        entityManager.persist(product);
+        product.setPath(categoryService.normalizeName(product.getName()) + "-" + product.getId());
+    }
 
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product already exists.");
-        }
-        Long categoryId = category.getId();
-        if (categoryId == null || categoryRepository.findById(categoryId) == null) {
-            throw new Error("Category doesn't exists.");
-        }
-        List<Category> children = categoryRepository.findAllByParent(category);
-        if (!children.isEmpty()) {
-            throw new Error("Can't add product to parent category.");
-        }
+    @Transactional
+    public void update(Product product) {
+        Product existingProduct = findById(product.getId());
+        productMapper.update(product, existingProduct);
+        save(existingProduct);
+    }
 
-        product.setPath(categoryRepository.normalizeName(name));
-        productRepository.save(product);
+    public void delete(Product product) {
+        productRepository.delete(product);
     }
 }

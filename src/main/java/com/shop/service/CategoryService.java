@@ -308,9 +308,14 @@ public class CategoryService extends AbstractService<Category> {
     }
 
     @Transactional
+    public void save(Category category) {
+        entityManager.persist(category);
+        populateCategory(category);
+    }
+
+    @Transactional
     public void update(Category category) {
-        Long id = category.getId();
-        Category existingCategory = findById(id);
+        Category existingCategory = findById(category.getId());
         boolean newParent = !existingCategory.getParent().equals(category.getParent());
         categoryMapper.update(category, existingCategory);
         save(existingCategory);
@@ -318,12 +323,6 @@ public class CategoryService extends AbstractService<Category> {
         if (newParent) {
             updateHierarchy(existingCategory);
         }
-    }
-
-    @Transactional
-    public void save(Category category) {
-        entityManager.persist(category);
-        populateCategory(category);
     }
 
     public void delete(Category category) {
