@@ -47,11 +47,11 @@ public class UserController {
     public User createUser(@RequestBody @Validated(CreateUserSequence.class) User user) {
         userService.save(user);
         roleService.save(new Role(RoleEnum.ROLE_USER, user));
-        sendTokenEmail(user,
-                "confirm.registration.subject",
-                "confirm-registration.html",
-                "confirm-registration?token=");
-        return new User();
+//        sendTokenEmail(user,
+//                "confirm.registration.subject",
+//                "confirm-registration.html",
+//                "confirm-registration?token=");
+        return user;
     }
 
     @GetMapping("/confirm-registration")

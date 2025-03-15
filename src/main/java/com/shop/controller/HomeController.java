@@ -1,9 +1,8 @@
 package com.shop.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
 import com.shop.entity.Category;
 import com.shop.service.CategoryService;
 
@@ -14,12 +13,20 @@ import java.util.*;
 public class HomeController {
     private final CategoryService categoryService;
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public Set<Category> home() {
         return categoryService.getHierarchy();
     }
 
-    @RequestMapping("/alternatives/{id}")
+    @PostMapping("/test")
+    public HashMap<String, Object> test(@RequestBody Map<String, String> object ) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("id", 1);
+        hashMap.put("isTest", true);
+        return hashMap;
+    }
+
+    @GetMapping("/alternatives/{id}")
     public Set<Category> alternatives(@PathVariable Long id) {
         Category category = categoryService.findById(id);
         return categoryService.getAlternativeParents(category);
@@ -32,7 +39,7 @@ public class HomeController {
         return (t2 - t1) / 1_000_000.0;
     }
 
-    @RequestMapping("/test-hierarchy")
+    @GetMapping("/test-hierarchy")
     public Map<String, Double> hierarchyPerformanceTest() {
         Double original = measureTime(categoryService::getHierarchyV3);
         Double dequeue = measureTime(categoryService::getHierarchy);
@@ -44,7 +51,7 @@ public class HomeController {
         return hashMap;
     }
 
-    @RequestMapping("/test-alternatives")
+    @GetMapping("/test-alternatives")
     public Map<String, Double> alternativesPerformanceTest() {
         Category category = categoryService.findById(5L);
         Double dequeue = measureTime(() -> categoryService.getAlternativeParents(category));

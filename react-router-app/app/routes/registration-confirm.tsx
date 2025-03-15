@@ -1,6 +1,6 @@
 import React from 'react';
 import type {Route} from "./+types/registration-confirm";
-import {Entity, confirm} from "~/data";
+import {EntityEnum, confirm} from "~/data";
 import {redirect} from "react-router";
 
 export async function loader({request}: Route.LoaderArgs) {
@@ -9,7 +9,7 @@ export async function loader({request}: Route.LoaderArgs) {
     if (!token) {
         throw new Response("Not Found", {status: 404});
     }
-    const response = await confirm(Entity.USER, token);
+    const response = await confirm(EntityEnum.USER, token);
     if (response.ok) {
         return redirect("/");
     }

@@ -15,6 +15,7 @@ export const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const response = await fetchWithParams("user/create", "POST", state);
+        console.log("create user");
         if (response.ok) {
             const json = await response.json();
             console.log(json);
@@ -69,7 +70,7 @@ export const Register = () => {
                     <label>Password: </label>
                     <input type={"password"} {...password} required />
                 </div>
-                <input type={"submit"} value={"Register"}/>
+                <input type={"submit"} value={"Register"} onSubmit={}/>
             </form>
         </>
     );

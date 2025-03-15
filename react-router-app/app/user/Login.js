@@ -35,7 +35,6 @@ export const fetchWithParams = (path, method = "GET", body = null, credentials =
         init.body = JSON.stringify(body);
     }
 
-
     return fetch(input, init);
 };
 

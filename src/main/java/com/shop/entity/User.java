@@ -7,10 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.validation.global.annotation.MinSize;
 import com.shop.validation.user.annotation.*;
 //import com.shop.validation.user.annotation.UserExists;
-import com.shop.validation.user.group.defaults.DefaultPassword;
-import com.shop.validation.user.group.defaults.DefaultUpdateUser;
-import com.shop.validation.user.group.defaults.DefaultEmail;
-import com.shop.validation.user.group.defaults.DefaultNewEmail;
+import com.shop.validation.user.group.defaults.*;
 import com.shop.validation.user.group.expensive.*;
 import com.shop.validation.user.group.expensive.UserExistsByEmail;
 import jakarta.persistence.*;
@@ -33,17 +30,17 @@ public class User {
     private Long id;
 
     @NotNull
-    @MinSize(groups = DefaultUpdateUser.class)
+    @MinSize(groups = CreateUserDefault.class)
     @UniqueUsername(groups = {CreateUser.class, UpdateUser.class})
     @Column(unique = true)
     private String username;
 
     @NotNull
-    @MinSize(groups = DefaultUpdateUser.class)
+    @MinSize(groups = CreateUserDefault.class)
     private String firstname;
 
     @NotNull
-    @MinSize(groups = DefaultUpdateUser.class)
+    @MinSize(groups = CreateUserDefault.class)
     private String lastname;
 
     @NotNull

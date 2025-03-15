@@ -1,8 +1,8 @@
 {
-  "id":1,
-  "name":"new product",
-  "description":"new product description",
-  "category": {
-    "id": 2
-  }
+  "username": "BigZbig",
+  "firstname": "Zbigniew",
+  "lastname": "Nowak",
+  "email": "u1326546@gmail.com",
+  "password": "Password123",
+  "passwordConfirm": "Password123"
 }

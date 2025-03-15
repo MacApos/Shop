@@ -20,7 +20,7 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
             return false;
         }
         String language = LocaleContextHolder.getLocale().getLanguage();
-        String path = language.equals("en") ? "messages" : "messages_" + language;
+        String path = "messages" + (language.equals("en") || language.isEmpty() ? "" : "_" + language);
         Properties props = new Properties();
         try {
             props.load(new FileInputStream("src/main/resources/" + path + ".properties"));

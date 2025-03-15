@@ -1,48 +1,22 @@
 import {
     isRouteErrorResponse,
-    Links,
-    Meta,
-    Outlet, redirect,
+    Outlet,
     Scripts,
     ScrollRestoration,
 } from "react-router";
 
 import type {Route} from "./+types/root";
-import logo from './logo.svg';
-import app from "../../src/main/resources/static/css/App.css?url";
-import index from "../../src/main/resources/static/css/index.css?url";
-import bootstrap from "../../src/main/resources/static/css/bootstrap-pulse.css?url";
-
-export const links: Route.LinksFunction = () => [
-    {rel: "stylesheet", href: app},
-    {rel: "stylesheet", href: index},
-    {rel: "stylesheet", href: bootstrap},
-];
+import appStylesHref from "../../src/main/resources/static/css/app.css?url";
+import favicon from "./public/favicon.ico?url";
 
 export default function App() {
-    (() => {
-        'use strict'
-
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        // const forms = document.querySelectorAll('.needs-validation')
-
-        // Loop over them and prevent submission
-        // Array.from(forms).forEach(form => {
-        //     form.addEventListener('submit', event => {
-        //         if (!form.checkValidity()) {
-        //             event.preventDefault()
-        //             event.stopPropagation()
-        //         }
-        //
-        //         form.classList.add('was-validated')
-        //     }, false)
-        // })
-    })()
 
     return (
         <Outlet/>
     )
 }
+
+
 
 export function Layout({children}: { children: React.ReactNode }) {
     return (
@@ -50,8 +24,8 @@ export function Layout({children}: { children: React.ReactNode }) {
         <head>
             <meta charSet="utf-8"/>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
-            <Meta/>
-            <Links/>
+            <link rel="stylesheet" href={appStylesHref}/>
+            <link rel="icon" href={favicon}/>
         </head>
         <body>
         {children}
