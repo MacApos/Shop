@@ -153,6 +153,7 @@ class UserValidationTest {
                         messageService.getMessage("TOO_SHORT").replace("%1$s", "8"),
                         messageService.getMessage("INSUFFICIENT_SPECIAL").replace("%1$s", "1"),
                         messageService.getMessage("INSUFFICIENT_UPPERCASE").replace("%1$s", "1"),
+                        messageService.getMessage("INSUFFICIENT_LOWERCASE").replace("%1$s", "1"),
                         messageService.getMessage("INSUFFICIENT_DIGIT").replace("%1$s", "1")),
                 "passwordConfirm", messageService.getMessage(invalidPasswordConfirmation)
         );

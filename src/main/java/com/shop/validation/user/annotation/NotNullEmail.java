@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import java.lang.annotation.*;
 
 @NotNull
-@Email
+@Email(regexp = "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}")
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(NotNullEmail.List.class)

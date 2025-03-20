@@ -1,7 +1,6 @@
 package com.shop.validation.user.validator;
 
 import com.shop.entity.User;
-import com.shop.service.MessageService;
 import com.shop.service.ValidatorService;
 import com.shop.validation.user.annotation.ConfirmPassword;
 import jakarta.validation.ConstraintValidator;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ConfirmPasswordValidator implements ConstraintValidator<ConfirmPassword, User> {
-    private final MessageService messageService;
     private final ValidatorService validatorService;
 
     @Override
@@ -20,9 +18,9 @@ public class ConfirmPasswordValidator implements ConstraintValidator<ConfirmPass
         String passwordConfirm = user.getPasswordConfirm();
         if (passwordConfirm == null || !passwordConfirm.equals(user.getPassword())) {
             String messageCode = passwordConfirm == null ?
-                    "jakarta.validation.constraints.NotNull.message" :
-                    "invalid.password.confirmation";
-            validatorService.addConstraint(constraintValidatorContext, messageService.getMessage(messageCode),
+                    "{jakarta.validation.constraints.NotNull.message}" :
+                    "{invalid.password.confirmation}";
+            validatorService.addConstraint(constraintValidatorContext, messageCode,
                     "passwordConfirm");
             return false;
         }

@@ -1,5 +1,7 @@
 @import "bootstrap-pulse.css";
 
-.needs-validation {
-
+.info-feedback {
+    display: block;
+    color: var(--bs-light-text-emphasis);
 }
+
