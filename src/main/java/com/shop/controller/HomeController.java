@@ -1,6 +1,7 @@
 package com.shop.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import com.shop.entity.Category;
@@ -61,4 +62,5 @@ public class HomeController {
         hashMap.put("dequeue", dequeue);
         return hashMap;
     }
+
 }

@@ -30,11 +30,8 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) throws JsonProcessingException {
-        Product product = productService.findById(id);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String s = objectMapper.writeValueAsString(product);
-        return product;
+    public Product getProductById(@PathVariable Long id)  {
+        return productService.findById(id);
     }
 
     @GetMapping("/by-category/{id}")

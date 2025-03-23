@@ -1,5 +1,7 @@
 package com.shop.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.entity.*;
 import com.shop.event.EmailEvent;
 import com.shop.service.*;
@@ -45,13 +47,18 @@ public class UserController {
 
     @PostMapping("/create")
     public User createUser(@RequestBody @Validated(CreateUserSequence.class) User user) {
-        userService.save(user);
-        roleService.save(new Role(RoleEnum.ROLE_USER, user));
+//        userService.save(user);
+//        roleService.save(new Role(RoleEnum.ROLE_USER, user));
 //        sendTokenEmail(user,
 //                "confirm.registration.subject",
 //                "confirm-registration.html",
 //                "confirm-registration?token=");
         return user;
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.findById(id);
     }
 
     @GetMapping("/confirm-registration")

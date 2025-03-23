@@ -6,13 +6,14 @@ export default function ValidatedForm({children, actionData}:
                                           {
                                               children: React.ReactElement<typeof ValidatedInput> |
                                                   React.ReactElement<typeof ValidatedInput>[],
+                                              action?: string
                                               actionData?: Record<string,
-                                                  Record<string, string | object> | // data
-                                                  Record<string, string[]> // errors
-                                              >
+                                                  Record<string, string | string[] | object> |
+                                                  undefined>
                                           }) {
     const navigate = useNavigate();
     const [validated, setValidated] = useState(false);
+
 
     let childrenWithProps = React.Children.map(children, child => {
         if (React.isValidElement(child) && "showBeforeValidation" in child.props && child.props.showBeforeValidation) {
@@ -29,7 +30,8 @@ export default function ValidatedForm({children, actionData}:
             if (React.isValidElement(child) && "children" in child.props) {
                 const c = child.props.children;
                 if (React.isValidElement(c) && c.props instanceof Object &&
-                    "name" in c.props && typeof c.props?.name === "string") {
+                    "name" in c.props && typeof c.props?.name === "string" &&
+                    data && errors) {
                     const newProp = {
                         defaultValue: data[c.props.name],
                         serverSideError: errors[c.props.name]
@@ -46,6 +48,8 @@ export default function ValidatedForm({children, actionData}:
         if (!form.checkValidity()) {
             event.preventDefault();
             event.stopPropagation();
+        } else {
+
         }
         setValidated(true);
     };
@@ -54,7 +58,7 @@ export default function ValidatedForm({children, actionData}:
         <Form method="post" className={`${validated ? "was-validated" : ""}`} onSubmit={handleSubmit} noValidate>
             {childrenWithProps}
             <button type={"submit"}>Submit</button>
-            <button onClick={() => navigate(-1)}>Cancel</button>
+            <button type={"button"} onClick={() => navigate(-1)}>Cancel</button>
         </Form>
     );
 }

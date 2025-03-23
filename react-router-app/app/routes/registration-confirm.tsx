@@ -21,15 +21,13 @@ export default function RegistrationConfirm({loaderData}: Route.ComponentProps) 
     return (
         <>
             <div>
-                {response.expiryDate !== undefined &&
                     <div>
                         Token expired
                         ### resend verification link ###
-                    </div>}
-                {response.token !== undefined &&
+                    </div>
                     <div>
                         Token invalid
-                    </div>}
+                    </div>
             </div>
         </>
     );

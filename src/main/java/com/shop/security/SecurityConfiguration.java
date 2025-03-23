@@ -76,8 +76,10 @@ public class SecurityConfiguration {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(origin));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000",
+                "http://localhost:5173",
+                "http://localhost:3001"));
+        configuration.setAllowedMethods(List.of("GET", "POST"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -88,19 +90,20 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/category/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/product/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll()
-                )
-                .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
-                )
-                .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
-                        .jwt(Customizer.withDefaults())
-                )
-                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/category/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/product/admin/**").hasRole("ADMIN")
+//                        .anyRequest().permitAll()
+//                )
+//                .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
+//                        .authenticationEntryPoint(authenticationEntryPoint)
+//                        .accessDeniedHandler(accessDeniedHandler)
+//                )
+//                .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
+//                        .jwt(Customizer.withDefaults())
+//                )
+//                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(AbstractHttpConfigurer::disable)
 //                .csrf(csrf -> csrf
 //                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                        .csrfTokenRequestHandler(new CsrfTokenRequestHandler() {
@@ -121,8 +124,7 @@ public class SecurityConfiguration {
 //                                        csrfToken);
 //                            }
 //                        })
-                .addFilterBefore(new JwtCookieFilter(), BearerTokenAuthenticationFilter.class)
-                .csrf(AbstractHttpConfigurer::disable)
+//                .addFilterBefore(new JwtCookieFilter(), BearerTokenAuthenticationFilter.class)
                 .build();
     }
 

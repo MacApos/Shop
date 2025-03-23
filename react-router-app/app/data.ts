@@ -1,10 +1,10 @@
 const url = "http://localhost:8080";
 
-const defaultInit: { [key: string]: any } = {
+export const defaultInit: { [key: string]: any } = {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
-    }
+    },
 };
 
 export const CREATE = "create";
@@ -29,15 +29,23 @@ async function fetchData(path: string, init = defaultInit) {
     };
 }
 
-export async function getCategories(id: number) {
-    return await fetchData(id === null ? "/category/all" : `/category/${id}`);
+export async function confirm(entity: EntityEnum, token: string) {
+    return await fetchData(`/${entity}/${CONFIRM}?token=${token}`);
 }
 
-export async function getCategory(id: number) {
-    return await fetchData(`/category/${id}`);
+export async function login(body: Record<string, any>) {
+    return await fetchData("/login",
+        {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(body),
+        });
 }
 
-export async function create(body: { [key: string]: any }, entity: EntityEnum) {
+export async function createEntity(body: { [key: string]: any }, entity: EntityEnum) {
     return await fetchData(`/${entity}/${CREATE}`,
         {
             ...defaultInit,
@@ -46,18 +54,23 @@ export async function create(body: { [key: string]: any }, entity: EntityEnum) {
         });
 }
 
-export async function update(body: { [key: string]: any }, entity: EntityEnum, id: Number) {
+export async function updateEntity(body: { [key: string]: any }, entity: EntityEnum, id: Number) {
     return await fetchData(`/${entity}/${UPDATE}/${id}`,
         {
             ...defaultInit,
             body: JSON.stringify(body),
-            method: "POST"
+            method: "PUT"
         });
 }
 
-export async function confirm(entity: EntityEnum, token: string) {
-    return await fetchData(`/${entity}/${CONFIRM}?token=${token}`);
+export async function deleteEntity(entity: EntityEnum, id: Number) {
+    return await fetchData(`/${entity}/${DELETE}/${id}`,
+        {
+            ...defaultInit,
+            method: "DELETE"
+        });
 }
+
 
 export function normalize(text: string) {
     return text.split(" ").map((t, i) => {

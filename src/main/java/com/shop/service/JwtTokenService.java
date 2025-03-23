@@ -5,12 +5,12 @@ import com.shop.entity.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class JwtTokenService {
     private final AuthenticationManager authManager;
     private final JwtEncoder jwtEncoder;
-    private final Long expiry = 3600L;
+    private final Long expiry = 3600L * 24;
     private final RoleService roleService;
 
     private String createToken(Authentication authentication) {
@@ -46,11 +46,11 @@ public class JwtTokenService {
     }
 
     private void setJwtAuthorizationCookie(final HttpServletResponse response, String token) {
-        String cookieKey = "jwt";
-        Cookie cookie = new Cookie(cookieKey, token);
+        Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setMaxAge(expiry.intValue());
+//        cookie.setSecure(true);
+//        cookie.setPath("/");
+//        cookie.setMaxAge(expiry.intValue());
         response.addCookie(cookie);
     }
 

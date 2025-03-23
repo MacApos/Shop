@@ -8,15 +8,16 @@ import {
 import type {Route} from "./+types/root";
 import appStylesHref from "../../src/main/resources/static/css/app.css?url";
 import favicon from "./public/favicon.ico?url";
+import {Provider} from "react-redux";
+import {store} from './store';
 
 export default function App() {
-
     return (
-        <Outlet/>
-    )
+        <Provider store={store}>
+            <Outlet/>
+        </Provider>
+    );
 }
-
-
 
 export function Layout({children}: { children: React.ReactNode }) {
     return (
@@ -39,7 +40,7 @@ export function Layout({children}: { children: React.ReactNode }) {
 export function HydrateFallback() {
     return (
         <div id="loading-splash">
-            <div id="loading-splash-spinner" />
+            <div id="loading-splash-spinner"/>
             <p>Loading, please wait...</p>
         </div>
     );

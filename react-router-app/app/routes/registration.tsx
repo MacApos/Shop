@@ -1,20 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {Route} from "./+types/registration";
-import {EntityEnum, create} from "~/data";
+import {EntityEnum, createEntity} from "~/data";
 
-import {type ActionFunctionArgs, redirect} from "react-router";
+import {type ActionFunctionArgs, useNavigate} from "react-router";
 import ValidatedForm from "~/common/ValidatedForm";
 import ValidatedInput from "~/common/ValidatedInput";
+import {useAppDispatch} from "~/hooks";
+import { setUser} from "~/features/userSlice";
 
 export async function action({request}: ActionFunctionArgs) {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
-    const response = await create(data, EntityEnum.USER);
-    if (response.ok) {
-        return redirect("/");
-    }
-    const errors = response.body;
-    return {data, errors};
+    const response = await createEntity(data, EntityEnum.USER);
+    return {data, response};
 }
 
 const passwordValidation = (value: string) => {
@@ -45,11 +43,23 @@ const passwordValidation = (value: string) => {
     return errorsArr;
 };
 
-const emailValidation = (value: string) => {
+export const emailValidation = (value: string) => {
     return /^[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(value) ? [] : ["Invalid email"];
 };
 
 export default function Registration({actionData}: Route.ComponentProps) {
+    const response = actionData?.response;
+    const body = response?.body;
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        if (response && response.ok && body) {
+            dispatch(setUser(response.body));
+            navigate("/");
+        }
+    }, [response]);
+
 
     return (
         <div className={"w-75 m-auto"}>
@@ -72,10 +82,10 @@ export default function Registration({actionData}: Route.ComponentProps) {
             {/*    </div>*/}
             {/*</div>*/}
 
-            <ValidatedForm actionData={actionData}>
+            <ValidatedForm actionData={response && !response.ok ? {data: actionData.data, errors: body} : undefined}>
                 <ValidatedInput>
                     <input name={"username"}
-                        // defaultValue={"bigZbig"}
+                           defaultValue={"bigZbig"}
                     />
                 </ValidatedInput>
                 <ValidatedInput>
@@ -103,7 +113,7 @@ export default function Registration({actionData}: Route.ComponentProps) {
                 </ValidatedInput>
                 <ValidatedInput label={"Confirm password"} defaultError={["Invalid password confirmation"]}>
                     <input name={"passwordConfirm"} minLength={0}
-                           defaultValue={"P@ssword123"}
+                           defaultValue={"P@ssword456"}
                     />
                 </ValidatedInput>
             </ValidatedForm>
