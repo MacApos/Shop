@@ -29,21 +29,34 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody @Validated(DefaultPassword.class) User user, HttpServletRequest request, HttpServletResponse response) {
 //        jwtTokenService.authenticateUser(user, response);
-        Cookie cookie = new Cookie("app", "app");
+        Cookie cookie = new Cookie("jwt", "your-jwt-token");
         cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
-//        cookie.setPath("/");
-//        cookie.setMaxAge(expiry.intValue());
+//        cookie.setSecure(false);
+//        cookie.setAttribute("SameSite", "None");
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(cookie);
+
         return ResponseEntity.ok(userService.findByEmail(user.getEmail()));
     }
 
+    @PostMapping("/secrete-token")
+    public ResponseEntity<Map<String, Object>> createToken(@RequestBody @Validated(DefaultPassword.class) User user) {
+        return ResponseEntity.ok(Map.of(
+                "user", userService.findByEmail(user.getEmail()),
+                "token", jwtTokenService.authenticateUser(user))
+        );
+    }
+
     @PostMapping("/login2")
-    public ResponseEntity<Map<String, String>> login2(@RequestBody @Validated(DefaultPassword.class) User user, HttpServletRequest request, HttpServletResponse response) {
-        Cookie cookie = new Cookie("app2", "app2");
+    public void login2(@RequestBody @Validated(DefaultPassword.class) User user, HttpServletRequest request, HttpServletResponse response) {
+        Cookie cookie = new Cookie("jwt2", "your-jwt-token");
         cookie.setHttpOnly(true);
+//        cookie.setSecure(false);
+//        cookie.setAttribute("SameSite", "None");
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(cookie);
-        return ResponseEntity.ok(Map.of("response", "ok"));
     }
 
     @GetMapping("/user-access")
@@ -55,8 +68,9 @@ public class LoginController {
 
     @GetMapping("/admin-access")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> adminAccess() {
-        return ResponseEntity.ok("admin success");
+    public ResponseEntity<Map<String, String>> adminAccess() {
+        ResponseEntity<Map<String, String>> ok = ResponseEntity.ok(Map.of("success", "admin success"));
+        return ok;
     }
 
     @GetMapping("/set-cookie")
@@ -75,7 +89,7 @@ public class LoginController {
                 .sameSite("None")
                 .maxAge(7 * 24 * 60 * 60)
                 .build();
-       response.addCookie(cookie);
+        response.addCookie(cookie);
         return Map.of("cookie", cookie.toString());
     }
 }

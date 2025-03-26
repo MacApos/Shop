@@ -6,14 +6,7 @@ import {type ActionFunctionArgs, useNavigate} from "react-router";
 import ValidatedForm from "~/common/ValidatedForm";
 import ValidatedInput from "~/common/ValidatedInput";
 import {useAppDispatch} from "~/hooks";
-import { setUser} from "~/features/userSlice";
-
-export async function action({request}: ActionFunctionArgs) {
-    const formData = await request.formData();
-    const data = Object.fromEntries(formData);
-    const response = await createEntity(data, EntityEnum.USER);
-    return {data, response};
-}
+import {setUser} from "~/features/userSlice";
 
 const passwordValidation = (value: string) => {
     const minLength = 8;
@@ -47,6 +40,13 @@ export const emailValidation = (value: string) => {
     return /^[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/.test(value) ? [] : ["Invalid email"];
 };
 
+export async function action({request}: ActionFunctionArgs) {
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData);
+    const response = await createEntity(data, EntityEnum.USER);
+    return {data, response};
+}
+
 export default function Registration({actionData}: Route.ComponentProps) {
     const response = actionData?.response;
     const body = response?.body;
@@ -54,8 +54,8 @@ export default function Registration({actionData}: Route.ComponentProps) {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (response && response.ok && body) {
-            dispatch(setUser(response.body));
+        if (response && response.ok) {
+            dispatch(setUser(body));
             navigate("/");
         }
     }, [response]);
@@ -113,7 +113,7 @@ export default function Registration({actionData}: Route.ComponentProps) {
                 </ValidatedInput>
                 <ValidatedInput label={"Confirm password"} defaultError={["Invalid password confirmation"]}>
                     <input name={"passwordConfirm"} minLength={0}
-                           defaultValue={"P@ssword456"}
+                           // defaultValue={"P@ssword45"}
                     />
                 </ValidatedInput>
             </ValidatedForm>

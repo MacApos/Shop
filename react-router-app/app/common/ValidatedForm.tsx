@@ -1,44 +1,53 @@
 import React, {useState} from 'react';
-import {useNavigate, Form} from "react-router";
+import {Form, useNavigate} from "react-router";
 import ValidatedInput from "~/common/ValidatedInput";
 
-export default function ValidatedForm({children, actionData}:
-                                          {
-                                              children: React.ReactElement<typeof ValidatedInput> |
-                                                  React.ReactElement<typeof ValidatedInput>[],
-                                              action?: string
-                                              actionData?: Record<string,
-                                                  Record<string, string | string[] | object> |
-                                                  undefined>
-                                          }) {
+type ValidatedFormProps = {
+    children: React.ReactElement<typeof ValidatedInput> |
+        React.ReactElement<typeof ValidatedInput>[],
+    action?: string
+    actionData?: Record<string,
+        Record<string, string | string[] | object> |
+        undefined>
+    shouldRevokeValidation?: boolean
+}
+
+export default function ValidatedForm(props: ValidatedFormProps) {
+    const {children, actionData, action, shouldRevokeValidation} = props;
+
     const navigate = useNavigate();
     const [validated, setValidated] = useState(false);
 
+    const revokeValidation = () => {
+        setValidated(false);
+    };
 
-    let childrenWithProps = React.Children.map(children, child => {
-        if (React.isValidElement(child) && "showBeforeValidation" in child.props && child.props.showBeforeValidation) {
-            const props = {validated};
-            return React.cloneElement(child, props);
+    let childrenWithProps:any[] = React.Children.map(children, child => {
+        let props = {};
+        if ("showBeforeValidation" in child.props && child.props.showBeforeValidation) {
+            props = {...props, validated};
         }
-        return child;
+        if (shouldRevokeValidation) {
+            props = {...props, revokeValidation};
+        }
+        return Object.keys(props).length ? child : React.cloneElement(child, props);
     });
 
-    // when serverSideErrors appear
-    if (actionData) {
-        const {data, errors} = actionData;
+// when serverSideErrors appear
+    if (actionData?.errors) {
+        const {errors} = actionData;
         childrenWithProps = childrenWithProps.map(child => {
-            if (React.isValidElement(child) && "children" in child.props) {
-                const c = child.props.children;
-                if (React.isValidElement(c) && c.props instanceof Object &&
-                    "name" in c.props && typeof c.props?.name === "string" &&
-                    data && errors) {
-                    const newProp = {
-                        defaultValue: data[c.props.name],
-                        serverSideError: errors[c.props.name]
-                    };
-                    return React.cloneElement(child, newProp);
+            // if (child.props && "children" in child.props &&
+            //     child.props.children && child.props.children instanceof Object && "props" in child.props.children &&
+            //     child.props.children.props && child.props.children.props instanceof Object && "name" in child.props.children.props &&
+            //     child.props.children.props.name === "string" && child.props.children.props.name in errors) {
+            //     const name = child.props.children.props.name;
+            //     const props = {serverSideError: errors[name]};
+            // }
+                const name = child.props.children.props.name;
+                if (name in errors) {
+                    return React.cloneElement(child, {serverSideError: errors[name]});
                 }
-            }
             return child;
         });
     }
@@ -48,14 +57,13 @@ export default function ValidatedForm({children, actionData}:
         if (!form.checkValidity()) {
             event.preventDefault();
             event.stopPropagation();
-        } else {
-
         }
         setValidated(true);
     };
 
     return (
-        <Form method="post" className={`${validated ? "was-validated" : ""}`} onSubmit={handleSubmit} noValidate>
+        <Form method="post" action={action ?? ""} className={`${validated ? "was-validated" : ""}`}
+              onSubmit={handleSubmit} noValidate>
             {childrenWithProps}
             <button type={"submit"}>Submit</button>
             <button type={"button"} onClick={() => navigate(-1)}>Cancel</button>

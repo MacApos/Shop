@@ -1,12 +1,5 @@
 const url = "http://localhost:8080";
 
-export const defaultInit: { [key: string]: any } = {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-};
-
 export const CREATE = "create";
 export const READ = "get";
 export const UPDATE = "update";
@@ -18,6 +11,13 @@ export enum EntityEnum {
     PRODUCT = "product",
     USER = "user",
 }
+
+export const defaultInit: { [key: string]: any } = {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+};
 
 async function fetchData(path: string, init = defaultInit) {
     const response = await fetch(url + path, init);
@@ -39,11 +39,22 @@ export async function login(body: Record<string, any>) {
             headers: {
                 "Content-Type": "application/json",
             },
-            method: "POST",
             credentials: "include",
+            method: "POST",
             body: JSON.stringify(body),
         });
 }
+
+export async function secretToken(body: Record<string, any>) {
+    return await fetchData("/secrete-token",
+        {
+            ...defaultInit,
+            credentials: "include",
+            method: "POST",
+            body: JSON.stringify(body),
+        });
+}
+
 
 export async function createEntity(body: { [key: string]: any }, entity: EntityEnum) {
     return await fetchData(`/${entity}/${CREATE}`,

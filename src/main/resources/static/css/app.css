@@ -1,7 +1,13 @@
 @import "bootstrap-pulse.css";
 
-.info-feedback {
+.info-feedback .feedback-message {
     display: block;
+}
+
+.info-feedback {
     color: var(--bs-light-text-emphasis);
 }
 
+.feedback-message {
+    color: var(--bs-form-invalid-color);
+}

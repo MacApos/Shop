@@ -5,7 +5,6 @@ import com.shop.entity.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,7 +49,7 @@ public class JwtTokenService {
         cookie.setHttpOnly(true);
 //        cookie.setSecure(true);
 //        cookie.setPath("/");
-//        cookie.setMaxAge(expiry.intValue());
+        cookie.setMaxAge(expiry.intValue());
         response.addCookie(cookie);
     }
 
@@ -62,6 +61,15 @@ public class JwtTokenService {
 
         String token = createToken(authentication);
         setJwtAuthorizationCookie(response, token);
+    }
+
+    public String authenticateUser(User user) {
+        String email = user.getEmail();
+        String password = user.getPassword();
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
+        Authentication authentication = authManager.authenticate(authenticationToken);
+
+        return createToken(authentication);
     }
 
     public void authWithoutPassword(User user, HttpServletResponse response) {
