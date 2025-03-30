@@ -1,6 +1,6 @@
 @import "bootstrap-pulse.css";
 
-.info-feedback .feedback-message {
+.info-feedback, .feedback-message {
     display: block;
 }
 

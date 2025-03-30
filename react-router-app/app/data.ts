@@ -6,22 +6,38 @@ export const UPDATE = "update";
 export const DELETE = "delete";
 export const CONFIRM = "confirm-registration";
 
-export enum EntityEnum {
+export enum Entity {
     CATEGORY = "category",
     PRODUCT = "product",
-    USER = "user",
+    USER = "user"
 }
 
-export const defaultInit: { [key: string]: any } = {
+export enum Path {
+    CREATE = "create",
+    READ = "get",
+    UPDATE = "update",
+    DELETE = "delete",
+    CONFIRM = "confirm-registration"
+}
+
+export enum Method {
+    GET = "GET",
+    POST = "POST",
+    PUT = "PUT",
+    DELETE = "DELETE"
+}
+
+export const getInit: { [key: string]: any } = {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
     },
+    credentials: "include",
 };
 
-async function fetchData(path: string, init = defaultInit) {
+async function fetchData(path: string, init = getInit) {
     const response = await fetch(url + path, init);
-    const json = await response.json();
+    const json = response.status === 204 ? undefined : await response.json();
     return {
         body: json,
         status: response.status,
@@ -29,55 +45,57 @@ async function fetchData(path: string, init = defaultInit) {
     };
 }
 
-export async function confirm(entity: EntityEnum, token: string) {
+export async function fetching(method: Method, path: string, body?: Record<string, any>) {
+    const response =  await fetch(url + path, {
+        ...getInit,
+        method: method,
+        body: JSON.stringify(body),
+    });
+    const json = response.status === 204 ? undefined : await response.json();
+    return {
+        body: json,
+        status: response.status,
+        ok: response.ok
+    };
+
+}
+
+export async function confirm(entity: Entity, token: string) {
     return await fetchData(`/${entity}/${CONFIRM}?token=${token}`);
 }
 
 export async function login(body: Record<string, any>) {
     return await fetchData("/login",
         {
-            headers: {
-                "Content-Type": "application/json",
-            },
+            ...getInit,
             credentials: "include",
             method: "POST",
             body: JSON.stringify(body),
         });
 }
 
-export async function secretToken(body: Record<string, any>) {
-    return await fetchData("/secrete-token",
-        {
-            ...defaultInit,
-            credentials: "include",
-            method: "POST",
-            body: JSON.stringify(body),
-        });
-}
-
-
-export async function createEntity(body: { [key: string]: any }, entity: EntityEnum) {
+export async function createEntity(body: { [key: string]: any }, entity: Entity) {
     return await fetchData(`/${entity}/${CREATE}`,
         {
-            ...defaultInit,
+            ...getInit,
             body: JSON.stringify(body),
             method: "POST"
         });
 }
 
-export async function updateEntity(body: { [key: string]: any }, entity: EntityEnum, id: Number) {
+export async function updateEntity(body: { [key: string]: any }, entity: Entity, id: Number) {
     return await fetchData(`/${entity}/${UPDATE}/${id}`,
         {
-            ...defaultInit,
+            ...getInit,
             body: JSON.stringify(body),
             method: "PUT"
         });
 }
 
-export async function deleteEntity(entity: EntityEnum, id: Number) {
+export async function deleteEntity(entity: Entity, id: Number) {
     return await fetchData(`/${entity}/${DELETE}/${id}`,
         {
-            ...defaultInit,
+            ...getInit,
             method: "DELETE"
         });
 }

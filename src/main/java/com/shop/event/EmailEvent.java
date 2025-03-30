@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationEvent;
 
 import java.util.Locale;
 import java.util.Map;
-
+// delete
 @Getter
 @Setter
 public class EmailEvent extends ApplicationEvent {
@@ -16,11 +16,11 @@ public class EmailEvent extends ApplicationEvent {
     private Map<String, Object> variables;
 
     public EmailEvent(String to, String subjectCode, String template, Map<String, Object> variables) {
-        super(to);
+        super("EmailEvent");
         this.to = to;
         this.subjectCode = subjectCode;
-        this.variables = variables;
         this.template = template;
+        this.variables = variables;
     }
 
 }

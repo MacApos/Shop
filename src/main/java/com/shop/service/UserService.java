@@ -47,7 +47,6 @@ public class UserService extends AbstractService<User> {
     public void save(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        user.setEnabled(true);
         entityManager.persist(user);
     }
 

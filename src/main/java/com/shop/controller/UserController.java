@@ -1,7 +1,5 @@
 package com.shop.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.entity.*;
 import com.shop.event.EmailEvent;
 import com.shop.service.*;
@@ -12,11 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @RestController
 @RequestMapping("/user")
@@ -24,19 +27,23 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
+    private final EmailService emailService;
     private final JwtTokenService jwtTokenService;
     private final RegistrationTokenService registrationTokenService;
     private final ApplicationEventPublisher eventPublisher;
+    private final MessageService messageService;
 
     @Value("${react.origin}")
     private String origin;
 
-    private void sendTokenEmail(String to, String subjectCode, String template, Map<String, Object> variables) {
+    // delete
+    private void sendTokenMessage(String to, String subjectCode, String template, Map<String, Object> variables) {
         EmailEvent emailEvent = new EmailEvent(to, subjectCode, template, variables);
         eventPublisher.publishEvent(emailEvent);
     }
 
-    private void sendTokenEmail(User user, String subjectCode, String template, String url) {
+    // delete
+    private void sendTokenMessage(User user, String subjectCode, String template, String url) {
         RegistrationToken registrationToken = registrationTokenService.generateAndSaveToken(user);
         Map<String, Object> variables = Map.of(
                 "user", user,
@@ -45,48 +52,53 @@ public class UserController {
         eventPublisher.publishEvent(emailEvent);
     }
 
-    @PostMapping("/create")
-    public User createUser(@RequestBody @Validated(CreateUserSequence.class) User user) {
-//        userService.save(user);
-//        roleService.save(new Role(RoleEnum.ROLE_USER, user));
-//        sendTokenEmail(user,
-//                "confirm.registration.subject",
-//                "confirm-registration.html",
-//                "confirm-registration?token=");
-        return user;
-    }
-
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return userService.findById(id);
     }
 
+    @PostMapping("/create")
+    public ResponseEntity<User> createUser(@RequestBody @Validated(CreateUserSequence.class) User user) {
+        userService.save(user);
+        roleService.save(new Role(RoleEnum.ROLE_USER, user));
+        emailService.sendTokenEmail(user,
+                "confirm.registration.subject",
+                "registration-confirm.html",
+                "registration-confirm?token=");
+        return ResponseEntity.ok(user);
+    }
+
     @GetMapping("/confirm-registration")
-    public ResponseEntity<?> confirmRegistration(@Validated(UserExistsSequence.class) RegistrationToken token,
-                                                 HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> confirmRegistration(@Validated(UserExistsSequence.class)
+                                                                   RegistrationToken token) {
         RegistrationToken validatedToken = registrationTokenService.validateToken(token);
         User user = validatedToken.getUser();
+        user.setEnabled(true);
         userService.save(user);
-        jwtTokenService.authWithoutPassword(user, response);
-        return ResponseEntity.ok().build();
+        jwtTokenService.authenticateWithoutPassword(user);
+        return ResponseEntity.ok(Map.of(
+                "user", userService.findByEmail(user.getEmail()),
+                "jwt", jwtTokenService.authenticateWithoutPassword(user))
+        );
     }
 
     @GetMapping("/resend-registration-token")
-    public ResponseEntity<?> resendRegistrationToken(@Validated(UserExistsSequence.class) RegistrationToken token) {
+    public ResponseEntity<User> resendRegistrationToken(@Validated(UserExistsSequence.class) RegistrationToken token) {
         RegistrationToken existingToken = registrationTokenService.findByToken(token.getToken());
+        existingToken.setActive(false);
         User user = existingToken.getUser();
-        sendTokenEmail(user,
+        emailService.sendTokenEmail(user,
                 "confirm.registration.subject",
-                "confirm-registration.html",
-                "confirm-registration?token=");
-        return ResponseEntity.ok().build();
+                "registration-confirm.html",
+                "registration-confirm?token=");
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/send-reset-password-token")
     public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(UserExistsSequence.class) User user) {
         User existingUser = userService.findByEmail(user.getEmail());
         if (existingUser.isEnabled()) {
-            sendTokenEmail(existingUser,
+            emailService.sendTokenEmail(existingUser,
                     "reset.password.subject",
                     "reset-password.html",
                     "reset-password?token=");
@@ -122,11 +134,11 @@ public class UserController {
         userService.save(existingUser);
 
         Map<String, Object> variables = new HashMap<>(Map.of("user", user));
-        sendTokenEmail(email, "oldEmail", "oldEmailTemplate", variables);
+        emailService.sendTokenEmail(email, "oldEmail", "oldEmailTemplate", variables);
 
         RegistrationToken registrationToken = registrationTokenService.generateAndSaveToken(existingUser);
         variables.put("url", origin + "url" + registrationToken.getToken());
-        sendTokenEmail(email, "newEmail", "newEmailTemplate", variables);
+        emailService.sendTokenEmail(email, "newEmail", "newEmailTemplate", variables);
 
         return user;
     }

@@ -30,25 +30,20 @@ export default function ValidatedInput(props: ValidatedInputProps) {
     const [infoFeedback, setInfoFeedback] = useState<string>();
     const [feedbackMessage, setFeedbackMessage] = useState<string>();
     const inputRef = useRef<HTMLInputElement>(null);
+    const input = inputRef.current;
 
     useEffect(() => {
-        const input = inputRef.current;
         if (input && serverSideError) {
             input.setCustomValidity(invalidInput);
             setErrorMessages(serverSideError);
             if (revokeValidation) {
-                setFeedbackMessage("d-block");
+                setFeedbackMessage("feedback-message");
             }
         }
     }, [serverSideError]);
 
     useEffect(() => {
-        if (revokeValidation) {
-            return;
-        }
-
-        const input = inputRef.current;
-        if (!input) {
+        if (revokeValidation || !input) {
             return;
         }
 
@@ -76,10 +71,9 @@ export default function ValidatedInput(props: ValidatedInputProps) {
     }, [value]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const targetValue = event.currentTarget.value;
-        setValue(targetValue);
-
-        if (serverSideError && revokeValidation) {
+        const target = event.currentTarget;
+        setValue(target.value);
+        if (!target.validity.valid && serverSideError && revokeValidation) {
             revokeValidation();
         } else if (serverSideError) {
             event.currentTarget.setCustomValidity("");
@@ -100,7 +94,7 @@ export default function ValidatedInput(props: ValidatedInputProps) {
                 minLength={minLength}
                 className={"form-control"}
                 onChange={handleChange}
-                onFocus={() => setInfoFeedback(showBeforeValidation && !validated ? "info-feedback" : "")}
+                onFocus={() => setInfoFeedback((showBeforeValidation && !validated) ? "info-feedback" : "")}
                 onBlur={() => setInfoFeedback("")}
             />
 

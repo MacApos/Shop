@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react';
-import {type ActionFunctionArgs, data, redirect, useNavigate} from "react-router";
-import type {Route} from "../../.react-router/types/app/routes/+types/registration";
+import {type ActionFunctionArgs, data, Navigate, redirect, useNavigate} from "react-router";
+import type {Route} from "./+types/login";
 import {useAppDispatch} from "~/hooks";
 import ValidatedForm from "~/common/ValidatedForm";
 import ValidatedInput from "~/common/ValidatedInput";
-import {secretToken} from "~/data";
+import {login} from "~/data";
 import {jwtToken, userCookie} from "~/cookie.server";
 import {setUser} from "~/features/userSlice";
 import {emailValidation} from "~/routes/registration";
@@ -31,52 +31,47 @@ export async function loader({request,}: Route.LoaderArgs) {
 export async function action({request}: ActionFunctionArgs) {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
-    const response = await secretToken(data);
+    const response = await login(data);
 
     if (response.ok) {
         let token = await jwtToken.serialize("");
-        token = token.replace("jwt=;", `jwt=${response.body.token};`);
+        token = token.replace("jwt=;", `jwt=${response.body.jwt};`);
         const user = await userCookie.serialize({user: response.body.user});
 
         const headers = new Headers();
-        headers.append("Set-Cookie", user);
         headers.append("Set-Cookie", token);
+        headers.append("Set-Cookie", user);
 
         return redirect("/login", {
             headers
         });
     }
-    if (response.status === 401) {
-        return {
-            data, response: {
-                ...response,
-                body: {
-                    email:[],
-                    password: ["Invalid email or password"]
-                }
-            }
-        };
-    }
-    return {data, response};
+
+    return {
+        errors: {
+            email: [],
+            password: ["Invalid email and/or password"]
+        }
+    };
 }
 
 export default function Login({loaderData, actionData}: Route.ComponentProps) {
     const user = loaderData?.user;
-    const response = actionData?.response;
-    const body = response?.body;
+    const errors = actionData?.errors;
     const navigate = useNavigate();
+
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (user) {
             dispatch(setUser(user));
-            navigate("/");
+            navigate("/", {replace: true});
         }
     }, [user]);
 
     return (
-        <>
-            <ValidatedForm actionData={response && !response.ok ? {data: actionData.data, errors: body} : undefined}
+        <div className={"w-75 m-auto"}>
+            <ValidatedForm errors={errors}
                            shouldRevokeValidation={true}>
                 <ValidatedInput validationFunction={emailValidation}>
                     <input name={"email"} type={"email"} defaultValue={"admn@gmail.com"}/>
@@ -85,7 +80,7 @@ export default function Login({loaderData, actionData}: Route.ComponentProps) {
                     <input name={"password"} type={"password"} defaultValue={"admin"}/>
                 </ValidatedInput>
             </ValidatedForm>
-        </>
+        </div>
     );
 }
 

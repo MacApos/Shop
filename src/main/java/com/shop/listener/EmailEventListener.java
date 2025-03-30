@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-
+// delete
 @Component
 @RequiredArgsConstructor
 public class EmailEventListener implements ApplicationListener<EmailEvent> {

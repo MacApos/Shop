@@ -47,8 +47,9 @@ public class JwtTokenService {
     private void setJwtAuthorizationCookie(final HttpServletResponse response, String token) {
         Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
-//        cookie.setPath("/");
+//        cookie.setSecure(false);
+//        cookie.setAttribute("SameSite", "None");
+        cookie.setPath("/");
         cookie.setMaxAge(expiry.intValue());
         response.addCookie(cookie);
     }
@@ -68,11 +69,21 @@ public class JwtTokenService {
         String password = user.getPassword();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         Authentication authentication = authManager.authenticate(authenticationToken);
-
         return createToken(authentication);
     }
 
-    public void authWithoutPassword(User user, HttpServletResponse response) {
+    public void authenticateWithoutPassword(User user, HttpServletResponse response) {
+        Authentication authentication = getAuthentication(user);
+        String token = createToken(authentication);
+        setJwtAuthorizationCookie(response, token);
+    }
+
+    public String authenticateWithoutPassword(User user) {
+        Authentication authentication = getAuthentication(user);
+        return createToken(authentication);
+    }
+
+    private Authentication getAuthentication(User user) {
         String email = user.getEmail();
         List<Role> roles = roleService.findByUser(user);
         List<GrantedAuthority> authorities = roles
@@ -83,8 +94,9 @@ public class JwtTokenService {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = createToken(authentication);
-        setJwtAuthorizationCookie(response, token);
+        return authentication;
     }
+
+
+
 }

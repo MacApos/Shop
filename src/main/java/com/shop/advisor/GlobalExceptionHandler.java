@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, ArrayList<String>>> handleValidationExceptions(ConstraintViolationException ex) {
-        HashMap<String, ArrayList<String>> violations = new HashMap<>();
+            HashMap<String, ArrayList<String>> violations = new HashMap<>();
         ex.getConstraintViolations().forEach(violation ->
                 computeIfAbsent(violations, violation.getPropertyPath().toString(), violation.getMessage())
         );
