@@ -54,7 +54,7 @@ public class JwtTokenService {
         response.addCookie(cookie);
     }
 
-    public void authenticateUser(User user, HttpServletResponse response) {
+    public String authenticateUser(User user, HttpServletResponse response) {
         String email = user.getEmail();
         String password = user.getPassword();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
@@ -62,6 +62,7 @@ public class JwtTokenService {
 
         String token = createToken(authentication);
         setJwtAuthorizationCookie(response, token);
+        return token;
     }
 
     public String authenticateUser(User user) {

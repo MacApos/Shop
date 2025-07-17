@@ -1,8 +1,6 @@
 package com.shop.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.shop.validation.cartItem.group.defaults.CreateCartItemDefaults;
 import com.shop.validation.category.annotation.*;
 import com.shop.validation.category.group.database.*;
@@ -30,6 +28,7 @@ import java.util.*;
 @ParentHasNoProducts(groups = ParentHasNoProductsGroup.class)
 @ParentIsNotItselfChild(groups = ParentIsNotItselfChildGroup.class)
 @CategoryHasNoChild(groups = CategoryHasNoChildGroup.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Category implements Comparable<Category>{
     @Id
     @NotNull(groups = {DeleteCategoryDefaults.class, CreateCartItemDefaults.class})

@@ -31,7 +31,8 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
                         "/product/by-category/{id:\\d+}");
         registry.addInterceptor(new InterceptorService<>(productService))
                 .addPathPatterns(
-                        "/product/{id:\\d+}");
+                        "/product/{id:\\d+}",
+                        "/product?category:\\d+");
         registry.addInterceptor(new InterceptorService<>(cartItemService))
                 .addPathPatterns(
                         "/cart-item/update/{id:\\d+}",

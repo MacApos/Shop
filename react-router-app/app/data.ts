@@ -45,10 +45,19 @@ async function fetchData(path: string, init = getInit) {
     };
 }
 
-export async function fetching(method: Method, path: string, body?: Record<string, any>) {
-    const response =  await fetch(url + path, {
+export async function fetchImage(path: string, headers?: ResponseInit, method?: Method, body?: Record<string, any>) {
+    const response = await fetch(url + path, {
+        ...getInit
+    })
+    const blob = await response.blob();
+    const s = URL.createObjectURL(blob);
+}
+
+export async function fetching(path: string, headers?: ResponseInit, method?: Method, body?: Record<string, any>) {
+    const response = await fetch(url + path, {
         ...getInit,
-        method: method,
+        method,
+        ...headers,
         body: JSON.stringify(body),
     });
     const json = response.status === 204 ? undefined : await response.json();
@@ -57,7 +66,6 @@ export async function fetching(method: Method, path: string, body?: Record<strin
         status: response.status,
         ok: response.ok
     };
-
 }
 
 export async function confirm(entity: Entity, token: string) {

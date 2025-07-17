@@ -82,12 +82,14 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
                 new Product("Torba 2", categoriesMap.get("Inne"))
         );
 
+        double price = 0.99;
         for (Product product : products) {
             if (productService.existsByNameAndCategory(product.getName(), product.getCategory())) {
                 continue;
             }
+            price += 1;
             product.setDescription("Lorem ipsum");
-            product.setPrice(10.0);
+            product.setPrice(price);
             product.setImage("crochet-hat.jpg");
             productService.save(product);
         }

@@ -1,29 +1,34 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {Form, Outlet} from "react-router";
-import {selectUser} from "~/features/userSlice";
-import {useAppSelector} from "~/hooks";
-import {selectModal} from "~/features/modalSlice";
+import {useAppDispatch, useAppSelector} from "~/hooks";
+import {selectModal, setShow} from "~/features/modalSlice";
+import {Entity, fetching} from "~/data";
+import {cookieOptionsToString, findCookieByName, jwtToken} from "~/cookie.server";
+import type {Route} from "./+types/layout";
+import NavigationBar from "~/common/NavigationBar";
+import Modal from "~/common/Modal";
 
 declare const bootstrap: any;
 
-export default function Layout() {
-    const user = useAppSelector(selectUser);
-    const modal = useAppSelector(selectModal);
-
-    let userElement =
-        <>
-            <p>This is Layout</p>
-            <Form action="login">
-                <button type="submit">Login</button>
-            </Form>
-            <Form action="registration">
-                <button type="submit">Register</button>
-            </Form>
-        </>;
-
-    if (user && "username" in user && typeof user.username === "string") {
-        userElement = <div>Howdy {user.username}</div>;
+export async function loader({request}: Route.LoaderArgs) {
+    const serializedCookie = findCookieByName(request, "jwt");
+    if (!serializedCookie) {
+        return {user: undefined};
     }
+    const jwt = await jwtToken.parse(serializedCookie);
+    const jwtCookie = `jwt=${jwt}; ${cookieOptionsToString()}`;
+    const response = await fetching(`/${Entity.USER}`, {
+        headers: {
+            "Cookie": jwtCookie
+        }
+    });
+    return {user: response.ok ? response.body : undefined};
+}
+
+export default function Layout({loaderData}: Route.ComponentProps) {
+    const {user} = loaderData;
+    const dispatch = useAppDispatch();
+    const modal = useAppSelector(selectModal);
 
     useEffect(() => {
         const modalElement = new bootstrap.Modal("#modalSheet");
@@ -34,25 +39,10 @@ export default function Layout() {
 
     return (
         <>
-            <div className="modal fade" id="modalSheet" data-bs-backdrop="static" data-bs-keyboard="false"
-                 tabIndex={-1}>
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content rounded-4 shadow">
-                        <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">Account registered</h1>
-                        </div>
-                        <div className="modal-body">
-                            Please confirm registration with link send to your email.
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-lg btn-primary" data-bs-dismiss="modal">
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {userElement}
+            <Modal header={"Account registered"} body = {"Please confirm registration with link send to your email."}
+                   footerButton={"Close"} handleClick={()=>dispatch(setShow(false))}/>
+            <p>This is Layout</p>
+            <NavigationBar user={user}/>
             <Outlet/>
         </>
     );

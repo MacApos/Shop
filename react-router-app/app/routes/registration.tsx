@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import {type ActionFunctionArgs, Navigate, useNavigation} from "react-router";
 import type {Route} from "./+types/registration";
+import {useAppDispatch} from "~/hooks";
+import {setShow} from "~/features/modalSlice";
 import {Entity, createEntity} from "~/data";
 import ValidatedForm from "~/common/ValidatedForm";
 import ValidatedInput from "~/common/ValidatedInput";
-import {selectModal, setShow} from "~/features/modalSlice";
-import {useAppDispatch, useAppSelector} from "~/hooks";
 
 const passwordValidation = (value: string) => {
     const minLength = 8;
@@ -48,7 +48,7 @@ export async function action({request}: ActionFunctionArgs) {
 
 export default function Registration({actionData}: Route.ComponentProps) {
     const response = actionData?.response;
-    const errors = response?.body;
+    const body = response?.body;
     const ok = response?.ok;
     const navigation = useNavigation();
     const dispatch = useAppDispatch();
@@ -70,7 +70,7 @@ export default function Registration({actionData}: Route.ComponentProps) {
                     <span className="visually-hidden">Loading...</span>
                 </div>
             }
-            <ValidatedForm errors={errors}>
+            <ValidatedForm errors={body}>
                 <ValidatedInput>
                     <input name={"username"}
                            defaultValue={"bigZbig"}

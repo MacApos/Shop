@@ -20,28 +20,24 @@ import java.util.Map;
 public class LoginController {
     private final UserService userService;
     private final JwtTokenService jwtTokenService;
-    private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody @Validated(DefaultPassword.class) User user) {
-        return ResponseEntity.ok(Map.of(
-                "user", userService.findByEmail(user.getEmail()),
-                "jwt", jwtTokenService.authenticateUser(user))
+    public ResponseEntity<Map<String, Object>> login(@RequestBody @Validated(DefaultPassword.class) User user,
+                                                     HttpServletResponse response) {
+        return ResponseEntity.ok(Map.of("jwt", jwtTokenService.authenticateUser(user, response))
         );
     }
 
     @GetMapping("/user-access")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> userAccess() {
-        authenticationService.getAuthenticatedUser();
-        return ResponseEntity.ok("user success");
+        return ResponseEntity.ok(Map.of("success", "user success"));
     }
 
     @GetMapping("/admin-access")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String, String>> adminAccess() {
-        ResponseEntity<Map<String, String>> ok = ResponseEntity.ok(Map.of("success", "admin success"));
-        return ok;
+        return ResponseEntity.ok(Map.of("success", "admin success"));
     }
 
 }

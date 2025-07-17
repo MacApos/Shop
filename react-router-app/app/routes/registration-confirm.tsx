@@ -2,11 +2,10 @@ import React, {useEffect} from 'react';
 import type {Route} from "./+types/registration-confirm";
 import {confirm, Entity, fetching, Method} from "~/data";
 import MessageComponent from "~/common/MessageComponent";
-import {data, Navigate, NavLink, useNavigate} from "react-router";
-import {cookieToString} from "~/cookie.server";
+import {data, NavLink, useNavigate} from "react-router";
+import {cookieOptionsToString, jwtToken} from "~/cookie.server";
 import {useAppDispatch} from "~/hooks";
 import {setShow} from "~/features/modalSlice";
-import {setUser} from "~/features/userSlice";
 
 export async function loader({request}: Route.LoaderArgs) {
     const url = new URL(request.url);
@@ -16,21 +15,19 @@ export async function loader({request}: Route.LoaderArgs) {
     }
     const response = await confirm(Entity.USER, token);
     if (response.ok) {
-        const {jwt, ...body} = response.body;
-        response.body = body.user;
-        return data({token, response}, {
+
+        const jwtCookie = await jwtToken.serialize(response.body.jwt);
+        return data({token, errors: undefined}, {
             headers: {
-                "Set-Cookie": `jwt=${jwt}; ${cookieToString()}`
+                "Set-Cookie": jwtCookie
             }
         });
     }
-    return {token, response};
+    return {token, errors: response.body};
 }
 
 export default function RegistrationConfirm({loaderData}: Route.ComponentProps) {
-    const {token, response} = loaderData;
-    const ok = response.ok;
-    const body = response.body;
+    const {token, errors} = loaderData;
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -38,30 +35,23 @@ export default function RegistrationConfirm({loaderData}: Route.ComponentProps) 
         e.preventDefault();
         e.stopPropagation();
         dispatch(setShow(true));
-        const response = await fetching(Method.GET, `/${Entity.USER}/resend-registration-token?token=${token}`);
+        const response = await fetching(`/${Entity.USER}/resend-registration-token?token=${token}`);
         if (!response.ok) {
             navigate(`/registration-confirm%token=${token}`, {replace: true});
         }
         navigate("/", {replace: true});
     };
 
-    useEffect(() => {
-        if (ok) {
-            dispatch(setUser(body));
-        }
-    }, [response]);
-
-    const message = ok ? "Good job!" : undefined;
-    const details = ok ?
-        <>
-            Your account has been activated, now return to <NavLink to={"/"} replace>home page →</NavLink>
-        </> : "expiryDate" in body ?
+    const message = errors ? undefined : "Good job!";
+    const details = errors ?
+        "Your token is invalid or has already been used." : "expiryDate" in errors ?
             <>
                 Your token has expired, click <a href={""} onClick={handleClick}>here</a> to resend activation link
-                to
-                your email address.
+                to your email address.
             </> :
-            "Your token is invalid or has already been used.";
+            <>
+                Your account has been activated, now return to <NavLink to={"/"} replace>home page →</NavLink>
+            </>;
     return (
         <MessageComponent message={message} details={details}/>
     );

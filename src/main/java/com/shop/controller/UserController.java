@@ -5,6 +5,7 @@ import com.shop.event.EmailEvent;
 import com.shop.service.*;
 import com.shop.validation.user.group.expensive.ResetPassword;
 import com.shop.validation.user.group.sequence.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ public class UserController {
     private final RegistrationTokenService registrationTokenService;
     private final ApplicationEventPublisher eventPublisher;
     private final MessageService messageService;
+    private final AuthenticationService authenticationService;
 
     @Value("${react.origin}")
     private String origin;
@@ -52,9 +54,10 @@ public class UserController {
         eventPublisher.publishEvent(emailEvent);
     }
 
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.findById(id);
+    @GetMapping
+    public ResponseEntity<User> getAuthenticatedUser(HttpServletRequest request) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser();
+        return ResponseEntity.ok(authenticatedUser);
     }
 
     @PostMapping("/create")

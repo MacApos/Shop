@@ -5,12 +5,15 @@ import com.shop.mapper.ProductMapper;
 import com.shop.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import com.shop.entity.Category;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static org.springframework.data.domain.Sort.Direction.fromString;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +55,33 @@ public class ProductService extends AbstractService<Product> {
 
     public List<Product> findAll() {
         return productRepository.findAll();
+    }
+
+    public List<Product> findAll(Optional<Integer> categoryId, Optional<Integer> pageNumber, Optional<Integer> pageSize,
+                                 Optional<List<String>> sortProperties, Optional<String> sortDirection) {
+        Pageable pageable = Pageable.unpaged();
+        if (pageNumber.isPresent() && pageSize.isPresent()) {
+            Sort.Direction direction = fromString(sortDirection
+                    .filter(d -> d.equalsIgnoreCase("desc"))
+                    .orElse("asc"));
+            List<String> properties = sortProperties.orElse(new ArrayList<>());
+            if (!properties.contains("name")) {
+                properties.add("name");
+            }
+            Sort sort = Sort.by(direction, properties.toArray(new String[0]));
+            long count = categoryId.map(productRepository::countAllByCategory)
+                    .orElseGet(productRepository::count);
+            int size = pageSize.get();
+            int maxPage = (int) (Math.min(1, count % size) + (count / size) - 1);
+            int chosenPage = Math.min(Math.max(pageNumber.get(), 0), maxPage);
+            pageable = PageRequest.of(chosenPage, size, sort);
+        }
+
+        Pageable finalPageable = pageable;
+        return categoryId
+                .map(id -> productRepository.findAllByCategory(finalPageable, id))
+                .orElseGet(() -> productRepository.findAll(finalPageable))
+                .getContent();
     }
 
     public boolean existsByNameAndCategory(String name, Category category) {

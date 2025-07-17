@@ -1,17 +1,28 @@
-import {createCookie} from "react-router";
+import {type CookieOptions, createCookie} from "react-router";
 
-const cookieOptions: Record<string, string | boolean | number> = {
+type CookieOptionsType = {
+    path: string,
+    httpOnly: boolean,
+    secure: boolean,
+    maxAge: number
+    credentials: boolean
+}
+
+const cookieOptions: CookieOptionsType = {
     path: "/",
     httpOnly: true,
     secure: true,
     maxAge: 7 * 24 * 60 * 60,
+    credentials: true,
 };
 
-export const cookieToString = () => {
-    return Object.keys(cookieOptions).map(key => `${key}=${cookieOptions[key]};`).join(" ");
-};
+export function findCookieByName(request: Request, name: string) {
+    const cookieHeader = request.headers.get("Cookie");
+    return cookieHeader ? cookieHeader.split("; ").find(cookie => cookie.startsWith(name)) : undefined;
+}
 
-const jwtToken = createCookie("jwt", cookieOptions);
-const userCookie = createCookie("user", cookieOptions);
+export function cookieOptionsToString() {
+    return Object.keys(cookieOptions).map(key => `${key}=${cookieOptions[key as keyof CookieOptionsType]}`).join("; ");
+}
 
-export {jwtToken, userCookie};
+export const jwtToken = createCookie("jwt", cookieOptions);

@@ -9,7 +9,6 @@ interface ModalState {
 const initialState: ModalState = {
     change: false,
     show: false,
-
 };
 
 export const modalSlice = createSlice({

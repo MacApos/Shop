@@ -1,7 +1,9 @@
 package com.shop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.shop.validation.cartItem.group.defaults.CreateCartItemDefaults;
 import com.shop.validation.global.annotation.MinSize;
 import com.shop.validation.product.annotation.ProductExists;
@@ -30,6 +32,7 @@ import java.util.Set;
 @NoArgsConstructor
 @ProductExists(groups = ProductExistsGroup.class)
 @UniqueProduct(groups = UniqueProductGroup.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Product {
     @Id
     @NotNull(groups = {DeleteProductDefaults.class, CreateCartItemDefaults.class})
@@ -61,6 +64,8 @@ public class Product {
     @Valid
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToString.Exclude
+    @JsonIgnore
     private Category category;
 
     @Transient
@@ -89,5 +94,9 @@ public class Product {
         this.image = image;
         this.path = path;
         this.category = category;
+    }
+
+    public Long getCategoryId() {
+        return category == null ? null : category.getId();
     }
 }
