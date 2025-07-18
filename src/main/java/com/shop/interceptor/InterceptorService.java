@@ -1,9 +1,6 @@
 package com.shop.interceptor;
 
 import com.shop.service.AbstractService;
-import com.shop.service.ServiceInterface;
-import com.shop.service.ServiceInterface;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +10,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
-import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

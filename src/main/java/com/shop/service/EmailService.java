@@ -56,16 +56,6 @@ public class EmailService {
         sendHtmlMessage(to, subject, htmlBody);
     }
 
-    // delete
-    public void sendHtmlMessage(EmailEvent event) {
-        Locale locale = LocaleContextHolder.getLocale();
-        String subject = messageService.getMessage(event.getSubjectCode(), locale);
-        Context context = new Context(locale);
-        context.setVariables(event.getVariables());
-        String htmlBody = templateEngine.process(event.getTemplate(), context);
-        sendHtmlMessage(event.getTo(), subject, htmlBody);
-    }
-
     @Async
     public void sendTokenEmail(String to, String subjectCode, String template, Map<String, Object> variables) {
         sendHtmlMessage(to, messageService.getMessage(subjectCode), template, variables);

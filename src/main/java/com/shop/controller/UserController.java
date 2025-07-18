@@ -38,22 +38,6 @@ public class UserController {
     @Value("${react.origin}")
     private String origin;
 
-    // delete
-    private void sendTokenMessage(String to, String subjectCode, String template, Map<String, Object> variables) {
-        EmailEvent emailEvent = new EmailEvent(to, subjectCode, template, variables);
-        eventPublisher.publishEvent(emailEvent);
-    }
-
-    // delete
-    private void sendTokenMessage(User user, String subjectCode, String template, String url) {
-        RegistrationToken registrationToken = registrationTokenService.generateAndSaveToken(user);
-        Map<String, Object> variables = Map.of(
-                "user", user,
-                "url", origin + url + registrationToken.getToken());
-        EmailEvent emailEvent = new EmailEvent(user.getEmail(), subjectCode, template, variables);
-        eventPublisher.publishEvent(emailEvent);
-    }
-
     @GetMapping
     public ResponseEntity<User> getAuthenticatedUser(HttpServletRequest request) {
         User authenticatedUser = authenticationService.getAuthenticatedUser();
