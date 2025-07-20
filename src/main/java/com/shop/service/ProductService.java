@@ -52,10 +52,6 @@ public class ProductService extends AbstractService<Product> {
         return products;
     }
 
-    public List<Product> findAll() {
-        return productRepository.findAll();
-    }
-
     public List<Product> findAll(Optional<Integer> categoryId, Optional<Integer> pageNumber, Optional<Integer> pageSize,
                                  Optional<String> sortProperties, Optional<String> sortDirection) {
         Pageable pageable = Pageable.unpaged();
@@ -72,9 +68,11 @@ public class ProductService extends AbstractService<Product> {
             int count = categoryId
                     .map(productRepository::countAllByCategory)
                     .orElseGet(productRepository::count).intValue();
-            int size = Math.max(Math.min(1, pageSize.get()), count);
-            int maxPage = (int) (Math.min(1, count % size) + (count / size) - 1);
-            int chosenPage = Math.min(java.lang.Math.max(pageNumber.get(), 0), maxPage);
+            // 1 >= pageSize <= count
+            int size = Math.min(Math.max(1, pageSize.get()), count);
+            int maxPage = (int) (Math.ceil((double) count / size));
+            // 1 >= pageNumber <= maxPage
+            int chosenPage = Math.min(Math.max(1, pageNumber.get()), maxPage) - 1;
             pageable = PageRequest.of(chosenPage, size, sort);
         }
 
