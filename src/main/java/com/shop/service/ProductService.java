@@ -1,15 +1,14 @@
 package com.shop.service;
 
-import com.shop.entity.Product;
+import com.shop.model.Product;
 import com.shop.mapper.ProductMapper;
 import com.shop.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import com.shop.entity.Category;
+import com.shop.model.Category;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
@@ -58,22 +57,24 @@ public class ProductService extends AbstractService<Product> {
     }
 
     public List<Product> findAll(Optional<Integer> categoryId, Optional<Integer> pageNumber, Optional<Integer> pageSize,
-                                 Optional<List<String>> sortProperties, Optional<String> sortDirection) {
+                                 Optional<String> sortProperties, Optional<String> sortDirection) {
         Pageable pageable = Pageable.unpaged();
         if (pageNumber.isPresent() && pageSize.isPresent()) {
             Sort.Direction direction = fromString(sortDirection
                     .filter(d -> d.equalsIgnoreCase("desc"))
                     .orElse("asc"));
-            List<String> properties = sortProperties.orElse(new ArrayList<>());
-            if (!properties.contains("name")) {
-                properties.add("name");
-            }
+            LinkedHashSet<String> properties = sortProperties
+                    .map(p -> new LinkedHashSet<>(Arrays.asList(p.split(","))))
+                    .orElseGet(LinkedHashSet::new);
+            properties.add("name");
             Sort sort = Sort.by(direction, properties.toArray(new String[0]));
-            long count = categoryId.map(productRepository::countAllByCategory)
-                    .orElseGet(productRepository::count);
-            int size = pageSize.get();
+
+            int count = categoryId
+                    .map(productRepository::countAllByCategory)
+                    .orElseGet(productRepository::count).intValue();
+            int size = Math.max(Math.min(1, pageSize.get()), count);
             int maxPage = (int) (Math.min(1, count % size) + (count / size) - 1);
-            int chosenPage = Math.min(Math.max(pageNumber.get(), 0), maxPage);
+            int chosenPage = Math.min(java.lang.Math.max(pageNumber.get(), 0), maxPage);
             pageable = PageRequest.of(chosenPage, size, sort);
         }
 
@@ -97,7 +98,7 @@ public class ProductService extends AbstractService<Product> {
     }
 
     public boolean existByCategoryId(Long categoryId) {
-        return productRepository.existsByCategoryId(categoryId) != null;
+        return productRepository.existsByCategoryId(categoryId) == 1;
     }
 
     @Transactional

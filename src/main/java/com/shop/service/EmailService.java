@@ -1,10 +1,8 @@
 package com.shop.service;
 
-import com.shop.entity.RegistrationToken;
-import com.shop.entity.User;
-import com.shop.event.EmailEvent;
+import com.shop.model.RegistrationToken;
+import com.shop.model.User;
 import jakarta.mail.*;
-import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,7 +17,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 @Service
 @RequiredArgsConstructor

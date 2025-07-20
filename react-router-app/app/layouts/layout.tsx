@@ -39,8 +39,8 @@ export default function Layout({loaderData}: Route.ComponentProps) {
 
     return (
         <>
-            <Modal header={"Account registered"} body = {"Please confirm registration with link send to your email."}
-                   footerButton={"Close"} handleClick={()=>dispatch(setShow(false))}/>
+            <Modal header={"Account registered"} body={"Please confirm registration with link send to your email."}
+                   footerButton={"Close"} handleClick={() => dispatch(setShow(false))}/>
             <p>This is Layout</p>
             <NavigationBar user={user}/>
             <Outlet/>

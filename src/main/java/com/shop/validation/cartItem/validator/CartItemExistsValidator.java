@@ -1,7 +1,7 @@
 package com.shop.validation.cartItem.validator;
 
-import com.shop.entity.CartItem;
-import com.shop.entity.User;
+import com.shop.model.CartItem;
+import com.shop.model.User;
 import com.shop.service.AuthenticationService;
 import com.shop.service.CartItemService;
 import com.shop.validation.cartItem.annotation.CartItemExists;

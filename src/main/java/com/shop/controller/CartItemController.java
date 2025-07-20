@@ -1,10 +1,9 @@
 package com.shop.controller;
 
-import com.shop.entity.Cart;
-import com.shop.entity.CartItem;
-import com.shop.entity.User;
+import com.shop.model.Cart;
+import com.shop.model.CartItem;
+import com.shop.model.User;
 import com.shop.service.*;
-import com.shop.validation.cartItem.group.defaults.UpdateCartItemDefaults;
 import com.shop.validation.cartItem.group.sequence.CreateCartItemSequence;
 import com.shop.validation.cartItem.group.sequence.DeleteCartItemSequence;
 import com.shop.validation.cartItem.group.sequence.UpdateCartItemSequence;

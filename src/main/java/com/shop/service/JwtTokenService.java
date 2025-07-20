@@ -1,7 +1,7 @@
 package com.shop.service;
 
-import com.shop.entity.Role;
-import com.shop.entity.User;
+import com.shop.model.Role;
+import com.shop.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -97,7 +97,6 @@ public class JwtTokenService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
     }
-
 
 
 }

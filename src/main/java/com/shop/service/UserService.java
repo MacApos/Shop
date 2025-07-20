@@ -3,11 +3,10 @@ package com.shop.service;
 import com.shop.mapper.UserMapper;
 import com.shop.repository.UserRepository;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.shop.entity.User;
+import com.shop.model.User;
 
 @Service
 public class UserService extends AbstractService<User> {

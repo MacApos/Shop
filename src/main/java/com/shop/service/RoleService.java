@@ -3,8 +3,8 @@ package com.shop.service;
 import com.shop.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.shop.entity.Role;
-import com.shop.entity.User;
+import com.shop.model.Role;
+import com.shop.model.User;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
 public class RoleService {
     private final RoleRepository roleRepository;
 
-    public List<Role> findByUser(User user){
+    public List<Role> findByUser(User user) {
         return roleRepository.findByUser(user);
     }
 

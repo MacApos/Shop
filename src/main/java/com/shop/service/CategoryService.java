@@ -6,7 +6,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.shop.entity.Category;
+import com.shop.model.Category;
 
 import java.text.Normalizer;
 import java.util.*;
@@ -27,18 +27,14 @@ public class CategoryService extends AbstractService<Category> {
                 treeMap.put(category.getName(), category);
             }
             return treeMap.values().stream().toList();
-//            return categories.stream().sorted((Comparator.comparing(Category::getName))).toList();
         }
         return categories;
     }
-
-    private final List<String> others = List.of("inne", "pozostałe");
 
     private List<Category> getSortedCategories(List<Category> categories) {
         List<Category> others = new ArrayList<>();
         List<Category> main = new ArrayList<>();
         for (Category category : categories) {
-//            if (this.others.stream().anyMatch(prop -> category.getName().toLowerCase().startsWith(prop))) {
             if (category.getName().toLowerCase().startsWith("inne")) {
                 others.add(category);
                 continue;
@@ -122,7 +118,6 @@ public class CategoryService extends AbstractService<Category> {
 
     public Category findChildren(Category category) {
         List<Category> categories = new ArrayList<>(List.of(category));
-
         for (int i = 0; i < categories.size(); i++) {
             Category cat = categories.get(i);
             List<Category> children = findAllByParent(cat);
@@ -242,7 +237,7 @@ public class CategoryService extends AbstractService<Category> {
     }
 
     public boolean existsByParent(Long id) {
-        return categoryRepository.existsByParentId(id) != null;
+        return categoryRepository.existsByParentId(id) == 1;
     }
 
     public boolean existsByNameAndParent(String name, Category category) {

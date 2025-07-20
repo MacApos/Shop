@@ -1,4 +1,4 @@
-package com.shop.entity;
+package com.shop.model;
 
 import com.fasterxml.jackson.annotation.*;
 import com.shop.validation.cartItem.group.defaults.CreateCartItemDefaults;
@@ -29,14 +29,14 @@ import java.util.*;
 @ParentIsNotItselfChild(groups = ParentIsNotItselfChildGroup.class)
 @CategoryHasNoChild(groups = CategoryHasNoChildGroup.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Category implements Comparable<Category>{
+public class Category implements Comparable<Category> {
     @Id
     @NotNull(groups = {DeleteCategoryDefaults.class, CreateCartItemDefaults.class})
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @MinSize( groups = CreateCategoryDefaults.class)
+    @MinSize(groups = CreateCategoryDefaults.class)
     @ValidName(groups = ValidNameGroup.class)
     private String name;
 

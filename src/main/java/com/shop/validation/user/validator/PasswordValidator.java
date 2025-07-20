@@ -16,7 +16,7 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext constraintValidatorContext) {
-        if(password==null){
+        if (password == null) {
             return false;
         }
         String language = LocaleContextHolder.getLocale().getLanguage();

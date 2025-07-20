@@ -1,10 +1,9 @@
 package com.shop.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
-import com.shop.entity.Category;
+import com.shop.model.Category;
 import com.shop.service.CategoryService;
 
 import java.util.*;
@@ -20,7 +19,7 @@ public class HomeController {
     }
 
     @PostMapping("/test")
-    public HashMap<String, Object> test(@RequestBody Map<String, String> object ) {
+    public HashMap<String, Object> test(@RequestBody Map<String, String> object) {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("id", 1);
         hashMap.put("isTest", true);

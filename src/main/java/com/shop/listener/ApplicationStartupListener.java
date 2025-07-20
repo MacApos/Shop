@@ -1,6 +1,6 @@
 package com.shop.listener;
 
-import com.shop.entity.*;
+import com.shop.model.*;
 import com.shop.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.shop.entity.RoleEnum.*;
+import static com.shop.model.RoleEnum.*;
 
 @Component
 @RequiredArgsConstructor

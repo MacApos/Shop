@@ -17,7 +17,7 @@ export const modalSlice = createSlice({
     reducers: {
         setShow: (state, action: PayloadAction<boolean>) => {
             state.change = !state.change;
-            state.show = action.payload
+            state.show = action.payload;
         },
     }
 });

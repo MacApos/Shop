@@ -2,8 +2,8 @@ package com.shop.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shop.entity.RegistrationToken;
-import com.shop.entity.User;
+import com.shop.model.RegistrationToken;
+import com.shop.model.User;
 import com.shop.listener.ApplicationStartupListener;
 import com.shop.listener.RegistrationEventListener;
 import com.shop.service.JwtTokenService;

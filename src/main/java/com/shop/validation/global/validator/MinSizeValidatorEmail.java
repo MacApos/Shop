@@ -7,10 +7,11 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class MinSizeValidatorEmail implements ConstraintValidator<NotNullEmail, String> {
     private int min;
+
     @Override
     public void initialize(NotNullEmail constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
-         min = 3;
+        min = 3;
     }
 
     @Override

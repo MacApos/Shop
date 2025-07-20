@@ -1,9 +1,9 @@
 package com.shop.service;
 
-import com.shop.entity.Cart;
-import com.shop.entity.CartItem;
-import com.shop.entity.Product;
-import com.shop.entity.User;
+import com.shop.model.Cart;
+import com.shop.model.CartItem;
+import com.shop.model.Product;
+import com.shop.model.User;
 import com.shop.repository.CartItemRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CartItemService extends AbstractService<CartItem>{
+public class CartItemService extends AbstractService<CartItem> {
     private final EntityManager entityManager;
     private final CartItemRepository cartItemRepository;
 

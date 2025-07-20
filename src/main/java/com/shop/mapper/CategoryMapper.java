@@ -1,15 +1,14 @@
 package com.shop.mapper;
 
-import com.shop.entity.Category;
+import com.shop.model.Category;
 import com.shop.repository.CategoryRepository;
-import lombok.RequiredArgsConstructor;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class CategoryMapper implements GenericMapper<Category> {
     @Autowired
-    private  CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Override
     @Mapping(target = "path", ignore = true)

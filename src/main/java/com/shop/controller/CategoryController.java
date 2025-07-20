@@ -1,6 +1,6 @@
 package com.shop.controller;
 
-import com.shop.entity.Category;
+import com.shop.model.Category;
 import com.shop.service.CategoryService;
 import com.shop.validation.category.group.sequence.CreateCategorySequence;
 import com.shop.validation.category.group.sequence.DeleteCategorySequence;

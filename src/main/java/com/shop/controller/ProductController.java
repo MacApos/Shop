@@ -11,18 +11,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.shop.entity.Category;
-import com.shop.entity.Product;
+import com.shop.model.Category;
+import com.shop.model.Product;
 import com.shop.service.CategoryService;
 import com.shop.service.ProductService;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/product")
@@ -35,7 +35,7 @@ public class ProductController {
     public ResponseEntity<List<Product>> getAllProducts(@RequestParam(name = "category") Optional<Integer> categoryId,
                                                         @RequestParam(name = "page") Optional<Integer> pageNumber,
                                                         @RequestParam(name = "size") Optional<Integer> pageSize,
-                                                        @RequestParam(name = "properties") Optional<List<String>> sortCriteria,
+                                                        @RequestParam(name = "sort") Optional<String> sortCriteria,
                                                         @RequestParam(name = "direction") Optional<String> sortDirection) {
         return ResponseEntity.ok(productService.findAll(categoryId, pageNumber, pageSize, sortCriteria, sortDirection));
     }
@@ -48,7 +48,7 @@ public class ProductController {
     @GetMapping("/image/{id}")
     public ResponseEntity<Resource> getProductImageById(@PathVariable Long id) throws MalformedURLException {
         Product product = productService.findById(id);
-        Path path = Paths.get("uploads/"+product.getImage());
+        Path path = Paths.get("uploads/" + product.getImage());
         Resource resource = new UrlResource(path.toUri());
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)

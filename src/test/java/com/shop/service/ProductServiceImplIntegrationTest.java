@@ -36,19 +36,19 @@
 //    @Mock
 //    private ProductRepository productRepository;
 //
-////    @TestConfiguration
-////    class P {
-////        @Bean
-////        public CategoryService categoryService() {
-////            return new CategoryServiceImpl(categoryRepository);
-////        }
-////
-////        @Bean
-////        public ProductService productService() {
-////            return new ProductServiceImpl(categoryService, productRepository);
-////        }
-////
-////    }
+/// /    @TestConfiguration
+/// /    class P {
+/// /        @Bean
+/// /        public CategoryService categoryService() {
+/// /            return new CategoryServiceImpl(categoryRepository);
+/// /        }
+/// /
+/// /        @Bean
+/// /        public ProductService productService() {
+/// /            return new ProductServiceImpl(categoryService, productRepository);
+/// /        }
+/// /
+/// /    }
 //
 //    @Autowired
 //    private CategoryServiceImpl categoryService;

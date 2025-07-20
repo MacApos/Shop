@@ -1,6 +1,6 @@
 package com.shop.validation.category.validator;
 
-import com.shop.entity.Category;
+import com.shop.model.Category;
 import com.shop.service.CategoryService;
 import com.shop.service.ValidatorService;
 import com.shop.validation.category.annotation.UniqueCategory;

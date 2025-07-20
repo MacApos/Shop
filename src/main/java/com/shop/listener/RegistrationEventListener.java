@@ -1,7 +1,7 @@
 package com.shop.listener;
 
-import com.shop.entity.RegistrationToken;
-import com.shop.entity.User;
+import com.shop.model.RegistrationToken;
+import com.shop.model.User;
 import com.shop.event.RegistrationEvent;
 import com.shop.service.EmailService;
 import com.shop.service.MessageService;

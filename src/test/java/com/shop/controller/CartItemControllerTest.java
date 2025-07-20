@@ -2,8 +2,8 @@ package com.shop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.common.AbstractControllerTest;
-import com.shop.entity.CartItem;
-import com.shop.entity.Product;
+import com.shop.model.CartItem;
+import com.shop.model.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class CartItemControllerTest extends AbstractControllerTest {
         cartItem.setQuantity(5);
         String json = objectMapper.writeValueAsString(cartItem);
 
-        mockMvc.perform(putRequestBuilder("/cart-item/update/1",json))
+        mockMvc.perform(putRequestBuilder("/cart-item/update/1", json))
                 .andExpect(status().isOk());
     }
 
@@ -53,7 +53,7 @@ public class CartItemControllerTest extends AbstractControllerTest {
         cartItem.setId(1L);
         String json = objectMapper.writeValueAsString(cartItem);
 
-        mockMvc.perform(deleteRequestBuilder("/cart-item/delete/1",json))
+        mockMvc.perform(deleteRequestBuilder("/cart-item/delete/1", json))
                 .andExpect(status().isOk());
     }
 

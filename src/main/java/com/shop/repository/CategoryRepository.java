@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import com.shop.entity.Category;
+import com.shop.model.Category;
 
 import java.util.List;
 
@@ -22,9 +22,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     boolean existsByNameAndParent(String name, Category category);
 
-    @Query(value = "select 1 from category where parent_id = :parentId;", nativeQuery = true)
+    @Query(value = "select exists(select 1 from category where parent_id = :parentId);", nativeQuery = true)
     Long existsByParentId(@Param("parentId") Long parentId);
-
-    @Query(value = "select 1 from category where name like :name and parent_id = :parentId;", nativeQuery = true)
-    Long existsByNameAndParentId(@Param("name") String name, @Param("parentId") Long parentId);
 }

@@ -1,4 +1,4 @@
-package com.shop.entity;
+package com.shop.model;
 
 import com.shop.validation.global.annotation.MinSize;
 import com.shop.validation.user.annotation.TokenExists;
@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;

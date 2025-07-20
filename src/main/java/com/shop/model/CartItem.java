@@ -1,4 +1,4 @@
-package com.shop.entity;
+package com.shop.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shop.validation.cartItem.annotation.CartItemExists;
@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -27,7 +26,7 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Min(value =1)
+    @Min(value = 1)
     @Min(value = 1, groups = {CreateCartItemDefaults.class, UpdateCartItemDefaults.class})
     private int quantity = 1;
 

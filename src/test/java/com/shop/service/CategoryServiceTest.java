@@ -3,9 +3,7 @@ package com.shop.service;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.shop.common.CategoriesInitiation;
-import com.shop.entity.Category;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import com.shop.model.Category;
 
 import java.util.List;
 import java.util.Set;

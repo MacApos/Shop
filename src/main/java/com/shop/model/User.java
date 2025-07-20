@@ -1,12 +1,10 @@
-package com.shop.entity;
+package com.shop.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-//import com.shop.validation.user.annotation.*;
 import com.shop.validation.global.annotation.MinSize;
 import com.shop.validation.user.annotation.*;
-//import com.shop.validation.user.annotation.UserExists;
 import com.shop.validation.user.group.defaults.*;
 import com.shop.validation.user.group.expensive.*;
 import com.shop.validation.user.group.expensive.UserExistsByEmail;

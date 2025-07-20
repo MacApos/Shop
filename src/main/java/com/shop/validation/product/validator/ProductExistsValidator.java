@@ -1,6 +1,6 @@
 package com.shop.validation.product.validator;
 
-import com.shop.entity.Product;
+import com.shop.model.Product;
 import com.shop.service.ProductService;
 import com.shop.validation.product.annotation.ProductExists;
 import jakarta.validation.ConstraintValidator;

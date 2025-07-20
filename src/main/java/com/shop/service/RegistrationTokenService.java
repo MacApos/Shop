@@ -1,15 +1,13 @@
 package com.shop.service;
 
-import com.shop.entity.RegistrationToken;
-import com.shop.entity.User;
+import com.shop.model.RegistrationToken;
+import com.shop.model.User;
 import com.shop.repository.RegistrationTokenRepository;
 import com.shop.validation.user.group.sequence.ValidTokenSequence;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindException;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Service

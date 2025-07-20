@@ -15,7 +15,7 @@ import MessageComponent from "~/common/MessageComponent";
 export default function App() {
     return (
         <Provider store={store}>
-                <Outlet/>
+            <Outlet/>
         </Provider>
     );
 }

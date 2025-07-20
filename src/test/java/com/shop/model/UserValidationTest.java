@@ -1,4 +1,4 @@
-package com.shop.entity;
+package com.shop.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.service.MessageService;

@@ -1,6 +1,6 @@
 package com.shop.validation.user.validator;
 
-import com.shop.entity.User;
+import com.shop.model.User;
 import com.shop.service.ValidatorService;
 import com.shop.validation.user.annotation.ConfirmPassword;
 import jakarta.validation.ConstraintValidator;

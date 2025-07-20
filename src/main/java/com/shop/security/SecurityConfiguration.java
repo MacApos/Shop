@@ -50,9 +50,6 @@ public class SecurityConfiguration {
     @Value("${jwt.private.key}")
     private RSAPrivateKey privateKey;
 
-    @Value("${react.origin}")
-    private String origin;
-
     public DelegatedAuthenticationEntryPoint authenticationEntryPoint;
 
     public DelegatedAccessDeniedHandler accessDeniedHandler;
@@ -94,14 +91,16 @@ public class SecurityConfiguration {
                         .requestMatchers("/product/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
-                .exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
+                .exceptionHandling(exceptionHandlingConfigurer ->
+                        exceptionHandlingConfigurer
+                                .authenticationEntryPoint(authenticationEntryPoint)
+                                .accessDeniedHandler(accessDeniedHandler)
                 )
-                .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer
-                        .jwt(Customizer.withDefaults())
+                .oauth2ResourceServer(resourceServerConfigurer ->
+                        resourceServerConfigurer.jwt(Customizer.withDefaults())
                 )
-                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
 //                .csrf(csrf -> csrf
 //                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())

@@ -1,8 +1,7 @@
 package com.shop.repository;
 
-import com.shop.entity.Product;
-import com.shop.entity.RegistrationToken;
-import com.shop.entity.User;
+import com.shop.model.RegistrationToken;
+import com.shop.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

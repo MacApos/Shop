@@ -1,7 +1,6 @@
 package com.shop.event;
 
-import com.shop.entity.User;
-import jakarta.servlet.http.HttpServletRequest;
+import com.shop.model.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;

@@ -48,7 +48,7 @@ async function fetchData(path: string, init = getInit) {
 export async function fetchImage(path: string, headers?: ResponseInit, method?: Method, body?: Record<string, any>) {
     const response = await fetch(url + path, {
         ...getInit
-    })
+    });
     const blob = await response.blob();
     const s = URL.createObjectURL(blob);
 }

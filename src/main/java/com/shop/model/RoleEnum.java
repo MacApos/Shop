@@ -1,4 +1,4 @@
-package com.shop.entity;
+package com.shop.model;
 
 public enum RoleEnum {
     ROLE_USER,

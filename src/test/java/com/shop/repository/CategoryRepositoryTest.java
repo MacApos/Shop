@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import com.shop.common.CategoriesInitiation;
-import com.shop.entity.Category;
+import com.shop.model.Category;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,7 +38,7 @@ public class CategoryRepositoryTest extends CategoriesInitiation {
     }
 
     @Test
-    public void givenName_whenFindByName_thenReturnCategoryWithGivenName(){
+    public void givenName_whenFindByName_thenReturnCategoryWithGivenName() {
         String name = child1.getName();
         Category category = categoryRepository.findByNameAndParent(name, parent1);
         assertThat(category)
@@ -49,7 +49,7 @@ public class CategoryRepositoryTest extends CategoriesInitiation {
     }
 
     @Test
-    public void givenNameAndParent_whenFindByNameAndParent_thenReturnCategoryWithGivenNameAndParent(){
+    public void givenNameAndParent_whenFindByNameAndParent_thenReturnCategoryWithGivenNameAndParent() {
         String name = child2.getName();
         Category category = categoryRepository.findByNameAndParent(name, parent1);
         assertThat(category)

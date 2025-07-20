@@ -1,17 +1,15 @@
 package com.shop.controller;
 
-import com.shop.service.AuthenticationService;
 import com.shop.service.JwtTokenService;
 import com.shop.service.UserService;
 import com.shop.validation.user.group.defaults.DefaultPassword;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.shop.entity.User;
+import com.shop.model.User;
 
 import java.util.Map;
 

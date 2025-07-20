@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import com.shop.entity.Category;
-import com.shop.entity.Product;
+import com.shop.model.Category;
+import com.shop.model.Product;
 
 import java.util.List;
 
@@ -36,25 +36,24 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             """;
 
     @Query(value = """
-                with recursive CategoryTree as (select  id, parent_id from category
-                                                           where id = :id
-                                                           union all
-                                                           select c.id, c.parent_id
-                                                           from category c
-                                                                    inner join CategoryTree ct on ct.id = c.parent_id)
-                            select count(*)
-                            from product p
-                                    inner join CategoryTree ct on ct.id = p.category_id
-                """, nativeQuery = true, countQuery = countQuery)
+            with recursive CategoryTree as (select  id, parent_id from category
+                                                       where id = :id
+                                                       union all
+                                                       select c.id, c.parent_id
+                                                       from category c
+                                                                inner join CategoryTree ct on ct.id = c.parent_id)
+                        select p.*
+                        from product p
+                                inner join CategoryTree ct on ct.id = p.category_id
+            """, nativeQuery = true, countQuery = countQuery)
     Page<Product> findAllByCategory(Pageable pageable, @Param("id") int categoryId);
 
     @NativeQuery(value = countQuery)
     long countAllByCategory(@Param("id") int categoryId);
 
-
     boolean existsByNameAndCategory(String name, Category category);
 
-    @Query(value = "select 1 from product where category_id = :categoryId;",
+    @Query(value = "select exists(select 1 from product where category_id = :categoryId);",
             nativeQuery = true)
     Long existsByCategoryId(@Param("categoryId") Long categoryId);
 }

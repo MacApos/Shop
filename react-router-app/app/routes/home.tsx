@@ -5,6 +5,6 @@ export default function Home() {
         <p id="index-page">
             This is a Home page.
         </p>
-    )
+    );
 
 }

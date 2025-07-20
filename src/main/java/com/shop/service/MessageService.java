@@ -12,21 +12,21 @@ import java.util.Locale;
 public class MessageService {
     private final MessageSource messageSource;
 
-    public Locale getLocale(){
+    public Locale getLocale() {
         return LocaleContextHolder.getLocale();
     }
 
-    public String getMessage(String code){
+    public String getMessage(String code) {
         Locale locale = getLocale();
         return messageSource.getMessage(code, null, locale);
     }
 
-    public String getMessage(String code, Object[] args){
+    public String getMessage(String code, Object[] args) {
         Locale locale = getLocale();
         return messageSource.getMessage(code, args, locale);
     }
 
-    public String getMessage(String code, Locale locale){
+    public String getMessage(String code, Locale locale) {
         return messageSource.getMessage(code, null, locale);
     }
 }

@@ -6,10 +6,11 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class MinSizeValidator implements ConstraintValidator<MinSize, String> {
     private int min;
+
     @Override
     public void initialize(MinSize constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
-         min = constraintAnnotation.min();
+        min = constraintAnnotation.min();
     }
 
     @Override

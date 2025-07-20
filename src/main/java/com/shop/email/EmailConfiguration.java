@@ -27,7 +27,7 @@ public class EmailConfiguration {
         templateResolver.setPrefix("template/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCharacterEncoding( "UTF-8");
+        templateResolver.setCharacterEncoding("UTF-8");
         return templateResolver;
     }
 

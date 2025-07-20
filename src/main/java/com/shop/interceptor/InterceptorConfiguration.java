@@ -4,15 +4,9 @@ import com.shop.service.CartItemService;
 import com.shop.service.CategoryService;
 import com.shop.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
-
-import java.util.List;
-import java.util.Locale;
 
 @Configuration
 @RequiredArgsConstructor
@@ -38,5 +32,4 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
                         "/cart-item/update/{id:\\d+}",
                         "/cart-item/delete/{id:\\d+}");
     }
-
 }
