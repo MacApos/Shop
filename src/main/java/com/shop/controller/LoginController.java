@@ -1,7 +1,6 @@
 package com.shop.controller;
 
 import com.shop.service.JwtTokenService;
-import com.shop.service.UserService;
 import com.shop.validation.user.group.defaults.DefaultPassword;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +15,12 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
-    private final UserService userService;
     private final JwtTokenService jwtTokenService;
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody @Validated(DefaultPassword.class) User user,
                                                      HttpServletResponse response) {
-        return ResponseEntity.ok(Map.of("jwt", jwtTokenService.authenticateUser(user, response))
-        );
+        return ResponseEntity.ok(Map.of("jwt", jwtTokenService.authenticateUser(user, response)));
     }
 
     @GetMapping("/user-access")
