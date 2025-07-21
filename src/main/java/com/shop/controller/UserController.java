@@ -27,6 +27,12 @@ public class UserController {
     @Value(value = "http://localhost:8080")
     private String origin;
 
+    @GetMapping
+    public ResponseEntity<User> getAuthenticatedUser() {
+        User authenticatedUser = authenticationService.getAuthenticatedUser();
+        return ResponseEntity.ok(authenticatedUser);
+    }
+
     @GetMapping("/send-reset-password-token")
     public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(UserExistsSequence.class) User user) {
         User existingUser = userService.findByEmail(user.getEmail());

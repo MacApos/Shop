@@ -99,7 +99,7 @@ public class ApplicationStartupListener implements ApplicationListener<Applicati
         Map<User, List<RoleEnum>> users = Map.of(
                 new User("admin", "Adamin", "Nowak", "admin", "admin@gmail.com"),
                 List.of(ROLE_USER, ROLE_ADMIN),
-                new User("user", "Andrzej", "Userski", "P@ssword123", "user@gmail.com"),
+                new User("user", "Andrzej", "Userski", "user", "user@gmail.com"),
                 List.of(ROLE_USER)
         );
 
