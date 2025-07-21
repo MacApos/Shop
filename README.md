@@ -1,6 +1,7 @@
 ## About The Project
 
-A simple shopping platform where users can register, log in, browse products, and manage a shopping cart.
+A simple shopping platform with handmade crochet products like hats, sweaters, rugs, bags or purses. Users can register,
+log in, browse products, and manage a shopping cart.
 
 ## Features
 
@@ -34,8 +35,7 @@ A simple shopping platform where users can register, log in, browse products, an
    ./mvnw spring-boot:run
    ```
 
-Main paths contained in the application:
-
+## API Endpoints
 - `/register` - this is a starting point for new customers. Registration will be followed by an email with a
   confirmation link. Activating it is required to enable the user account.
 - `/login` - is done with email and password. Users with inactive accounts will not be authenticated.
