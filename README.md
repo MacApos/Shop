@@ -40,7 +40,8 @@ log in, browse products, and manage a shopping cart.
 - `/register` - this is a starting point for new customers. Registration will be followed by an email with a
   confirmation link. Activating it is required to enable the user account.
 - `/login` - is done with email and password. Users with inactive accounts will not be authenticated.
-  A valid registration or login process will set a JWT cookie with a max age of 7 days.
+  
+    A valid registration or login process will set a JWT cookie with a max age of 7 days.
 - `/user` - will show user information and allow modifying it.
 - `/categories` - used for grouping products. They are organized into a hierarchical tree. Extend the path with /all to
   simply list them, or /hierarchy to check their structure.
