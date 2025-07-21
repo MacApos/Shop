@@ -19,20 +19,21 @@ log in, browse products, and manage a shopping cart.
 - Spring Security
 - H2 Database Engine 2.3.232
 - AssertJ 3.26.3
+- Apache Maven 3.9.11
 
 ## Installation
 
 1. Clone the repository
    ```sh
-   git clone https://github.com/MacApos/GitHubAPIClient.git
+   git clone https://github.com/MacApos/Shop.git
    ```
 2. Go to the project's main directory
    ```sh
-   cd GitHubAPIClient
+   cd Shop
    ```
 3. Run Spring Boot application
    ```sh
-   ./mvnw spring-boot:run
+   mvn spring-boot:run
    ```
 
 ## API Endpoints
@@ -46,3 +47,5 @@ log in, browse products, and manage a shopping cart.
 - `/products` - can be listed by categories, paginated, and sorted.
   Users with the admin role can perform CRUD operations on categories and products.
 - `/cart-items` - used for storing products saved by the user. They require a user role to be created and manipulated.
+
+<p align="right"><a href="#about-the-project">back to top</a></p>
