@@ -18,9 +18,10 @@ public class LoginController {
     private final JwtTokenService jwtTokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody @Validated(DefaultPassword.class) User user,
-                                                     HttpServletResponse response) {
-        return ResponseEntity.ok(Map.of("jwt", jwtTokenService.authenticateUser(user, response)));
+    public ResponseEntity<User> login(@RequestBody @Validated(DefaultPassword.class) User user,
+                                      HttpServletResponse response) {
+        jwtTokenService.authenticateUser(user, response);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/user-access")

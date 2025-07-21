@@ -40,7 +40,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import javax.sql.DataSource;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -96,37 +95,37 @@ public class SecurityConfiguration {
                         .requestMatchers("/product/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
-                .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer
-                                .authenticationEntryPoint(authenticationEntryPoint)
-                                .accessDeniedHandler(accessDeniedHandler)
-                )
+//                .exceptionHandling(exceptionHandlingConfigurer ->
+//                        exceptionHandlingConfigurer
+//                                .authenticationEntryPoint(authenticationEntryPoint)
+//                                .accessDeniedHandler(accessDeniedHandler)
+//                )
                 .oauth2ResourceServer(resourceServerConfigurer ->
                         resourceServerConfigurer.jwt(Customizer.withDefaults())
                 )
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(new CsrfTokenRequestHandler() {
-                            private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
-                            private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
-
-                            @Override
-                            public void handle(HttpServletRequest request, HttpServletResponse response,
-                                               Supplier<CsrfToken> csrfToken) {
-                                xor.handle(request, response, csrfToken);
-                                csrfToken.get();
-                            }
-
-                            @Override
-                            public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
-                                String header = request.getHeader(csrfToken.getHeaderName());
-                                return (StringUtils.hasText(header) ? plain : xor).resolveCsrfTokenValue(request,
-                                        csrfToken);
-                            }
-                        }))
+//                .csrf(csrf -> csrf
+//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                        .csrfTokenRequestHandler(new CsrfTokenRequestHandler() {
+//                            private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
+//                            private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
+//
+//                            @Override
+//                            public void handle(HttpServletRequest request, HttpServletResponse response,
+//                                               Supplier<CsrfToken> csrfToken) {
+//                                xor.handle(request, response, csrfToken);
+//                                csrfToken.get();
+//                            }
+//
+//                            @Override
+//                            public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
+//                                String header = request.getHeader(csrfToken.getHeaderName());
+//                                return (StringUtils.hasText(header) ? plain : xor).resolveCsrfTokenValue(request,
+//                                        csrfToken);
+//                            }
+//                        }))
                 .addFilterBefore(new JwtCookieFilter(), BearerTokenAuthenticationFilter.class)
                 .build();
     }

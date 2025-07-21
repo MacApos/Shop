@@ -1,7 +1,6 @@
 package com.shop.validation.category.annotation;
 
 import com.shop.validation.category.validator.CategoryHasNoChildValidator;
-import com.shop.validation.product.validator.ProductExistsValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

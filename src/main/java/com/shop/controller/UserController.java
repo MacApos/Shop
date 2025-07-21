@@ -4,10 +4,8 @@ import com.shop.model.*;
 import com.shop.service.*;
 import com.shop.validation.user.group.expensive.ResetPassword;
 import com.shop.validation.user.group.sequence.*;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -21,59 +19,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final RoleService roleService;
     private final EmailService emailService;
-    private final JwtTokenService jwtTokenService;
     private final RegistrationTokenService registrationTokenService;
-    private final ApplicationEventPublisher eventPublisher;
-    private final MessageService messageService;
     private final AuthenticationService authenticationService;
 
-    @Value("${react.origin}")
+    //    @Value("${react.origin}")
+    @Value(value = "http://localhost:8080")
     private String origin;
-
-    @GetMapping
-    public ResponseEntity<User> getAuthenticatedUser(HttpServletRequest request) {
-        User authenticatedUser = authenticationService.getAuthenticatedUser();
-        return ResponseEntity.ok(authenticatedUser);
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody @Validated(CreateUserSequence.class) User user) {
-        userService.save(user);
-        roleService.save(new Role(RoleEnum.ROLE_USER, user));
-        emailService.sendTokenEmail(user,
-                "confirm.registration.subject",
-                "registration-confirm.html",
-                "registration-confirm?token=");
-        return ResponseEntity.ok(user);
-    }
-
-    @GetMapping("/confirm-registration")
-    public ResponseEntity<Map<String, Object>> confirmRegistration(@Validated(UserExistsSequence.class)
-                                                                   RegistrationToken token) {
-        RegistrationToken validatedToken = registrationTokenService.validateToken(token);
-        User user = validatedToken.getUser();
-        user.setEnabled(true);
-        userService.save(user);
-        jwtTokenService.authenticateWithoutPassword(user);
-        return ResponseEntity.ok(Map.of(
-                "user", userService.findByEmail(user.getEmail()),
-                "jwt", jwtTokenService.authenticateWithoutPassword(user))
-        );
-    }
-
-    @GetMapping("/resend-registration-token")
-    public ResponseEntity<User> resendRegistrationToken(@Validated(UserExistsSequence.class) RegistrationToken token) {
-        RegistrationToken existingToken = registrationTokenService.findByToken(token.getToken());
-        existingToken.setActive(false);
-        User user = existingToken.getUser();
-        emailService.sendTokenEmail(user,
-                "confirm.registration.subject",
-                "registration-confirm.html",
-                "registration-confirm?token=");
-        return ResponseEntity.ok(user);
-    }
 
     @GetMapping("/send-reset-password-token")
     public ResponseEntity<?> sendResetPasswordToken(@RequestBody @Validated(UserExistsSequence.class) User user) {
@@ -82,7 +34,7 @@ public class UserController {
             emailService.sendTokenEmail(existingUser,
                     "reset.password.subject",
                     "reset-password.html",
-                    "reset-password?token=");
+                    "/reset-password?token=");
         }
         return ResponseEntity.ok().build();
     }

@@ -25,7 +25,8 @@ public class EmailService {
     private final MessageService messageService;
     private final RegistrationTokenService registrationTokenService;
 
-    @Value("${react.origin}")
+//    @Value("${react.origin}")
+    @Value(value = "http://localhost:8080")
     private String origin;
 
     @Qualifier("emailTemplateEngine")

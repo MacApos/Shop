@@ -7,7 +7,6 @@ import com.shop.validation.global.annotation.MinSize;
 import com.shop.validation.user.annotation.*;
 import com.shop.validation.user.group.defaults.*;
 import com.shop.validation.user.group.expensive.*;
-import com.shop.validation.user.group.expensive.UserExistsByEmail;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;

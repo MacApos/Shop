@@ -22,7 +22,7 @@ public @interface NotNullEmail {
 
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface List {
+    @interface List {
         NotNullEmail[] value();
     }
 }

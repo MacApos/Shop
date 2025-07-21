@@ -44,8 +44,10 @@ public class UserService extends AbstractService<User> {
 
     @Transactional
     public void save(User user) {
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        if (!userRepository.existsByEmail(user.getEmail())) {
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
+        }
         entityManager.persist(user);
     }
 

@@ -1,6 +1,5 @@
 package com.shop.validation.global.validator;
 
-import com.shop.validation.global.annotation.MinSize;
 import com.shop.validation.user.annotation.NotNullEmail;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -1,6 +1,5 @@
 package com.shop.validation.category.annotation;
 
-import com.shop.validation.category.validator.UniqueCategoryValidator;
 import com.shop.validation.category.validator.ValidNameValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
