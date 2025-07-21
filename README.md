@@ -52,4 +52,8 @@ log in, browse products, and manage a shopping cart.
   Users with the admin role can perform CRUD operations on categories and products.
 - `/cart-items` - used for storing products saved by the user. They require a user role to be created and manipulated.
 
+## Contact
+
+Email: maciejapostol98@gmail.com
+
 <p align="right"><a href="#about-the-project">back to top</a></p>
