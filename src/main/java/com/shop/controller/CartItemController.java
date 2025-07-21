@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/cart-item")
+@RequestMapping("/cart-items")
 @PreAuthorize("hasRole('ROLE_USER')")
 public class CartItemController {
     private final CartService cartService;

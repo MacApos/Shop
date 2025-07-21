@@ -91,8 +91,8 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/category/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/product/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/categories/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/products/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
 //                .exceptionHandling(exceptionHandlingConfigurer ->

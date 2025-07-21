@@ -32,7 +32,7 @@ public class CartItemControllerTest extends AbstractControllerTest {
         cartItem.setQuantity(1);
         String json = objectMapper.writeValueAsString(cartItem);
 
-        mockMvc.perform(postRequestBuilder("/cart-item/create", json))
+        mockMvc.perform(postRequestBuilder("/cart-items/create", json))
                 .andExpect(status().isOk());
     }
 
@@ -43,7 +43,7 @@ public class CartItemControllerTest extends AbstractControllerTest {
         cartItem.setQuantity(5);
         String json = objectMapper.writeValueAsString(cartItem);
 
-        mockMvc.perform(putRequestBuilder("/cart-item/update/1", json))
+        mockMvc.perform(putRequestBuilder("/cart-items/update/1", json))
                 .andExpect(status().isOk());
     }
 
@@ -53,7 +53,7 @@ public class CartItemControllerTest extends AbstractControllerTest {
         cartItem.setId(1L);
         String json = objectMapper.writeValueAsString(cartItem);
 
-        mockMvc.perform(deleteRequestBuilder("/cart-item/delete/1", json))
+        mockMvc.perform(deleteRequestBuilder("/cart-items/delete/1", json))
                 .andExpect(status().isOk());
     }
 
@@ -64,7 +64,7 @@ public class CartItemControllerTest extends AbstractControllerTest {
         cartItem.setQuantity(0);
         String json = objectMapper.writeValueAsString(cartItem);
 
-        mockMvc.perform(postRequestBuilder("/cart-item/create", json))
+        mockMvc.perform(postRequestBuilder("/cart-items/create", json))
                 .andExpect(status().isBadRequest());
     }
 
@@ -75,7 +75,7 @@ public class CartItemControllerTest extends AbstractControllerTest {
         cartItem.setQuantity(5);
         String json = objectMapper.writeValueAsString(cartItem);
 
-        mockMvc.perform(put("/cart-item/update/999")
+        mockMvc.perform(put("/cart-items/update/999")
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -87,7 +87,7 @@ public class CartItemControllerTest extends AbstractControllerTest {
         cartItem.setId(999L);
         String json = objectMapper.writeValueAsString(cartItem);
 
-        mockMvc.perform(delete("/cart-item/delete/999")
+        mockMvc.perform(delete("/cart-items/delete/999")
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());

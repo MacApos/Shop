@@ -20,16 +20,16 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new InterceptorService<>(categoryService))
                 .addPathPatterns(
-                        "/category/{id:\\d+}",
-                        "/category/parents/{id:\\d+}",
-                        "/product/by-category/{id:\\d+}");
+                        "/categories/{id:\\d+}",
+                        "/categories/parents/{id:\\d+}",
+                        "/products/by-category/{id:\\d+}");
         registry.addInterceptor(new InterceptorService<>(productService))
                 .addPathPatterns(
-                        "/product/{id:\\d+}",
-                        "/product?category:\\d+");
+                        "/products/{id:\\d+}",
+                        "/products?category:\\d+");
         registry.addInterceptor(new InterceptorService<>(cartItemService))
                 .addPathPatterns(
-                        "/cart-item/update/{id:\\d+}",
-                        "/cart-item/delete/{id:\\d+}");
+                        "/cart-items/update/{id:\\d+}",
+                        "/cart-items/delete/{id:\\d+}");
     }
 }
