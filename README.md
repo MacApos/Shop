@@ -1,6 +1,6 @@
 ## About The Project
 
-A simple shopping platform with handmade crochet products like hats, sweaters, rugs, bags or purses. Users can register,
+This is a simple shopping platform with handmade crochet products like hats, sweaters, rugs, bags or purses. Users can register,
 log in, browse products, and manage a shopping cart.
 
 ## Features
