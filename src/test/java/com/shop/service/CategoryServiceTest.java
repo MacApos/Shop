@@ -12,7 +12,6 @@ import java.util.TreeSet;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-//@Import(RepositoryConfiguration.class)
 class CategoryServiceTest extends CategoriesInitiation {
     private Set<Category> firstGenerationChildren;
     private Set<Category> secondGenerationChildren;

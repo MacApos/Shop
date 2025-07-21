@@ -33,3 +33,4 @@ A simple shopping platform where users can register, log in, browse products, an
    ```sh
    ./mvnw spring-boot:run
    ```
+   

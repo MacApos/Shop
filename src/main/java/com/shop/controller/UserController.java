@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,7 +98,7 @@ public class UserController {
     }
 
     @PostMapping("/update-password")
-//    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public User updatePassword(@RequestBody @Validated(UpdatePasswordSequence.class) User user) {
         User existingUser = userService.findByEmail(user.getEmail());
         userService.update(user, existingUser);
@@ -105,7 +106,7 @@ public class UserController {
     }
 
     @PostMapping("/update-email")
-//    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public User updateEmail(@RequestBody @Validated(UpdateEmailSequence.class) User user) {
         String email = user.getEmail();
         String newEmail = user.getNewEmail();
@@ -134,7 +135,7 @@ public class UserController {
     }
 
     @PostMapping("/update")
-//    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public User update(@RequestBody @Validated(UpdateUserSequence.class) User user) {
         User existingUser = userService.findByUsername(user.getUsername());
         userService.update(user, existingUser);

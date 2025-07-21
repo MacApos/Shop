@@ -4,6 +4,8 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.proc.SecurityContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +32,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.*;
+import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -38,6 +42,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Configuration
 @EnableMethodSecurity
@@ -102,26 +107,26 @@ public class SecurityConfiguration {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-//                .csrf(csrf -> csrf
-//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                        .csrfTokenRequestHandler(new CsrfTokenRequestHandler() {
-//                            private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
-//                            private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
-//
-//                            @Override
-//                            public void handle(HttpServletRequest request, HttpServletResponse response,
-//                                               Supplier<CsrfToken> csrfToken) {
-//                                xor.handle(request, response, csrfToken);
-//                                csrfToken.get();
-//                            }
-//
-//                            @Override
-//                            public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
-//                                String header = request.getHeader(csrfToken.getHeaderName());
-//                                return (StringUtils.hasText(header) ? plain : xor).resolveCsrfTokenValue(request,
-//                                        csrfToken);
-//                            }
-//                        })
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new CsrfTokenRequestHandler() {
+                            private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
+                            private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
+
+                            @Override
+                            public void handle(HttpServletRequest request, HttpServletResponse response,
+                                               Supplier<CsrfToken> csrfToken) {
+                                xor.handle(request, response, csrfToken);
+                                csrfToken.get();
+                            }
+
+                            @Override
+                            public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
+                                String header = request.getHeader(csrfToken.getHeaderName());
+                                return (StringUtils.hasText(header) ? plain : xor).resolveCsrfTokenValue(request,
+                                        csrfToken);
+                            }
+                        }))
                 .addFilterBefore(new JwtCookieFilter(), BearerTokenAuthenticationFilter.class)
                 .build();
     }
