@@ -18,14 +18,6 @@ public class HomeController {
         return categoryService.getHierarchy();
     }
 
-    @PostMapping("/test")
-    public HashMap<String, Object> test(@RequestBody Map<String, String> object) {
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("id", 1);
-        hashMap.put("isTest", true);
-        return hashMap;
-    }
-
     @GetMapping("/alternatives/{id}")
     public Set<Category> alternatives(@PathVariable Long id) {
         Category category = categoryService.findById(id);
