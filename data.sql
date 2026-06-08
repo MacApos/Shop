@@ -112,6 +112,7 @@ from category;
 select *
 from category
          left join product on category.id = product.category_id;
+
 select *
 from category
          right join product on category.id = product.category_id;
@@ -166,3 +167,4 @@ with recursive CategoryTree as (select id, parent_id
 select count(*)
 from product p
          inner join CategoryTree ct on ct.id = p.category_id;
+
